@@ -11,6 +11,13 @@ export default {
       colors: {
         background: "var(--background)",
         foreground: "var(--foreground)",
+        'custom-beige': '#FEE5C5',
+        'custom-turquoise': 
+        {
+          400:  '#03a3ff',
+          500:  '#53c0ff',
+          600:  '#60c2ff',
+        }
       },
     },
   },
