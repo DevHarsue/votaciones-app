@@ -29,13 +29,20 @@ export default function CNUApp(){
             <p className="text-start mb-8">
                 ¿Quieres registrar a tu artista favorito para las elecciones? Presiona el siguiente botón.
             </p>
-            <NormalButton text="Registrar" color="bg-custom-turquoise-400" colorHover="bg-custom-turquoise-600" extraClass="absolute right-4 bottom-4"/>
+            <button className="bg-blue-600 text-white py-2 px-4 rounded-lg absolute right-4 bottom-4 hover:bg-blue-500 transition-colors">
+                Registrar
+             </button>
         </section>
             {/* Buttons Vote, Results */}
-            <div className="flex flex-col items-center space-y-4 mt-20 mb-40">
-                <NormalButton text="Votaciones" color="bg-green-500" colorHover="bg-green-600" extraClass="" />
-                <NormalButton text="Ver Resultados" color="bg-yellow-500" colorHover="bg-yellow-600" extraClass=""/> 
-            </div>
+        <div className="flex flex-col items-center space-y-6 mt-20 mb-20">
+            <button className="bg-custom-green-400 text-white py-2 px-4 rounded-lg w-full md:w-auto hover:bg-custom-green-500 transition-colors">
+                Votar  
+            </button>
+            
+            <button className="bg-red-700 text-white py-2 px-4 rounded-lg w-full md:w-auto hover:bg-red-500 transition-colors">
+                Ver Resultados
+            </button>
+        </div>
         </main>
     );
 };

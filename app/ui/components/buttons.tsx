@@ -9,3 +9,5 @@ export function NormalButton(
         </button>
     );
 }
+
+{/*ESTA MIERDA NO SIRVE ESTÁ LLENA DE BUGS*/}

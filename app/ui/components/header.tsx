@@ -13,7 +13,7 @@ export default function Header(){
             <h1 className="text-4xl font-bold text-custom-beige">
                 CNU
             </h1>
-            <button className='custom-turquoise text-white text-2xl rounded py-2 px-4 mt-2 mb-2 md:mb-0 hover:text-custom-turquoise-400 transition-colors'>
+            <button className='custom-turquoise text-white text-2xl rounded py-2 px-4 mt-2 mb-2 md:mb-0 hover:text-black transition-colors'>
                 Iniciar sesión
             </button>
         </header>
