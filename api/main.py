@@ -1,6 +1,7 @@
 from fastapi import FastAPI,status
 from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
+from api.routers.user_router import user_router
 
 app = FastAPI(
     title="API CNU",
@@ -28,3 +29,7 @@ def home() -> JSONResponse:
             {"message":"API RUNNING"},
             status_code=status.HTTP_200_OK
         )
+
+
+
+app.include_router(user_router,tags=["User"],prefix="/user")
