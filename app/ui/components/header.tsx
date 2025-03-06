@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { NormalButton } from "./buttons";
 
 export default function Header(){
     return(
@@ -13,9 +14,13 @@ export default function Header(){
             <h1 className="text-4xl font-bold text-custom-beige">
                 CNU
             </h1>
-            <button className='custom-turquoise text-white text-2xl rounded py-2 px-4 mt-2 mb-2 md:mb-0 hover:text-black transition-colors'>
-                Iniciar sesión
-            </button>
+            <NormalButton
+                text="Iniciar Sesión"
+                color=""
+                hoverClass="hover:text-black"
+                extraClass="text-white text-2xl py-2 px-4 mb-2 md:mb-0 transition-colors"
+                type="button"
+            />
         </header>
     );
 }

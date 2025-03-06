@@ -12,7 +12,7 @@ export default function RootLayout({
         <head>
             <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         </head>
-        <body className='font-montserrat bg-custoom-beige'>
+        <body className='bg-custoom-beige'>
             <div className="flex min-h-screen flex-col p-0">
                 <Header / >
                 {children}

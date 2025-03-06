@@ -1,13 +1,17 @@
-
 export function NormalButton(
-    {text,color,colorHover,extraClass=""}:
-    {text:string,color:string,colorHover:string,extraClass:string}
-){
-    return (
-        <button className={`${color} text-white py-2 px-4 rounded w-full md:w-auto hover:${colorHover} transition-colors ${extraClass}`}>
-            {text}
-        </button>
-    );
+{ text, color, hoverClass, extraClass = "", type = "button" }:
+{ text: string, 
+  color: string, 
+  hoverClass: string, 
+  extraClass?: string, 
+  type?: "button" | "submit" | "reset" }
+) {
+  return (
+    <button
+      type={type}
+      className={`${color} text-white py-2 px-4 rounded md:w-auto ${hoverClass} transition-colors ${extraClass}`}
+    >
+      {text}
+    </button>
+  );
 }
-
-{/*ESTA MIERDA NO SIRVE ESTÁ LLENA DE BUGS*/}

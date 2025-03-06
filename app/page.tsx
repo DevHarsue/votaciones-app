@@ -1,4 +1,6 @@
 import { NormalButton } from "./ui/components/buttons";
+import { lusitana, montserrat } from './ui/fonts';
+import Link from 'next/link';
 
 export default function CNUApp(){
     return (
@@ -12,8 +14,8 @@ export default function CNUApp(){
                     />
                 </div>
                 
-                <div className="mt-6">
-                    <h2 className="text-3xl md:text-4xl font-bold text-center text-gray-800 mb-6">
+                <div className={`${lusitana.className} mt-6`}>
+                    <h2 className='text-3xl md:text-4xl font-bold text-center text-gray-800 mb-6'>
                         CNU: Donde la fauna se convierte en estrella.
                     </h2>
                     <p className="text-lg text-gray-700 text-center md:text-left leading-relaxed">
@@ -29,20 +31,37 @@ export default function CNUApp(){
             <p className="text-start mb-8">
                 ¿Quieres registrar a tu artista favorito para las elecciones? Presiona el siguiente botón.
             </p>
-            <button className="bg-blue-600 text-white py-2 px-4 rounded-lg absolute right-4 bottom-4 hover:bg-blue-500 transition-colors">
-                Registrar
-             </button>
+            <div>
+            <Link href="/inscripcion">
+                <NormalButton
+                    text="Registrar"
+                    color="bg-blue-600"
+                    hoverClass="hover:bg-blue-500"
+                    extraClass="rounded-lg absolute right-4 bottom-4"
+                    type="button"
+                />
+            </Link>
+            </div>               
         </section>
             {/* Buttons Vote, Results */}
         <div className="flex flex-col items-center space-y-6 mt-20 mb-20">
-            <button className="bg-custom-green-400 text-white py-2 px-4 rounded-lg w-full md:w-auto hover:bg-custom-green-500 transition-colors">
-                Votar  
-            </button>
-            
-            <button className="bg-red-700 text-white py-2 px-4 rounded-lg w-full md:w-auto hover:bg-red-500 transition-colors">
-                Ver Resultados
-            </button>
+            <NormalButton
+                text="Votar"
+                color="bg-custom-green-400"
+                hoverClass="hover:bg-custom-green-500"
+                extraClass="text-white py-2 px-4 rounded-lg transition-colors"
+                type="button"
+            />
+            <NormalButton
+                text="Ver Resultados"
+                color="bg-red-700"
+                hoverClass="hover:bg-red-500"
+                extraClass="text-white py-2 px-4 rounded-lg transition-colors"
+                type="button"
+            />
         </div>
+
+
         </main>
     );
 };
