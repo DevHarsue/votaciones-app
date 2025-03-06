@@ -117,7 +117,7 @@ const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
             <Link href="/">
                 <NormalButton
                     text='Volver a Inicio'
-                    color='text-blue-700'
+                    color='text-blue-600'
                     hoverClass='hover:text-blue-400'
                     extraClass='w-full py-2 px-4 rounded-md md:w-full transition-colors'
                     type='submit'
