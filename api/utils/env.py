@@ -1,7 +1,7 @@
 from dotenv import load_dotenv
 import os
 
-load_dotenv("api/utils/.env")
+load_dotenv()
 
 # Datos de la base de datos
 USER = os.getenv("USER")

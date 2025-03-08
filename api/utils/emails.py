@@ -33,10 +33,15 @@ class Email:
             return True
         except Exception as e:
             raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                                detail="Error al enviar el correo electrónico")
+                                detail="Email not sent. Error: "+str(e))
         
 
-    def send_email_validate_user(self,receiver, token):
+    def send_email_validate_user(self,receiver, code):
         subject = 'Validación de usuario'
-        body = f'Para validar su usuario, haga clic en el siguiente enlace: http://localhost:5000/user/validate_user/{token}'
+        body = f'Codigo de validacion: {code}'
+        self.send_email(receiver, subject, body)
+        
+    def send_email_validate_voter(self,receiver, code):
+        subject = 'Validación de votante'
+        body = f'Codigo de validacion: {code}'
         self.send_email(receiver, subject, body)

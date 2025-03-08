@@ -5,6 +5,8 @@ from .env import ALGORITHM, SECRET_KEY
 from ..models.user_models import UserResponse
 import bcrypt
 import json
+import random
+
 
 def hash_password(password: str):
     return (bcrypt.hashpw(password.encode("utf-8"), bcrypt.gensalt(rounds=12))).decode("utf-8")
@@ -12,16 +14,8 @@ def hash_password(password: str):
 def verify_password(password: str, hashed_password: str):
     return bcrypt.checkpw(password.encode("utf-8"), hashed_password.encode("utf-8"))
 
-def generate_token_validate(id: int):
-    try:
-        payload = {
-            "sub": str(id),
-            "exp": datetime.utcnow() + timedelta(minutes=5)  # Añadir expiración al token
-        }
-        token = jwt.encode(payload, SECRET_KEY, algorithm=ALGORITHM)
-        return token
-    except Exception as e:
-        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
+def generate_code():
+    return random.randrange(100000,999999)
 
 def generate_token_user(user: UserResponse):
     try:

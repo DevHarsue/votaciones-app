@@ -1,5 +1,4 @@
-from sqlalchemy import Column, Integer,ForeignKey,Text,CHAR,BOOLEAN,DATETIME
-from sqlalchemy.dialects.postgresql import BYTEA,JSONB
+from sqlalchemy import Column, Integer,ForeignKey,Text,CHAR,BOOLEAN,DATE
 from .config import Base,engine
 
 class User(Base):
@@ -12,10 +11,12 @@ class User(Base):
     validated = Column(BOOLEAN,nullable=False,default=False)
 
 
-# class TokenUser(Base):
-#     __tablename__ = "tokens_users"
-#     id = Column(Integer, primary_key=True,autoincrement=True)
-#     user_id = Column(Integer, ForeignKey('users.id'),nullable=False)
+class CodeUser(Base):
+    __tablename__ = "codes_users"
+    id = Column(Integer, primary_key=True,autoincrement=True)
+    code = Column(Integer,nullable=False)
+    user_id = Column(Integer, ForeignKey('users.id'),nullable=False)
+    expire = Column(DATE,nullable=False)
 
 class Candidate(Base):
     __tablename__ = 'candidates'
@@ -24,7 +25,7 @@ class Candidate(Base):
     lastname = Column(Text, nullable=False)
     starname = Column(Text, nullable=False)
     gender = Column(CHAR(1), nullable=False)
-    image = Column(BYTEA, nullable=False)
+    image_url = Column(Text, nullable=False)
     user_id = Column(Integer, ForeignKey('users.id'),nullable=False)
     
 
@@ -40,16 +41,19 @@ class Voter(Base):
     validated = Column(BOOLEAN,nullable=False,default=False)
 
 
-# class TokenVoter(Base):
-#     __tablename__ = "tokens_voters"
-#     id = Column(Integer, primary_key=True,autoincrement=True)
-#     voter_id = Column(Integer, ForeignKey('voters.id'),nullable=False)
+class CodeVoter(Base):
+    __tablename__ = "codes_voters"
+    id = Column(Integer, primary_key=True,autoincrement=True)
+    code = Column(Integer,nullable=False)
+    voter_id = Column(Integer, ForeignKey('voters.id'),nullable=False)
+    expire = Column(DATE,nullable=False)
 
-class Vote:
+class Vote(Base):
     __tablename__ = "votes"
+    id = Column(Integer, primary_key=True,autoincrement=True)
     voter_id = Column(Integer, ForeignKey('voters.id'),nullable=False)
     candidate_id = Column(Integer, ForeignKey('candidates.id'),nullable=False)
-    voting_date = Column(DATETIME,nullable=False)
+    voting_date = Column(DATE,nullable=False)
     
     
 
