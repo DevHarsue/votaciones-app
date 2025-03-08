@@ -52,11 +52,26 @@ class UserUpdate(UserRequest):
     username: str = None
     password: str = None
     rol: str = None
+
+class UserDelete(BaseModel):
+    email: str
+    username: str
+    
+    @validator("email")
+    def validate_email(cls,value:str):
+        value = value.upper()
+        return value
+    
+    @validator("username")
+    def validate_username(cls,value:str):
+        value = value.upper()
+        return value
     
 class UserResponse(BaseModel):
     username: str
     email: str
     rol: str
+    validated: bool
     
     @validator("email")
     def validate_email(cls,value:str):
