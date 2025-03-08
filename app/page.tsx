@@ -64,8 +64,6 @@ export default function CNUApp(){
                 />
             </Link>
         </div>
-
-
         </main>
     );
 };
