@@ -37,7 +37,7 @@ export default function CNUApp(){
                     text="Registrar"
                     color="bg-blue-600"
                     hoverClass="hover:bg-blue-500"
-                    extraClass="rounded-lg absolute right-4 bottom-4"
+                    extraClass="text-white rounded-lg absolute right-4 bottom-4"
                     type="button"
                 />
             </Link>
@@ -45,23 +45,25 @@ export default function CNUApp(){
         </section>
             {/* Buttons Vote, Results */}
         <div className="flex flex-col items-center space-y-6 mt-20 mb-20">
-            <NormalButton
-                text="Votar"
-                color="bg-custom-green-400"
-                hoverClass="hover:bg-custom-green-500"
-                extraClass="text-white py-2 px-4 rounded-lg transition-colors"
-                type="button"
-            />
-            <NormalButton
-                text="Ver Resultados"
-                color="bg-red-700"
-                hoverClass="hover:bg-red-500"
-                extraClass="text-white py-2 px-4 rounded-lg transition-colors"
-                type="button"
-            />
+            <Link href="/votaciones">
+                <NormalButton
+                    text="Votar"
+                    color="bg-custom-green-400"
+                    hoverClass="hover:bg-custom-green-500"
+                    extraClass="text-white py-2 px-4 rounded-lg transition-colors"
+                    type="button"
+                />
+            </Link>    
+            <Link href="/">    
+                <NormalButton
+                    text="Ver Resultados"
+                    color="bg-red-700"
+                    hoverClass="hover:bg-red-500"
+                    extraClass="text-white py-2 px-4 rounded-lg transition-colors"
+                    type="button"
+                />
+            </Link>
         </div>
-
-
         </main>
     );
 };

@@ -78,7 +78,9 @@ const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 
           {/* Campo: Género */}
         <div>
-            <label className="block text-sm font-medium text-gray-700">Género</label>
+            <label className="block text-sm font-medium text-gray-700">
+                Género
+            </label>
                 <select
                 value={gender}
                 onChange={(e) => setGender(e.target.value)}
@@ -98,7 +100,7 @@ const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
                 <input
                 type="file"
                 onChange={handleImageChange}
-                className="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+                className="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-semibold file:cursor-pointer file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
                 accept="image/*"
                 required
                 />
@@ -108,7 +110,7 @@ const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
             text='Enviar Solicitud'
             color='bg-custom-green-400'
             hoverClass='hover:bg-custom-green-500'
-            extraClass='w-full text-black py-2 px-4 rounded-md md:w-full transition-colors'
+            extraClass='w-full text-white py-2 px-4 rounded-md md:w-full transition-colors'
             type='submit'
         />
     </form>
@@ -120,7 +122,7 @@ const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
                     color='text-blue-600'
                     hoverClass='hover:text-blue-400'
                     extraClass='w-full py-2 px-4 rounded-md md:w-full transition-colors'
-                    type='submit'
+                    type='button'
                 />
             </Link>
         </div>  
