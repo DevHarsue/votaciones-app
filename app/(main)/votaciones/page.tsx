@@ -1,10 +1,10 @@
 'use client'; // Necesario para manejar estados y eventos en Next.js
 
 import { useState } from 'react';
-import ArtistCard from '../ui/components/artistCard';
-import ArtistModal from '../ui/components/artistModal';
-import { Artist } from '../ui/types';
-import { NormalButton } from '../ui/components/buttons';
+import ArtistCard from '../../ui/components/artistCard';
+import ArtistModal from '../../ui/components/artistModal';
+import { Artist } from '../../ui/types';
+import { NormalButton } from '../../ui/components/buttons';
 import Image from 'next/image';
 import Link from 'next/link';
 

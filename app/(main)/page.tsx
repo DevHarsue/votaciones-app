@@ -1,5 +1,5 @@
-import { NormalButton } from "./ui/components/buttons";
-import { lusitana, montserrat } from './ui/fonts';
+import { NormalButton } from "../ui/components/buttons";
+import { lusitana, montserrat } from '../ui/fonts';
 import Link from 'next/link';
 
 export default function CNUApp(){

@@ -1,5 +1,5 @@
 "use client"; // Necesario para manejar estados y eventos en Next.js
-import { NormalButton } from '../ui/components/buttons';
+import { NormalButton } from '../../ui/components/buttons';
 import Link from 'next/link';
 import { useState } from 'react';
 
