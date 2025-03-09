@@ -1,7 +1,8 @@
+import { ReactNode } from "react";
 export function NormalButton(
 { text, color, hoverClass, extraClass = "", type = "button", onClick }:
 { 
-  text: string, 
+  text: string | ReactNode,
   color: string, 
   hoverClass: string, 
   extraClass?: string, 

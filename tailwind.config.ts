@@ -8,6 +8,25 @@ export default {
   ],
   theme: {
     extend: {
+      animation: {
+        'fade-in': 'fade-in 0.2s ease-in forwards',
+        'fade-out': 'fade-out 0.2s ease-out forwards',
+        'slide-down': 'slide-down 0.5s ease-in forwards',
+      },
+      keyframes: {
+        'fade-in': {
+          '0%': { opacity: '0' },
+          '100%': { opacity: '1' },
+        },
+        'fade-out': {
+          '0': { opacity: '1' },
+          '100%': { opacity: '0' },
+        },
+        'slide-down': {
+          '0%': { opacity: '0', transform: 'translateY(-20px)' },
+          '100%': { opacity: '1', transform: 'translateY(0)' },
+        },
+      },
       colors: {
         background: "var(--background)",
         foreground: "var(--foreground)",
