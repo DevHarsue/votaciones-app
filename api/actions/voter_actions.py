@@ -47,19 +47,23 @@ class VoterActions:
         return True
     
     @session
-    def get_voter(self,session: Session,nationality:str,ci:int) -> VoterResponse:
-        query = select(Voter).where(Voter.ci==ci,Voter.nationality==nationality)
-        voter = session.execute(query).one()[0]
-        return VoterResponse(
-            id=voter.id,
-            nationality=voter.nationality,
-            ci=voter.ci,
-            name=voter.name,
-            lastname=voter.lastname,
-            gender=voter.gender,
-            email=voter.email,
-            validated=voter.validated
-        )
+    def get_voter(self,session: Session,email: str) -> VoterResponse:
+        query = select(Voter).where(Voter.email==email)
+        try:
+            voter = session.execute(query).one()[0]
+            return VoterResponse(
+                id=voter.id,
+                nationality=voter.nationality,
+                ci=voter.ci,
+                name=voter.name,
+                lastname=voter.lastname,
+                gender=voter.gender,
+                email=voter.email,
+                validated=voter.validated
+            )
+        except Exception as e:
+            print(e)
+            return False
     
     @session
     def verify_voter(self,session: Session
