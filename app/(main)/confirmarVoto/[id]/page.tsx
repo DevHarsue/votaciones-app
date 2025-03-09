@@ -3,7 +3,8 @@ import { NormalButton } from '../../../ui/components/buttons';
 import Link from 'next/link';
 import React, { useState } from 'react';
 import { useParams } from 'next/navigation';
-import { validateEmail } from './validations';
+import { validateEmail, validateNationality, validateName, validateCI, validateCode} from '../../../utils/validations';
+import { useNotification } from '@/context/NotificationContext';
 
 export default function confirmarVotoPage() {
     // Estados para manejar los datos del formulario
@@ -19,30 +20,88 @@ export default function confirmarVotoPage() {
     const params = useParams();
     const { id } = params;
 
-    const handleConfirmVote = () => {
-        if (showConfirmationCode) {
-            alert(`¡Gracias por confirmar tu voto!`);
+    const { showNotification } = useNotification();
+
+    const [loading, setLoading] = useState<boolean>(false);
+    const [error, setError] = useState<string | null>(null);
+    
+    const handleSendCode = async () =>{
+        
+        if (!validateNationality(nationality)){
+            showNotification( {message: "Seleccione una Nacionalidad", type: "error"} )
+            return
         }
-    };
 
-    // Función para manejar el envío del formulario
-    const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    console.log({
-        nationality,
-        ci,
-        name,
-        lastname,
-        gender,
-        email,
-        confirmationCode,
-    });
-    };
+        const ci_int = parseInt(ci)
+        if (!validateCI(ci_int)){
+            showNotification( { message: 'Cedula Invalida', type: 'error' } )
+            return
+        }
 
-    const handleSendCode = (e: React.FormEvent) =>{
-        e.preventDefault()
-        if (nationality && ci && name && lastname && gender && gender && validateEmail(email)){
-            setShowConfirmationCode(true)
+        if (!validateName(name)){
+            showNotification( { message: 'Nombre Invalido', type: 'error' } )
+            return
+        }
+        
+        if (!validateName(lastname)){
+            showNotification( { message: 'Apellido Invalido', type: 'error' } )
+            return
+        }
+
+        if (!validateName(gender)){
+            showNotification( { message: 'Seleccione un Genero', type: 'error' } )
+            return
+        }
+
+        if (!validateEmail(email)){
+            showNotification( { message: 'Email Invalido', type: 'error' } )
+            return
+        }
+
+        const data = {
+            nationality: nationality[0],
+            ci: ci_int,
+            name: name,
+            lastname: lastname,
+            gender: gender[0],
+            email: email
+        }
+
+
+        try {
+            setLoading(true);
+            setError(null);
+            const response = await fetch('https://api.example.com/data', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                // Tus datos aquí
+                nombre: "Ejemplo",
+                valor: 123
+                }),
+            });
+
+            if (!response.ok) throw new Error('Error en la solicitud');
+            
+            const data = await response.json();
+            console.log('Respuesta exitosa:', data);
+
+            } catch (err) {
+            setError(err instanceof Error ? err.message : 'Error desconocido');
+            } finally {
+            setLoading(false);
+            }
+
+        setShowConfirmationCode(true)
+    }
+
+    const handleSendVote = async ()=>{
+        const code = parseInt(confirmationCode)
+        if (!validateCode(code)){
+            showNotification( { message: 'Codigo Invalido', type: 'error' } )
+            return
         }
     }
 
@@ -52,7 +111,7 @@ export default function confirmarVotoPage() {
                 <h1 className="text-2xl md:text-3xl font-bold text-center mb-6">
                 Ingrese Sus Datos Para Confirmar Voto
                 </h1>
-            <form onSubmit={handleSubmit} className="space-y-4">
+            <form className="space-y-4">
 
             {/* Campo: Nacionalidad */}
                 <div>
@@ -127,7 +186,6 @@ export default function confirmarVotoPage() {
                         <option value="" disabled> Selecciona un Género </option>
                         <option value="Masculino">Masculino</option>
                         <option value="Femenino">Femenino</option>
-                        <option value="Otro">Otro</option>
                     </select>
             </div>
     
@@ -152,7 +210,7 @@ export default function confirmarVotoPage() {
                         color="bg-green-600"
                         hoverClass="hover:bg-green-500"
                         extraClass="w-full md:w-auto text-white py-2 px-4 rounded-md transition-colors"
-                        type="submit"
+                        type="button"
                         onClick= {handleSendCode}
                     />
                 </div> 
@@ -164,7 +222,7 @@ export default function confirmarVotoPage() {
                         INGRESA EL CÓDIGO DE CONFIRMACIÓN
                     </label>
                     <input
-                        type="text"
+                        type="number"
                         value={confirmationCode}
                         onChange={(e) => setConfirmationCode(e.target.value)}
                         className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -175,11 +233,12 @@ export default function confirmarVotoPage() {
                 {showConfirmationCode && (  
                 <div className="flex justify-center">
                     <NormalButton
+                        type='button'
                         text="Validar voto"
                         color="bg-blue-600"
                         hoverClass="hover:bg-blue-400"
                         extraClass="text-white w-full py-2 px-4 rounded-md md:w-full transition-colors"
-                        onClick={handleConfirmVote} // Función para confirmar el voto
+                        onClick={handleSendVote} // Función para confirmar el voto
                     />
                 </div>
     )}
