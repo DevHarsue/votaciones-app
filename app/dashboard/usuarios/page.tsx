@@ -4,6 +4,7 @@ import DataRow from "../../ui/components/dataRow";
 import { NormalButton} from "../../ui/components/buttons";
 import { useRouter } from "next/navigation";
 
+
 export default function UsuariosPage() {
   const router = useRouter();
 

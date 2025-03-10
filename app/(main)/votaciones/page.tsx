@@ -79,7 +79,7 @@ export default function VotacionesPage() {
                         />
                     </div>
                     <h3 className="text-xl font-semibold mt-4">{votedArtist.name}</h3>
-                    <Link href={"/confirmarVoto?id="+votedArtist.id}>
+                    <Link href={"/confirmarVoto/"+votedArtist.id}>
                         <div className="mt-4">
                             <NormalButton
                                 text="Confirmar voto"

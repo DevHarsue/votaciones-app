@@ -1,6 +1,6 @@
-import Link from 'next/link';
 
-export default function Dashboard(){
+export default async function Dashboard(){
+    
     return(
     <main className='flex flex-col items-center'>
         <h1 className='md:w-auto text-3xl font-bold items-center text-center py-5'>
