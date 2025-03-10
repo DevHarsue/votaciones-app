@@ -50,7 +50,7 @@ export default function Dashboard() {
         </Link> */}
 
         {/* Botón de Votantes */}
-        <Link href="/dashboard/votantes" className="flex-grow">
+        {/* <Link href="/dashboard/votantes" className="flex-grow">
           <NormalButton
             text="Votantes"
             color="bg-blue-900"
@@ -59,7 +59,7 @@ export default function Dashboard() {
             type="button"
             onClick={() => console.log("Votantes clickeado")}
           />
-        </Link>
+        </Link> */}
       </div>
     </header>
   );

@@ -12,11 +12,19 @@ import { useRouter } from "next/navigation";
     const [data, setData] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
 
+    const token = useToken();
+
     const {showNotification} = useNotification()
         const router = useRouter()
     
         useEffect(() => {
-            fetch(process.env.NEXT_PUBLIC_API_URL+"candidates/get_candidates")
+            fetch(process.env.NEXT_PUBLIC_API_URL+"voters/get_voters",{
+              method:"GET",
+              headers: {
+                'accept': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            })
             .then((res) => res.json())
             .then((data) => {
                 setData(data);
@@ -27,9 +35,29 @@ import { useRouter } from "next/navigation";
       console.log(`Modificar votante con ID: ${id}`);
     };
   
-    const handleDelete = (id: number) => {
-      console.log(`Eliminar votante con ID: ${id}`);
-    };
+    const handleDelete = async (id: number) => {
+
+      try{
+          const response = await fetch(process.env.NEXT_PUBLIC_API_URL+"voters/delete_voter?id="+id,
+              {
+                  method:"DELETE",
+                  headers: {
+                      'Authorization': `Bearer ${token}`
+                  }
+              })
+
+          if (!response.ok){
+              const errorData = await response.json();
+              throw new Error(errorData.message || 'Error al borrar candidato');
+          }
+          
+          router.push("/dashboard")
+      }catch (err) {
+          showNotification({message:err instanceof Error ? err.message : 'Error desconocido',type:"error"})
+      } 
+  };
+
+  if (loading) return <div>Cargando...</div>;
   
     return (
     <main>
