@@ -2,14 +2,27 @@
 import Link from "next/link"
 import DataRow from "../../ui/components/dataRow";
 import { NormalButton} from "../../ui/components/buttons";
+import { useToken } from "@/components/token-provider";
+import { useEffect, useState } from "react";
+import { useNotification } from "@/context/NotificationContext";
+import { useRouter } from "next/navigation";
 
-const votantes = [
-    { id: 1, name: "Votante 1" },
-    { id: 2, name: "Votante 2" },
-    { id: 3, name: "Votante 3" },
-  ];
   
   export default function VotantesPage() {
+    const [data, setData] = useState<any[]>([]);
+    const [loading, setLoading] = useState(true);
+
+    const {showNotification} = useNotification()
+        const router = useRouter()
+    
+        useEffect(() => {
+            fetch(process.env.NEXT_PUBLIC_API_URL+"candidates/get_candidates")
+            .then((res) => res.json())
+            .then((data) => {
+                setData(data);
+                setLoading(false);
+            });
+        }, []); 
     const handleEdit = (id: number) => {
       console.log(`Modificar votante con ID: ${id}`);
     };
@@ -24,7 +37,7 @@ const votantes = [
         <h2 className="text-2xl font-bold mb-4 text-center">
             Gestión de Votantes
         </h2>
-        {votantes.map((votante) => (
+        {data.map((votante) => (
           <DataRow
             key={votante.id}
             name={votante.name}

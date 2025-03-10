@@ -2,6 +2,7 @@
 import Link from "next/link"
 import DataRow from "../../ui/components/dataRow";
 import { NormalButton} from "../../ui/components/buttons";
+import { useRouter } from "next/navigation";
 
 const usuarios = [
   { id: 1, name: "Juan Pérez" },
@@ -10,6 +11,9 @@ const usuarios = [
 ];
 
 export default function UsuariosPage() {
+  const router = useRouter()
+  router.push("artistas")
+
   const handleEdit = (id: number) => {
     console.log(`Modificar usuario con ID: ${id}`);
   };
