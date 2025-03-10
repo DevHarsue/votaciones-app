@@ -12,7 +12,7 @@ export default function DataRow({ name, onEdit, onDelete }: DataRowProps) {
     <div className="flex justify-between items-center p-2 border-b">
       <p className="font-bold">{name}</p>
       <div>
-        {/* Botón de Modificar */}
+        {/* Botón de Modificar */} 
         <NormalButton
           text="Modificar"
           color="bg-blue-500"

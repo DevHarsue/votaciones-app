@@ -90,4 +90,5 @@ export default function ArtistasPage() {
             </div>  
         </main>
     );
+
 }

@@ -82,7 +82,7 @@ import { useRouter } from "next/navigation";
                 extraClass='w-full py-2 px-4 rounded-md md:w-full transition-colors'
                 type='button'
                 />
-        </Link>
+            </Link>
     </main>
-    );
-  }
+  );
+}
