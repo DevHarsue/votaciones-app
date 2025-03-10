@@ -4,9 +4,8 @@ import Image from "next/image";
 import { NormalButton } from "./buttons";
 import Link from "next/link";
 
-export default function Header() {
+export default function Header({isLoggin}:{isLoggin:boolean}) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
   };
@@ -25,7 +24,7 @@ export default function Header() {
       <h1 className="text-4xl font-bold text-custom-beige">CNU</h1>
 
       {/* Botón con flecha hacia abajo */}
-      <div className="relative">
+        <div className="relative">
         <NormalButton
           text={
             <div className="flex items-center">
@@ -46,24 +45,25 @@ export default function Header() {
           }`}
         >
           <div className="flex flex-col p-2 space-y-2">
-            <Link href="/login" className="w-full">
+            <Link href={!isLoggin?"/login":"/dashboard"} className="w-full">
               <NormalButton
-                text="Login"
+                text={!isLoggin?"INICIAR SESION":"DASHBOARD"}
                 color="bg-transparent"
                 hoverClass="hover:bg-blue-500"
                 extraClass="w-full text-white py-2 px-4 rounded-md md:w-full transition-colors border-3 border-y border-white rounded-sm"
                 type="button"
               />
             </Link>
-            <Link href="/register" className="w-full">
+            {/* <Link href="/register" className="w-full">
               <NormalButton
-                text="Register"
+                text="REGISTRO"
                 color="bg-transparent"
                 hoverClass="hover:bg-blue-500"
                 extraClass="w-full text-white py-2 px-4 rounded-md md:w-full transition-colors border-3 border-y border-white rounded-sm"
                 type="button"
               />
-            </Link>
+            </Link> */}
+      
           </div>
         </div>
       </div>
