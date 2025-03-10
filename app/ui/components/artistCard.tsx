@@ -13,7 +13,7 @@ return (
 
             <div className="relative aspect-square">
                 <Image
-                src={artist.image}
+                src={process.env.NEXT_PUBLIC_API_URL+artist.image_url}
                 alt={artist.name}
                 fill
                 className="object-cover"

@@ -1,4 +1,6 @@
 import './ui/globals.css';
+import { NotificationProvider } from '@/context/NotificationContext';
+import { Providers } from './providers';
 
 export default function RootLayout({
     children,
@@ -8,7 +10,9 @@ export default function RootLayout({
     return (
         <html lang="es">
         <body className='bg-custoom-beige'>
-            {children}
+            <NotificationProvider>
+            <Providers>{children}</Providers>
+            </NotificationProvider>
         </body>
         </html>
     );
