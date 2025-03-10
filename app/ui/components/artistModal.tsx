@@ -10,7 +10,7 @@ onVote: () => void;
 export default function ArtistModal({ artist, onClose, onVote }: ArtistModalProps) {
 return (
     <div className="fixed z-50 inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4">
-        <div className="bg-white rounded-lg overflow-hidden shadow-xl max-w-screen-md">
+        <div className="bg-white rounded-lg overflow-hidden shadow-xl  md:w-auto">
             <div className="relative aspect-square">
                 <Image
                     src={artist.image}

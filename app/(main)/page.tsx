@@ -54,7 +54,7 @@ export default function CNUApp(){
                     type="button"
                 />
             </Link>    
-            <Link href="/">    
+            <Link href="/resultados">    
                 <NormalButton
                     text="Ver Resultados"
                     color="bg-red-700"
