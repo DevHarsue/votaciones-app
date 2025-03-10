@@ -1,6 +1,8 @@
 export interface Artist {
     id: number;
     name: string;
-    image: string;
-    description?: string;
+    lastname: string;
+    starname: string;
+    image_url: string;
+    gender: string;
 }

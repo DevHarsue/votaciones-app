@@ -13,7 +13,7 @@ return (
         <div className="bg-white rounded-lg overflow-hidden shadow-xl max-w-screen-md">
             <div className="relative aspect-square">
                 <Image
-                    src={artist.image}
+                    src={process.env.NEXT_PUBLIC_API_URL+artist.image_url}
                     alt={artist.name}
                     fill
                     className="object-cover"
@@ -27,7 +27,7 @@ return (
             </div>
             <div className="p-6">
                 <h2 className="text-2xl font-bold mb-2">{artist.name}</h2>
-                <p className="text-gray-700">{artist.description}</p>
+                <p className="text-gray-700">{artist.starname}</p>
                     <div className="mt-4">
                         <button
                         onClick={onVote}
