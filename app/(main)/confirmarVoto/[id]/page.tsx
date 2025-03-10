@@ -115,10 +115,6 @@ export default function confirmarVotoPage() {
             if (response.status == 400) throw new Error('Codigo Incorrecto');
             if (!response.ok) throw new Error('Error en la solicitud');
             
-            console.log(JSON.stringify({
-                voter_id: voterId,
-                candidate_id: id
-            }))
             const response_vote = await fetch(process.env.NEXT_PUBLIC_API_URL+"vote/create_vote", {
                 method: 'POST',
                 headers: {
