@@ -24,6 +24,7 @@ export default function Header({isLoggin}:{isLoggin:boolean}) {
       <h1 className="text-4xl font-bold text-custom-beige">CNU</h1>
 
       {/* Botón con flecha hacia abajo */}
+
         <div className="relative">
         <NormalButton
           text={
@@ -63,7 +64,6 @@ export default function Header({isLoggin}:{isLoggin:boolean}) {
                 type="button"
               />
             </Link> */}
-      
           </div>
         </div>
       </div>

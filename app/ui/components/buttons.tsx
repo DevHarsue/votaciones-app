@@ -1,3 +1,5 @@
+'use client';
+
 import { ReactNode } from "react";
 export function NormalButton(
 { text, color, hoverClass, extraClass = "", type = "button", onClick }:
