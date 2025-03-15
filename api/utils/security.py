@@ -14,8 +14,8 @@ def hash_password(password: str):
 def verify_password(password: str, hashed_password: str):
     return bcrypt.checkpw(password.encode("utf-8"), hashed_password.encode("utf-8"))
 
-def generate_code():
-    return random.randrange(100000,999999)
+def generate_code() -> int:
+    return int(random.randrange(100000,999999))
 
 def generate_token_user(user: UserResponse):
     try:
