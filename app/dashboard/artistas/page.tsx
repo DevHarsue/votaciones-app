@@ -24,11 +24,10 @@ export default function ArtistasPage() {
     }, []); 
 
     const handleEdit = (id: number) => {
-        console.log(`Modificar artista con ID: ${id}`);
+        router.push("/dashboard/artistas/updateArtista/"+id)
     };
 
     const handleDelete = async (id: number) => {
-
         try{
             const response = await fetch(process.env.NEXT_PUBLIC_API_URL+"candidates/delete_candidate?id="+id,
                 {
@@ -37,20 +36,12 @@ export default function ArtistasPage() {
                         'accept': 'application/json',
                         'Authorization': `Bearer ${token}`
                     },
-
-                    
-
                 })
 
             if (!response.ok){
                     const errorData = await response.json();
                     throw new Error(errorData.message || 'Error al borrar candidato');
                 }
-
-            if (!response.ok){
-                const errorData = await response.json();
-                throw new Error(errorData.message || 'Error al borrar candidato');
-            }
             
             router.push("/dashboard")
         }catch (err) {
