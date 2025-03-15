@@ -43,8 +43,33 @@ export const authOptions = {
     ],
     callbacks: {
         async jwt({ token, user }:{token:any,user:any}) {
-            if (user) token.accessToken = user.token;
-            return token;
+            if (user) {
+                token.accessToken = user.token;
+                token.username = user.username;
+            }
+            // Si no hay token, retornar inmediatamente
+            if (!token.accessToken) return null;
+            // Verificar validez del token en cada solicitud
+            try {
+                // Llamada a la API para validar el token
+                const validation = await fetch(`${process.env.NEXT_PUBLIC_API_URL}validate_token`,
+                    {
+                        headers: {
+                            'Authorization': `Bearer ${token.accessToken}`
+                        },
+                        method: "GET",
+                    }
+                );
+
+                if (!validation.ok) {
+                    throw `Error en validación: ${validation.status}`
+                }
+                return token;
+
+            } catch (error) {
+                console.error('Token validation failed:', error);
+                return null; // Forzar logout
+            }
         },
         async session({ session, token }:{session:any,token:any}) {
             session.user = token.accessToken;

@@ -13,7 +13,7 @@ export default function Formulario({ token }: { token: any }) {
         name: '',
         lastname: '',
         starname: '',
-        gender: 'M'
+        gender: ''
     });
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
