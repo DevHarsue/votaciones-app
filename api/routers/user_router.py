@@ -102,3 +102,9 @@ def get_users(data:depend_data) -> List[UserResponse]:
     actions = UserActions()
     users = actions.get_users()
     return JSONResponse(content=[user.model_dump() for user in users],status_code=status.HTTP_200_OK)
+
+@user_router.get("/validate_token",status_code=status.HTTP_200_OK,dependencies=list_dependencies)
+def validate_token(data:depend_data) -> List[UserResponse]:
+    print(data)
+    
+    return JSONResponse(content={"message":"Token Validated"},status_code=status.HTTP_200_OK)

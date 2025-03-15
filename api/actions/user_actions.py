@@ -28,11 +28,14 @@ class UserActions:
     @session
     def validate_user(self,session: Session,username:str,password:str) -> UserResponse:
         query = select(User).where(User.username==username)
-        user = session.execute(query).one()[0]
-        if verify_password(password,user.password):
-            return UserResponse(username=user.username,rol=user.rol,email=user.email)
+        try:
+            user = session.execute(query).one()[0]
+            if verify_password(password,user.password):
+                return UserResponse(username=user.username,rol=user.rol,email=user.email)
+        except Exception as e:
+            print(e)    
         return None
-    
+        
     @session
     def verify_user(self,session: Session, username:str, email:str, rol:str) -> bool:
         query = select(User).where(User.username==username,User.email==email,User.rol==rol)
