@@ -5,9 +5,9 @@ from fastapi.exceptions import HTTPException
 from typing import List
 from ..models.user_models import UserRequest,UserResponse,UserUpdate,UserDelete
 from ..actions.user_actions import UserActions
-from ..actions.code_user_actions import CodeUserActions
-from ..utils.emails import Email
-from ..utils.security import generate_code,verify_token,hash_password,generate_token_user
+from ..actions.code_actions import CodeActions
+from ..utils.emails import SenderEmail
+from ..utils.security import generate_code,hash_password,generate_token_user
 from ..utils.depends import depend_data
 from .token import list_dependencies
 
@@ -16,38 +16,27 @@ user_router = APIRouter()
 @user_router.post("/register_user",status_code=status.HTTP_201_CREATED)
 def register_user(user: UserRequest) -> UserResponse:
     actions = UserActions()
+    
+    if actions.validate_user_by_email(email=user.email):
+        raise HTTPException(status_code=status.HTTP_409_CONFLICT,detail="Email already exists")
+    
+    if actions.validate_user_by_username(username=user.username):
+        raise HTTPException(status_code=status.HTTP_409_CONFLICT,detail="Username already exists")
+    
+    code_actions = CodeActions()
+    if not code_actions.validate_code(code=user.code,email=user.email):
+        raise HTTPException(status_code=status.HTTP_409_CONFLICT,detail="Code Incorrect")
+    
+    code_actions.delete_code(email=user.email)
+    
     user.password = hash_password(user.password)
     id = actions.create_user(user=user)
     if id==0:
-        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,detail="id is 0")
-    code = generate_code()
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,detail="Error creating user")
     
-    code_actions = CodeUserActions()
-    if not code_actions.create_code(user_id=id,code=code):
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,detail="Code not saved")
-    sender = Email()
-    sender.send_email_validate_user(user.email,code)
     
     return JSONResponse(content=UserResponse(email=user.email,username=user.username,rol=user.rol,validated=False).model_dump(),
                         status_code=status.HTTP_201_CREATED)
-
-@user_router.get("/validate_user/{code}",status_code=status.HTTP_200_OK)
-def validate_user(code: int) -> JSONResponse:
-    code_actions = CodeUserActions()
-    id = code_actions.validate_code(code)
-    if id==0:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,detail="Invalid Code")
-    
-    actions = UserActions()
-    validate = actions.validate_user(id)
-    if not validate:
-        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,detail="User not validated")
-    
-    code_actions.delete_code(code=code,user_id=id)
-    
-    return JSONResponse(content={"message":"User validated"},
-                        status_code=status.HTTP_200_OK)
-    
 
 
 class CustomOAuth2PasswordRequestForm:
@@ -59,7 +48,7 @@ class CustomOAuth2PasswordRequestForm:
 @user_router.post("/token",status_code=status.HTTP_200_OK)
 async def login(form_data: Annotated[CustomOAuth2PasswordRequestForm,Depends()]) -> JSONResponse:
     actions = UserActions()
-    user = actions.get_user(form_data.username,form_data.password)
+    user = actions.validate_user(form_data.username,form_data.password)
     if not bool(user):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
@@ -73,24 +62,24 @@ async def login(form_data: Annotated[CustomOAuth2PasswordRequestForm,Depends()])
 @user_router.put("/update_user",status_code=status.HTTP_200_OK,tags=["User"],dependencies=list_dependencies)
 def update_user(data:depend_data,user: UserUpdate) -> JSONResponse:
     actions = UserActions()
+    if actions.validate_user_by_email(email=user.email):
+        raise HTTPException(status_code=status.HTTP_409_CONFLICT,detail="Email already exists")
+    
+    if actions.validate_user_by_username(username=user.username):
+        raise HTTPException(status_code=status.HTTP_409_CONFLICT,detail="Username already exists")
+    
+    code_actions = CodeActions()
+    if not code_actions.validate_code(code=user.code,email=data["email"]):
+        raise HTTPException(status_code=status.HTTP_409_CONFLICT,detail="Code Incorrect")
+    
+    code_actions.delete_code(email=data["email"])
+    
     user.password = hash_password(user.password) if user.password else None
     data = actions.update_user(data["username"],data["email"],user)
-    if data:
-        email = Email()
-        code = generate_code()
-        code_actions = CodeUserActions()
-        if not code_actions.create_code(user_id=data["id"],code=code):
-            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,detail="Code not keeped")
-        try:
-            email.send_email_validate_user(data["email"],code) 
-        except Exception as e:
-            print(e)
-            raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,detail="Email not sent")
-        
-        return JSONResponse(content={"message": "User updated"},
-                        status_code=status.HTTP_200_OK)
-    else:
+    if not data:
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,detail="User not updated")
+    
+    return JSONResponse(content={"message": "User updated"},status_code=status.HTTP_200_OK)
 
 @user_router.delete("/delete_user",status_code=status.HTTP_200_OK,tags=["User"],dependencies=list_dependencies)
 def delete_user(data:depend_data,username: str = Query()) -> JSONResponse:
@@ -113,3 +102,9 @@ def get_users(data:depend_data) -> List[UserResponse]:
     actions = UserActions()
     users = actions.get_users()
     return JSONResponse(content=[user.model_dump() for user in users],status_code=status.HTTP_200_OK)
+
+@user_router.get("/validate_token",status_code=status.HTTP_200_OK,dependencies=list_dependencies)
+def validate_token(data:depend_data) -> List[UserResponse]:
+    print(data)
+    
+    return JSONResponse(content={"message":"Token Validated"},status_code=status.HTTP_200_OK)
