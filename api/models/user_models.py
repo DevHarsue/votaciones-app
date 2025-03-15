@@ -6,6 +6,7 @@ class UserRequest(BaseModel):
     username: str
     password: str
     rol: str
+    code: int
     
     @validator("email")
     def validate_email(cls,value:str):
@@ -47,6 +48,15 @@ class UserRequest(BaseModel):
         
         return value
     
+    @validator("code")
+    def validate_code(cls,value:int):
+        value_str = str(value)
+        if len(value_str)!=6:
+            raise ValueError("Invalid Code")
+        
+        return value
+
+    
 class UserUpdate(UserRequest):
     email: str = None
     username: str = None
@@ -71,7 +81,6 @@ class UserResponse(BaseModel):
     username: str
     email: str
     rol: str
-    validated: bool
     
     @validator("email")
     def validate_email(cls,value:str):

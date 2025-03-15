@@ -24,16 +24,16 @@ async def create_image(image):
 @candidate_router.post("/create_candidate",status_code=status.HTTP_201_CREATED,dependencies=list_dependencies)
 async def create_candidate(form_data: Annotated[CandidateForm,Depends()],data: depend_data) -> CandidateResponse:
     actions_user = UserActions()
-    user_id = actions_user.get_state_user(data["username"])
+    user_id = actions_user.validate_user_by_username(username=data["username"])
     if not user_id:
-        raise HTTPException(status_code=status.HTTP_405_METHOD_NOT_ALLOWED,detail="User not validated")
+        raise HTTPException(status_code=status.HTTP_405_METHOD_NOT_ALLOWED,detail="User not Exists")
     
     actions = CandidateActions()
     
     candidate = actions.create_candidate(candidate=form_data.candidate,user_id=user_id)
     
     if not candidate:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,detail="User not created")
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,detail="Candidate not created")
     
     
     file_path = await create_image(form_data.image)

@@ -2,7 +2,7 @@ from sqlalchemy import select
 from sqlalchemy.orm.session import Session
 from .session import session
 from ..models.canidadate_models import CandidateRequest,CandidateResponse,CandidateUpdate
-from ..db.models import Candidate
+from ..db.models import Candidate,Vote
 
 class CandidateActions:
     @session
@@ -19,7 +19,7 @@ class CandidateActions:
         )
         try:
             session.add(candidate_db)
-            query = select(Candidate).where(Candidate.starname==candidate.starname and Candidate.name==candidate.starname)
+            query = select(Candidate).where(Candidate.starname==candidate.starname,Candidate.name==candidate.name)
             candidate_db = session.execute(query).one()[0]
         except Exception as e:
             print(e)
@@ -83,8 +83,15 @@ class CandidateActions:
     
     @session
     def delete_candidate(self,session: Session,id: int) -> bool:
-        query = select(Candidate).where(Candidate.id==id)
         try:
+            query = select(Vote).where(Vote.candidate_id==id)
+            votes = session.execute(query).all()
+            print(votes)
+            if len(votes) > 0:
+                for v in votes: 
+                    session.delete(v[0])
+                
+            query = select(Candidate).where(Candidate.id==id)
             candidate_db = session.execute(query).one()[0]
             if candidate_db:
                 session.delete(candidate_db)

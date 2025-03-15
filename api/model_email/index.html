@@ -1,12 +1,34 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CNU</title>
-    <link rel="stylesheet" href="style.css"> <>
 </head>
 <body>
+    <style>
+        body {
+            background-image: url("cid:logo");
+            /* background-size: cover;  */
+            background-repeat: no-repeat; 
+            background-position: center; 
+        }
+
+        div {
+            background-color: rgba(255, 255, 255, 0.8); 
+            padding: 20px;
+            border-radius: 10px; 
+            max-width: 600px; 
+            margin: auto; 
+            text-align: center; 
+        }
+
+        .centered {
+            text-align: center; 
+            margin: 20px 0;
+        }
+    </style>
     <div>
         
         <div>
@@ -14,11 +36,13 @@
         </div>
 
         
-        <h2>Ya casi estamos</h2>
+        <h2>YA CASI ESTAMOS</h2>
 
         
         <p>Aquí tienes tu código:</p>
-
+        <p class="centered" id="code" style="font-size: 1.25em; font-weight: 700;">
+            {{ code }}
+        </p>
         
         <p class="centered">
             Este código permanecerá activo durante 10 minutos. Si no te da tiempo, no te preocupes, podrás pedir uno nuevo.
