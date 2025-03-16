@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 import { useNotification } from "@/context/NotificationContext";
 import { useRouter, useParams } from "next/navigation";
-import { useToken } from "@/components/token-provider";
+import { useToken } from "@/components/auth-provider";
 
 
 

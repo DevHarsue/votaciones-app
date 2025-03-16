@@ -4,7 +4,7 @@ import Image from "next/image";
 import { NormalButton } from "./buttons";
 import Link from "next/link";
 
-export default function Header({isLoggin}:{isLoggin:boolean}) {
+export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -46,9 +46,9 @@ export default function Header({isLoggin}:{isLoggin:boolean}) {
           }`}
         >
           <div className="flex flex-col p-2 space-y-2">
-            <Link href={!isLoggin?"/login":"/dashboard"} className="w-full">
+            <Link href={!true?"/login":"/dashboard"} className="w-full">
               <NormalButton
-                text={!isLoggin?"INICIAR SESION":"DASHBOARD"}
+                text={!true?"INICIAR SESION":"DASHBOARD"}
                 color="bg-transparent"
                 hoverClass="hover:bg-blue-500"
                 extraClass="w-full text-white py-2 px-4 rounded-md md:w-full transition-colors border-3 border-y border-white rounded-sm"

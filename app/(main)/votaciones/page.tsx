@@ -49,7 +49,7 @@ export default function VotacionesPage() {
     return (
         <main className="min-h-screen bg-gray-100 p-8 flex flex-col items-center">
             <h1 className="text-3xl font-bold text-center mb-8">Vota Por Tu Artista Favorito</h1>
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-2 max-w-3xl w-full">
+            {data.length > 0 ? (<div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-2 max-w-3xl w-full">
                 {data.map((artist) => (
                 <ArtistCard
                     key={artist.id}
@@ -57,7 +57,10 @@ export default function VotacionesPage() {
                     onClick={() => handleArtistClick(artist)}
                 />
                 ))}
-            </div>
+            </div>) :
+            (<div>
+                <h4>No Hay Artistas Registrados</h4>
+            </div>)}
             {selectedArtist && (
                 <ArtistModal
                 artist={selectedArtist}

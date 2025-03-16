@@ -1,6 +1,5 @@
 'use client';
 import { useEffect } from 'react'; 
-import { NormalButton } from '../ui/components/buttons';
 
 export default function Error({
     error,

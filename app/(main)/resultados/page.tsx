@@ -30,7 +30,8 @@ export default function ResultadosPage() {
         <h1 className="text-3xl font-bold text-center mb-8">
             Resultados de las Votaciones
         </h1>
-        <div className="w-full max-w-4xl">
+        {artistsData.length>0 ? 
+        (<div className="w-full max-w-4xl">
             {artistsData.map((artist) => {
                 console.log(artist)
             const percentage = ((artist.total_votes / totalVotes) * 100).toFixed(2); // Calcular el porcentaje
@@ -69,7 +70,10 @@ export default function ResultadosPage() {
                 </div>
             );
             })}
-        </div>
+        </div>) :
+        (<div>
+            <h4>No Hay Resultados Para Mostrar</h4>
+        </div>)}
         {/* Botón: Volver a Inicio */}
         <div className='mt-5'>
                 <Link href="/">

@@ -15,8 +15,10 @@ export default function confirmarVotoPage() {
     const [lastname, setLastname] = useState('');
     const [gender, setGender] = useState('');
     const [email, setEmail] = useState('');
+    const [emailFinal,setEmailFinal] = useState("")
     const [confirmationCode, setConfirmationCode] = useState('');
     const [showConfirmationCode, setShowConfirmationCode] = useState(false);
+    const [codeSend,setCodeSend] = useState(false)
 
     const params = useParams();
     const id = parseInt(params.id as string, 10);;
@@ -29,7 +31,7 @@ export default function confirmarVotoPage() {
 
     const router = useRouter()
     
-    const handleSendCode = async () =>{
+    const handleSendDataVoter = async () =>{
 
         if (loading){
             return
@@ -60,11 +62,11 @@ export default function confirmarVotoPage() {
             return
         }
 
-        if (!validateEmail(email)){
-            showNotification( { message: 'Email Invalido', type: 'error' } )
+        const code = parseInt(confirmationCode)
+        if (!validateCode(code)){
+            showNotification( { message: 'Codigo Invalido', type: 'error' } )
             return
         }
-
 
 
         try {
@@ -80,7 +82,8 @@ export default function confirmarVotoPage() {
                     name: name,
                     lastname: lastname,
                     gender: gender[0],
-                    email: email
+                    email: email,
+                    code: code
                 }),
             });
 
@@ -89,32 +92,6 @@ export default function confirmarVotoPage() {
             const data = await response.json();
             setVoterId(data.id)
             showNotification({message: "Codigo Enviado", type:"success"});
-            setShowConfirmationCode(true)
-
-        } catch (err) {
-            showNotification({message: err instanceof Error ? err.message : 'Error desconocido', type:"error"});
-        } finally {
-            setLoading(false);
-        }
-
-    }
-    const handleSendVote = async ()=>{
-        if (loading){
-            return
-        }
-        const code = parseInt(confirmationCode)
-        if (!validateCode(code)){
-            showNotification( { message: 'Codigo Invalido', type: 'error' } )
-            return
-        }
-
-        try{
-            setLoading(true)
-            const response = await fetch(process.env.NEXT_PUBLIC_API_URL+"voters/validate_voter/"+code.toString(),{method: 'GET'})
-
-            if (response.status == 400) throw new Error('Codigo Incorrecto');
-            if (!response.ok) throw new Error('Error en la solicitud');
-            
             const response_vote = await fetch(process.env.NEXT_PUBLIC_API_URL+"vote/create_vote", {
                 method: 'POST',
                 headers: {
@@ -131,7 +108,41 @@ export default function confirmarVotoPage() {
             alert("Voto Realizado!")
             router.push("/resultados/")
 
+        } catch (err) {
+            showNotification({message: err instanceof Error ? err.message : 'Error desconocido', type:"error"});
+        } finally {
+            setLoading(false);
+        }
 
+
+
+    }
+    const handleSendCode = async ()=>{
+        if (loading) return
+        setLoading(true)
+        
+        if (!validateEmail(email)){
+            showNotification( { message: 'Email Invalido', type: 'error' } )
+            setLoading(false)
+            return
+        }
+        setEmailFinal(email)
+        
+        try{
+            const response = await fetch(process.env.NEXT_PUBLIC_API_URL+"code/generate_code",{
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    email
+                })
+            });
+
+            if (!response.ok) throw new Error('Error en la solicitud');
+
+            setShowConfirmationCode(true)
+            setCodeSend(true)
         } catch (err) {
             showNotification({message: err instanceof Error ? err.message : 'Error desconocido', type:"error"});
         } finally {
@@ -148,82 +159,6 @@ export default function confirmarVotoPage() {
                     Ingrese Sus Datos Para Confirmar Voto
                 </h1>
                 <form className="space-y-4">
-                    {/* Campo: Nacionalidad */}
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700">
-                        Nacionalidad
-                        </label>
-                        <select
-                            value={nationality}
-                            onChange={(e) => setNationality(e.target.value)}
-                            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            required
-                        >
-                            <option value="" disabled>Selecciona una nacionalidad</option>
-                            <option value="Extranjero">Extranjero</option>
-                            <option value="Venezolano">Venezolano</option>
-                        </select>
-                    </div>
-                        
-                    {/* Campo: Cédula */}
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700">
-                            Cédula
-                        </label>
-                        <input
-                            type="number"
-                            value={ci}
-                            onChange={(e) => setCi(e.target.value)}
-                            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            required
-                        />
-                    </div>
-
-                    {/* Campo: Nombre */}
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700">
-                            Nombre
-                        </label>
-                        <input
-                            type="text"
-                            value={name}
-                            onChange={(e) => setName(e.target.value)}
-                            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            required
-                        />
-                    </div>
-        
-                    {/* Campo: Apellido */}
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700">
-                            Apellido
-                        </label>
-                        <input
-                            type="text"
-                            value={lastname}
-                            onChange={(e) => setLastname(e.target.value)}
-                            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            required
-                        />
-                    </div>
-        
-                    {/* Campo: Género */}
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700">
-                            Género
-                        </label>
-                        <select
-                            value={gender}
-                            onChange={(e) => setGender(e.target.value)}
-                            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            required
-                        >
-                            <option value="" disabled> Selecciona un Género </option>
-                            <option value="Masculino">Masculino</option>
-                            <option value="Femenino">Femenino</option>
-                        </select>
-                    </div>
-        
                     {/* Campo: Correo */}
                     <div>
                         <label className="block text-sm font-medium text-gray-700">
@@ -237,11 +172,10 @@ export default function confirmarVotoPage() {
                             required
                         />
                     </div>
-        
-                    {/* Botón: Confirmar Datos */}
+                    {/* Botón: Enviar Codigo */}
                     <div className="flex justify-center">
                         <NormalButton
-                            text={loading ? 'Enviando...' : "Confirmar Datos"}
+                            text={!codeSend ? (loading ? 'Enviando...' : "Enviar Codigo") : "Reenviar Codigo"  }
                             color="bg-green-600"
                             hoverClass="hover:bg-green-500"
                             extraClass="w-full md:w-auto text-white py-2 px-4 rounded-md transition-colors"
@@ -249,34 +183,107 @@ export default function confirmarVotoPage() {
                             onClick= {handleSendCode}
                         />
                     </div> 
-        
-                    {/* Campo: Código de Confirmación */}
-                    {showConfirmationCode && (    
+                    {showConfirmationCode &&(<>
+                        {/* Campo: Nacionalidad */}
                         <div>
-                            <label className="block text-sm font-medium text-gray-700 text-center">
-                                INGRESA EL CÓDIGO DE CONFIRMACIÓN
+                            <label className="block text-sm font-medium text-gray-700">
+                            Nacionalidad
+                            </label>
+                            <select
+                                value={nationality}
+                                onChange={(e) => setNationality(e.target.value)}
+                                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                required
+                            >
+                                <option value="" disabled>Selecciona una nacionalidad</option>
+                                <option value="Extranjero">Extranjero</option>
+                                <option value="Venezolano">Venezolano</option>
+                            </select>
+                        </div>
+                            
+                        {/* Campo: Cédula */}
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700">
+                                Cédula
                             </label>
                             <input
                                 type="number"
-                                value={confirmationCode}
-                                onChange={(e) => setConfirmationCode(e.target.value)}
+                                value={ci}
+                                onChange={(e) => setCi(e.target.value)}
                                 className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                                 required
                             />
                         </div>
-                    )}
-                    {showConfirmationCode && (  
-                        <div className="flex justify-center">
-                            <NormalButton
-                                type='button'
-                                text={loading ? 'Enviando...' : "Validar voto"}
-                                color="bg-blue-600"
-                                hoverClass="hover:bg-blue-400"
-                                extraClass="text-white w-full py-2 px-4 rounded-md md:w-full transition-colors"
-                                onClick={handleSendVote} // Función para confirmar el voto
+
+                        {/* Campo: Nombre */}
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700">
+                                Nombre
+                            </label>
+                            <input
+                                type="text"
+                                value={name}
+                                onChange={(e) => setName(e.target.value)}
+                                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                required
                             />
                         </div>
-                    )}
+            
+                        {/* Campo: Apellido */}
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700">
+                                Apellido
+                            </label>
+                            <input
+                                type="text"
+                                value={lastname}
+                                onChange={(e) => setLastname(e.target.value)}
+                                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                required
+                            />
+                        </div>
+            
+                        {/* Campo: Género */}
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700">
+                                Género
+                            </label>
+                            <select
+                                value={gender}
+                                onChange={(e) => setGender(e.target.value)}
+                                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                required
+                            >
+                                <option value="" disabled> Selecciona un Género </option>
+                                <option value="Masculino">Masculino</option>
+                                <option value="Femenino">Femenino</option>
+                            </select>
+                        </div>
+            
+                        {/* Campo: Código de Confirmación */}
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 text-center">
+                                    INGRESA EL CÓDIGO DE CONFIRMACIÓN
+                                </label>
+                                <input
+                                    type="number"
+                                    value={confirmationCode}
+                                    onChange={(e) => setConfirmationCode(e.target.value)}
+                                    className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                    required
+                                />
+                            </div>
+                            <div className="flex justify-center">
+                                <NormalButton
+                                    type='button'
+                                    text={loading ? 'Enviando...' : "Validar Voto"}
+                                    color="bg-blue-600"
+                                    hoverClass="hover:bg-blue-400"
+                                    extraClass="text-white w-full py-2 px-4 rounded-md md:w-full transition-colors"
+                                    onClick={handleSendDataVoter} // Función para confirmar el voto
+                                />
+                            </div>
+                    </>)}
                     {/* Botón: Volver a Inicio */}
                     <div className='mt-5'>
                         <Link href="/">

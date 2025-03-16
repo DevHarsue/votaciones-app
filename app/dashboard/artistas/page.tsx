@@ -3,17 +3,16 @@ import Link from "next/link"
 import DataRow from "../../ui/components/dataRow";
 import { NormalButton } from "../../ui/components/buttons";
 import { useEffect, useState } from "react";
-import { useToken } from "@/components/token-provider";
 import { useNotification } from "@/context/NotificationContext";
 import { useRouter } from "next/navigation";
+import Cookies from "js-cookie";
 
 export default function ArtistasPage() {
     const [data, setData] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
-    const token = useToken();
     const {showNotification} = useNotification()
     const router = useRouter()
-
+    const token = Cookies.get('auth_token');    
     useEffect(() => {
         fetch(process.env.NEXT_PUBLIC_API_URL+"candidates/get_candidates")
         .then((res) => res.json())
