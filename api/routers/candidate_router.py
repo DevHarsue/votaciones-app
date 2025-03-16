@@ -29,7 +29,10 @@ async def create_candidate(form_data: Annotated[CandidateForm,Depends()],data: d
         raise HTTPException(status_code=status.HTTP_405_METHOD_NOT_ALLOWED,detail="User not Exists")
     
     actions = CandidateActions()
-    
+    candidate_exists = actions.get_candidate_by_starname(starname=form_data.candidate.starname)
+    if candidate_exists:
+        raise HTTPException(status_code=status.HTTP_409_CONFLICT,detail="Starname already exists")
+
     candidate = actions.create_candidate(candidate=form_data.candidate,user_id=user_id)
     
     if not candidate:
@@ -52,10 +55,18 @@ def get_candidates() -> List[CandidateResponse]:
 @candidate_router.put("/update_candidate",status_code=status.HTTP_200_OK,dependencies=list_dependencies)
 async def update_candidate(form_data: Annotated[CandidateFormUpdate,Depends()]) -> CandidateResponse:
     actions = CandidateActions()
-    
+    candidate_exists = actions.get_candidate_by_starname(starname=form_data.candidate.starname)
+    if candidate_exists:
+        raise HTTPException(status_code=status.HTTP_409_CONFLICT,detail="Starname already exists")
+
+    path_image = actions.get_candidate(id=form_data.id).image_url
     candidate = actions.update_candidate(id=form_data.id,candidate=form_data.candidate)
     if form_data.image:
-        # Agregar funcion para borrar imagen anterior
+        if os.path.exists(path_image):
+            try:
+                os.remove(path_image)
+            except Exception as e:
+                print(f"Error al borrar: {e}")
         file_path = await create_image(form_data.image)
         actions.assign_image(image_url=file_path,id=candidate.id)
         candidate.image_url = file_path
