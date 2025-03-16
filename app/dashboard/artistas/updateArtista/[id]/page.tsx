@@ -1,46 +1,59 @@
 'use client';
 import { useState, useEffect } from "react";
-import { useNotification } from "@/context/NotificationContext";
-import { useRouter, useParams } from "next/navigation";
-import { useToken } from "@/components/auth-provider";
+// import { useNotification } from "@/context/NotificationContext";
+import { useParams } from "next/navigation";
+import Cookies from "js-cookie";
+
+interface Artist {
+    id: number
+    name: string
+    lastname: string
+    starname: string
+    gender: string
+    image_url: string
+}
 
 export default function UpdateArtista() {
-  const [name, setName] = useState("");
-  const [lastname, setLastname] = useState("");
-  const [starname, setStarname] = useState("");
-  const [gender, setGender] = useState("");
-  const [data, setData] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
-  const token = useToken();
-  const params = useParams();
-  const id = parseInt(params.id as string, 10);;
-  const {showNotification} = useNotification()
-          const router = useRouter()
+    const [name, setName] = useState("");
+    const [lastname, setLastname] = useState("");
+    const [starname, setStarname] = useState("");
+    const [gender, setGender] = useState("");
+    const [data, setData] = useState<Artist | null>(null);
+    const [loading, setLoading] = useState(true);
+    const params = useParams();
+    const id = parseInt(params.id as string, 10);
+    const token = Cookies.get('auth_token');
+    // const {showNotification} = useNotification()
+    // const router = useRouter()
+    
+    const handleSubmit = async () => {
+        console.log(name,lastname,starname,gender)
+    };
+    useEffect(() => {
+        if (!token || isNaN(id)) return;
+        fetch(process.env.NEXT_PUBLIC_API_URL+"candidates/get_candidates",{
+        method:"GET",
+        headers: {
+            'accept': 'application/json',
+            'Authorization': `Bearer ${token}`
+        },
+        })
+        .then((res) => res.json())
+        .then((data: Artist[]) => {
+            const artist = data.find((x) => x.id === id);
+            if (artist) {
+            setData(artist);
+            setName(artist.name);
+            setLastname(artist.lastname);
+            setStarname(artist.starname);
+            setGender(artist.gender);
+            }
+            setLoading(false);
+        });
+    }, [id,token]); 
 
-  const handleSubmit = async () => {
-    console.log(name)
-
-  };
-  useEffect(() => {
-    fetch(process.env.NEXT_PUBLIC_API_URL+"candidates/get_candidates",{
-      method:"GET",
-      headers: {
-        'accept': 'application/json',
-        'Authorization': `Bearer ${token}`
-    },
-    })
-    .then((res) => res.json())
-    .then((data) => {
-        for (let x of data){
-          if (x.id==id){
-            setData(x)
-          }
-        }
-        setLoading(false);
-    });
-}, []); 
-
-if (loading) return <div>Cargando...</div>;
+    if (loading) return <div>Cargando...</div>;
+    if (!data) return <div>Artista no encontrado</div>;
 
 
   return (

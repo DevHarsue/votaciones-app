@@ -6,10 +6,24 @@ import Link from 'next/link';
 import { NormalButton } from '../../ui/components/buttons';
 import Spin from '@/app/ui/components/spin';
 
+interface Candidate {
+    data_candidate:{
+        id: number
+        name: string
+        lastname: string
+        starname: string
+        gender: string
+        image_url: string
+    },
+    total_votes: number
+}
+
+
 export default function ResultadosPage() {
-    const [artistsData, setArtistsData] = useState<any[]>([]);
+    const [artistsData, setArtistsData] = useState<[Candidate]|null>(null);
     const [totalVotes, setTotalVotes] = useState(0)
     const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<Error | null>(null);
 
     useEffect(() => {
             fetch(process.env.NEXT_PUBLIC_API_URL+"vote/get_votes")
@@ -18,12 +32,18 @@ export default function ResultadosPage() {
                 setArtistsData(data.candidates);
                 setTotalVotes(data.total_votes)
                 setLoading(false);
+            }).catch(error=>{
+                setError(error)
             });
     }, []); 
 
 
     if (loading) return <Spin />;
-    
+    if (!artistsData) return <div>No se encontraron Resultados</div>;
+
+    if (error) {
+        throw error; // Esto activará el error.tsx
+    }
 
     return (
         <main className="min-h-screen bg-gray-100 p-8 flex flex-col items-center ">

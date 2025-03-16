@@ -15,7 +15,7 @@ export const validateGender = (gender:string)=>{
 }
 
 export const validateCI = (ci: number)=>{
-    let ciString = ci.toString()
+    const ciString = ci.toString()
     if (ciString.length < 7 || ciString.length > 8){
         return false
     }

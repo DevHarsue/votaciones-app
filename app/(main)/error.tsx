@@ -1,30 +1,25 @@
-'use client';
-import { useEffect } from 'react'; 
+'use client' // Obligatorio: los componentes de error deben ser client components
+import { NormalButton } from "@/app/ui/components/buttons";
 
-export default function Error({
-    error,
-    reset,
-}: {
-    error: Error & { digest?: string };
+interface ErrorProps {
+    error: Error;
     reset: () => void;
-}) {
-    useEffect(() => {
-        console.error(error);
-    }, [error]);
+}
 
+export default function ErrorComponent({ error, reset }: ErrorProps) {
     return (
-        <main className="flex h-full flex-col items-center justify-center">
-            <h2 className="text-center mt-3">Ha ocurrido un error</h2>
-            <button
-                className="mt-4 rounded-md bg-blue-600 px-4 py-2 text-sm text-white transition-colors hover:bg-blue-500 mb-7"
-                onClick={
-                    // Attempt to recover by trying to re-render the invoices route
-                    () => reset()
-                }
-            >
-                Volver a Intentar
-            </button>
-
-        </main>
+        <div className=" bg-gray-100 p-8 flex flex-col items-center justify-between">
+            <h1 className="font-bold">Algo salió mal!</h1>
+            <p>{error.message}</p>
+            <NormalButton 
+                text = "Intentar Nuevamente"
+                onClick={reset} 
+                color="bg-blue-600"
+                hoverClass="hover:bg-blue-500"
+                extraClass="w-full md:w-auto text-white py-2 px-4 rounded-md transition-colors"
+                type="button"
+                
+            />
+        </div>
     );
 }

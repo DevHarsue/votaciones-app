@@ -7,22 +7,26 @@ import { Artist } from '../../ui/types';
 import { NormalButton } from '../../ui/components/buttons';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+// import { useRouter } from 'next/navigation';
 import Spin from '@/app/ui/components/spin';
-
 
 export default function VotacionesPage() {
 
-    const [data, setData] = useState<any[]>([]);
+    const [data, setData] = useState<[Artist]|null>(null);
     const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<Error | null>(null);
 
     useEffect(() => {
-        fetch(process.env.NEXT_PUBLIC_API_URL+"candidates/get_candidates")
-        .then((res) => res.json())
-        .then((data) => {
-            setData(data);
-            setLoading(false);
-        });
+            fetch(process.env.NEXT_PUBLIC_API_URL+"candidates/get_candidates")
+            .then((res) => res.json())
+            .then((data) => {
+                setData(data);
+                setLoading(false);
+            }).catch(error=>{
+                console.error(error);
+                setError(error); // Guarda el error en el estado
+                throw "Error de Peticion"
+            });
     }, []); 
 
     const [selectedArtist, setSelectedArtist] = useState<Artist | null>(null);
@@ -42,10 +46,14 @@ export default function VotacionesPage() {
         setSelectedArtist(null); // Cierra el modal
     };
 
-    const router = useRouter()
+    // const router = useRouter()
 
+    if (error) {
+        throw error; // Esto activará el error.tsx
+    }
 
     if (loading) return <Spin />;
+    if (!data) return <div>No se encontraron Artistas</div>;
 
     return (
         <main className="min-h-screen bg-gray-100 p-8 flex flex-col items-center">

@@ -17,6 +17,7 @@ export default function LoginPage() {
 
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
+    console.log(error)
     const router = useRouter();
     const {showNotification} = useNotification()
 

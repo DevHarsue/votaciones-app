@@ -1,14 +1,15 @@
 "use client"; // Necesario para manejar estados y eventos en Next.js
 import { NormalButton } from '../../../ui/components/buttons';
 import Link from 'next/link';
-import React, { useState } from 'react';
+import React from 'react';
+import { useState } from 'react';
 import { useParams } from 'next/navigation';
 import { validateEmail, validateNationality, validateName, validateCI, validateCode} from '../../../utils/validations';
 import { useNotification } from '@/context/NotificationContext';
 import { useRouter } from 'next/navigation';
 import Spin from '@/app/ui/components/spin';
 
-export default function confirmarVotoPage() {
+export default function ConfirmarVotoPage() {
     // Estados para manejar los datos del formulario
     const [nationality, setNationality] = useState('');
     const [ci, setCi] = useState("");
@@ -20,11 +21,9 @@ export default function confirmarVotoPage() {
     const [confirmationCode, setConfirmationCode] = useState('');
     const [showConfirmationCode, setShowConfirmationCode] = useState(false);
     const [codeSend,setCodeSend] = useState(false)
-
+    // const [error,setError] = useState<Error | null>(null);    
     const params = useParams();
     const id = parseInt(params.id as string, 10);;
-    
-    const [voterId, setVoterId] = useState(0);
 
     const { showNotification } = useNotification();
 
@@ -108,7 +107,7 @@ export default function confirmarVotoPage() {
             if (!response.ok) throw new Error('Error en la solicitud');
             
             const data = await response.json();
-            setVoterId(data.id)
+            console.log(data)
             const response_vote = await fetch(process.env.NEXT_PUBLIC_API_URL+"vote/create_vote", {
                 method: 'POST',
                 headers: {
@@ -170,6 +169,10 @@ export default function confirmarVotoPage() {
         
 
     }
+
+    // if (error) {
+    //     throw error; // Esto activará el error.tsx
+    // }
 
     return (
         <main className="min-h-screen flex items-center justify-center bg-gray-100 py-8">

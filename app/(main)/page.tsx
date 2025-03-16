@@ -1,15 +1,18 @@
 import { NormalButton } from "../ui/components/buttons";
-import { lusitana, montserrat } from '../ui/fonts';
+import { lusitana } from '../ui/fonts';
 import Link from 'next/link';
+import Image from "next/image";
 
 export default function CNUApp(){
     return (
         <main className="my-4 mx-4 lg:mx-auto lg:max-w-4xl">
             <section className="container mx-auto px-4 py-0">
                 <div className="flex justify-center">
-                    <img
+                    <Image
                     src="/animals-description.png"
                     alt="Descripción de CNU"
+                    width="800"
+                    height="800"
                     className="w-full max-w-md h-auto rounded-lg shadow-lg"
                     />
                 </div>

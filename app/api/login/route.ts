@@ -28,6 +28,7 @@ export async function POST(request: Request) {
             headers: { 'Set-Cookie': cookie },
         });
     } catch (error) {
+        console.log(error)
         return NextResponse.json(
             { error: 'Credenciales inválidas' },
             { status: 401 }

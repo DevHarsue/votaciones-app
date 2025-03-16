@@ -1,6 +1,7 @@
 'use client';
 import Link from "next/link"
 import DataRow from "../../ui/components/dataRow";
+import { Artist } from "@/app/ui/types";
 import { NormalButton } from "../../ui/components/buttons";
 import { useEffect, useState } from "react";
 import { useNotification } from "@/context/NotificationContext";
@@ -8,7 +9,7 @@ import { useRouter } from "next/navigation";
 import Cookies from "js-cookie";
 
 export default function ArtistasPage() {
-    const [data, setData] = useState<any[]>([]);
+    const [data, setData] = useState<[Artist]|null>(null);
     const [loading, setLoading] = useState(true);
     const {showNotification} = useNotification()
     const router = useRouter()
@@ -49,6 +50,7 @@ export default function ArtistasPage() {
     };
 
     if (loading) return <div>Cargando...</div>;
+    if (!data) return <div>Sin Artistas</div>;
 
     
     return (

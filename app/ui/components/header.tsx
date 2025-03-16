@@ -37,9 +37,9 @@ export default function Header() {
         <header className="flex flex-col items-center h-30 bg-blue-800 p-2 relative">
             <Link href="/">
                 <Image
-                width={300}
-                height={300}
                 src="/animals-logo1.png"
+                width="300"
+                height="300"
                 alt="CNU Logo"
                 className="w-20 h-20 rounded-full overflow-hidden mb-1 cursor-pointer"
                 />

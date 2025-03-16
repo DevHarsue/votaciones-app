@@ -7,16 +7,28 @@ import { useNotification } from "@/context/NotificationContext";
 import { useRouter } from "next/navigation";
 import Cookies from "js-cookie";
 
+interface Votantes {
+    id: number
+    name: string
+    lastname: string
+    starname: string
+    gender: string
+    image_url: string
+}
+
+
 
 export default function VotantesPage() {
-    const [data, setData] = useState<any[]>([]);
+    const [data, setData] = useState<[Votantes] | null>(null);
     const [loading, setLoading] = useState(true);
-    const token = Cookies.get('auth_token');
 
     const {showNotification} = useNotification()
     const router = useRouter()
+    const token = Cookies.get('auth_token');
+
     
     useEffect(() => {
+        if (!token) return;
         fetch(process.env.NEXT_PUBLIC_API_URL+"voters/get_voters",{
             method:"GET",
             headers: {
@@ -29,7 +41,7 @@ export default function VotantesPage() {
             setData(data);
             setLoading(false);
         });
-    }, []); 
+    }, [token]); 
     
     const handleEdit = (id: number) => {
         console.log(`Modificar votante con ID: ${id}`);
@@ -58,7 +70,8 @@ export default function VotantesPage() {
     };
 
     if (loading) return <div>Cargando...</div>;
-    
+    if (!data) return <div>No se encontraron Votantes</div>
+
     return (
     <main>
       <div className="p-4 flex flex-col px-40">

@@ -24,8 +24,6 @@ export default function IncripcionPage() {
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const { name, value } = e.target;
-        console.log(e.target)
-        console.log(name,value)
         setFormData(prevState => ({
             ...prevState,  // Mantenemos todo el estado anterior
             [name]: value  // Actualizamos solo el campo modificado
@@ -70,7 +68,6 @@ export default function IncripcionPage() {
             form.append('gender', formData.gender[0]);
             form.append('image', image);
             
-            console.log(form)
             const response = await fetch(process.env.NEXT_PUBLIC_API_URL+'candidates/create_candidate', {
                 method: 'POST',
                 headers: {
@@ -80,12 +77,17 @@ export default function IncripcionPage() {
                     body: form
                 });
             
+            if (response.status==409){
+                const errorData = await response.json();
+                console.log(errorData)
+                showNotification({message:"El Nombre Artístico ya esta siendo usado",type:"error"})
+                return
+            }
             if (!response.ok){
                 const errorData = await response.json();
                 throw new Error(errorData.message || 'Error al crear candidato');
             }
-            const data = await response.json();
-            console.log(data)
+            // const data = await response.json();
             alert('Candidato creado exitosamente!');
             router.push("votaciones")
         }catch (err) {

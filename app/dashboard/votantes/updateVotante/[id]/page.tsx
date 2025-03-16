@@ -1,9 +1,8 @@
 'use client';
-import { useState, useEffect } from "react";
-import { useNotification } from "@/context/NotificationContext";
-import { useRouter, useParams } from "next/navigation";
-import { useToken } from "@/components/auth-provider";
-
+import { useState } from "react";
+// import { useNotification } from "@/context/NotificationContext";
+// import { useRouter, useParams } from "next/navigation";
+// import Cookies from "js-cookie";
 
 
 export default function UpdateVotante() {
@@ -13,13 +12,13 @@ export default function UpdateVotante() {
     const [gender, setGender] = useState("");
     const [email, setEmail] = useState("");
 
-    const [data, setData] = useState<any[]>([]);
-    const [loading, setLoading] = useState(true);
-    const token = useToken();
-    const params = useParams();
-    const id = parseInt(params.id as string, 10);;
-    const {showNotification} = useNotification()
-    const router = useRouter()
+    // const [data, setData] = useState<any[]>([]);
+    // const [loading, setLoading] = useState(true);
+    // // const token = Cookies.get('auth_token');
+    // // const params = useParams();
+    // // // const id = parseInt(params.id as string, 10);;
+    // // // // const {showNotification} = useNotification()
+    // // // // const router = useRouter()
 
 
     const handleSubmit = (e: React.FormEvent) => {

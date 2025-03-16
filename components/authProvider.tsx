@@ -25,6 +25,7 @@ export default function AuthProvider({
                 if (!response.ok) throw new Error('Token inválido');
                 
             } catch (error) {
+                console.log(error)
                 Cookies.remove('auth_token');
                 router.push('/login');
             }
