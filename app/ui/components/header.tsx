@@ -12,7 +12,12 @@ export default function Header() {
         setIsMenuOpen(!isMenuOpen);
     };
 
-    const token = Cookies.get('auth_token');
+    const [isAuthenticated, setIsAuthenticated] = useState(false);
+    useEffect(() => {
+        const token = Cookies.get('auth_token')
+        setIsAuthenticated(token ? true : false);
+    }, []);
+
     const menuRef = useRef<HTMLDivElement | null>(null);;
 
     const handleClickOutside = (event:Event) => {
@@ -64,9 +69,9 @@ export default function Header() {
                     }`}
                 >
                     <div className="flex flex-col p-2 space-y-2">
-                        <Link href={!token ?"/login":"/dashboard"} className="w-full">
+                        <Link href={!isAuthenticated ? "/login" : "/dashboard"} className="w-full">
                             <NormalButton
-                                text={!token ?"INICIAR SESION":"DASHBOARD"}
+                                text={!isAuthenticated ? "INICIAR SESION" : "DASHBOARD"}
                                 color="bg-transparent"
                                 hoverClass="hover:bg-blue-500"
                                 extraClass="w-full text-white py-2 px-4 rounded-md md:w-full transition-colors border-3 border-y border-white rounded-sm"
@@ -74,7 +79,7 @@ export default function Header() {
                                 onClick={toggleMenu}
                             />
                         </Link>
-                        {!token &&(<Link href="/register" className="w-full">
+                        {!isAuthenticated &&(<Link href="/register" className="w-full">
                             <NormalButton
                                 text="REGISTRO"
                                 color="bg-transparent"
