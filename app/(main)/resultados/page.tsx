@@ -4,8 +4,7 @@ import { useState,useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { NormalButton } from '../../ui/components/buttons';
-
-
+import Spin from '@/app/ui/components/spin';
 
 export default function ResultadosPage() {
     const [artistsData, setArtistsData] = useState<any[]>([]);
@@ -23,7 +22,8 @@ export default function ResultadosPage() {
     }, []); 
 
 
-    if (loading) return <div>Cargando...</div>;
+    if (loading) return <Spin />;
+    
 
     return (
         <main className="min-h-screen bg-gray-100 p-8 flex flex-col items-center ">

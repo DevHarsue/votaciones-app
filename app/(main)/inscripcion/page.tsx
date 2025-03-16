@@ -1,12 +1,12 @@
 "use client"; // Necesario para manejar estados y eventos en Next.js
 import { NormalButton } from '../../ui/components/buttons';
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { validateName,validateGender } from '@/app/utils/validations';
 import { useNotification } from '@/context/NotificationContext';
 import { useRouter } from 'next/navigation';
 import Cookies from 'js-cookie';
-import { redirect } from 'next/navigation';
+import Spin from '@/app/ui/components/spin';
 
 
 export default function IncripcionPage() {
@@ -20,7 +20,7 @@ export default function IncripcionPage() {
     });
     const [loading, setLoading] = useState(false);
 
-    const token = Cookies.get('auth_token');    
+    const token = Cookies.get('auth_token');
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const { name, value } = e.target;
@@ -57,7 +57,6 @@ export default function IncripcionPage() {
             setLoading(false)
             return
         }
-
         if(!image){
             showNotification({message:"Seleccione una imagen",type:"error"})
             setLoading(false)
@@ -125,11 +124,11 @@ export default function IncripcionPage() {
         }
     };
 
-    if (loading) return <div>Cargando...</div>;
     
     return (
-        <main className="min-h-screen flex items-center justify-center bg-gray-100 py-4">
-            <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
+        <main className="min-h-screen flex items-center justify-center bg-gray-100">
+            {loading &&(<Spin />)}
+            <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md mt-4 mb-4">
                 <h1 className="text-3xl font-bold text-center mb-10">
                     INSCRIBE A TU ARTISTA
                 </h1>

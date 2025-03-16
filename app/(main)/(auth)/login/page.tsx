@@ -6,6 +6,8 @@ import Cookies from 'js-cookie';
 import { NormalButton } from '../../../ui/components/buttons';
 import Link from 'next/link';
 import { useState } from 'react';
+import Spin from "@/app/ui/components/spin";
+import { useNotification } from '@/context/NotificationContext';
 
 
 export default function LoginPage() {
@@ -16,6 +18,7 @@ export default function LoginPage() {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
     const router = useRouter();
+    const {showNotification} = useNotification()
 
     // Función para manejar el envío del formulario
     const handleSubmit = async (e: React.FormEvent) => {
@@ -34,7 +37,10 @@ export default function LoginPage() {
             });
             
             const data = await response.json();
-
+            if (response.status==401){
+                showNotification( { message: 'Usuario o Contraseña Invalida', type: 'error' } )
+                return
+            }
             if (!response.ok) throw new Error(data.error || 'Error de autenticación');
             Cookies.set('auth_token', data.access_token, { secure: true, sameSite: 'strict' });
             router.push('/dashboard');
@@ -45,10 +51,9 @@ export default function LoginPage() {
         }
     };
 
-    if (loading) return <div>Cargando...</div>;
-
     return (
         <main className="min-h-screen flex items-center justify-center bg-gray-100 py-4">
+            {loading &&(<Spin />)}
             <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
                 <h1 className="text-3xl font-bold text-center mb-10">
                     INICIAR SESION
