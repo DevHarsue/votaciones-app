@@ -3,17 +3,16 @@ import Link from "next/link"
 import DataRow from "../../ui/components/dataRow";
 import { NormalButton } from "../../ui/components/buttons";
 import { useEffect, useState } from "react";
-import { useToken } from "@/components/token-provider";
 import { useNotification } from "@/context/NotificationContext";
 import { useRouter } from "next/navigation";
+import Cookies from "js-cookie";
 
 export default function ArtistasPage() {
     const [data, setData] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
-    const token = useToken();
     const {showNotification} = useNotification()
     const router = useRouter()
-
+    const token = Cookies.get('auth_token');    
     useEffect(() => {
         fetch(process.env.NEXT_PUBLIC_API_URL+"candidates/get_candidates")
         .then((res) => res.json())
@@ -24,11 +23,10 @@ export default function ArtistasPage() {
     }, []); 
 
     const handleEdit = (id: number) => {
-        console.log(`Modificar artista con ID: ${id}`);
+        router.push("/dashboard/artistas/updateArtista/"+id)
     };
 
     const handleDelete = async (id: number) => {
-
         try{
             const response = await fetch(process.env.NEXT_PUBLIC_API_URL+"candidates/delete_candidate?id="+id,
                 {
@@ -37,20 +35,12 @@ export default function ArtistasPage() {
                         'accept': 'application/json',
                         'Authorization': `Bearer ${token}`
                     },
-
-                    
-
                 })
 
             if (!response.ok){
                     const errorData = await response.json();
                     throw new Error(errorData.message || 'Error al borrar candidato');
                 }
-
-            if (!response.ok){
-                const errorData = await response.json();
-                throw new Error(errorData.message || 'Error al borrar candidato');
-            }
             
             router.push("/dashboard")
         }catch (err) {

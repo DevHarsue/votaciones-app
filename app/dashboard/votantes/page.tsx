@@ -2,63 +2,63 @@
 import Link from "next/link"
 import DataRow from "../../ui/components/dataRow";
 import { NormalButton} from "../../ui/components/buttons";
-import { useToken } from "@/components/token-provider";
 import { useEffect, useState } from "react";
 import { useNotification } from "@/context/NotificationContext";
 import { useRouter } from "next/navigation";
+import Cookies from "js-cookie";
 
-  
-  export default function VotantesPage() {
+
+export default function VotantesPage() {
     const [data, setData] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
-
-    const token = useToken();
+    const token = Cookies.get('auth_token');
 
     const {showNotification} = useNotification()
-        const router = useRouter()
+    const router = useRouter()
     
-        useEffect(() => {
-            fetch(process.env.NEXT_PUBLIC_API_URL+"voters/get_voters",{
-              method:"GET",
-              headers: {
+    useEffect(() => {
+        fetch(process.env.NEXT_PUBLIC_API_URL+"voters/get_voters",{
+            method:"GET",
+            headers: {
                 'accept': 'application/json',
                 'Authorization': `Bearer ${token}`
             },
-            })
-            .then((res) => res.json())
-            .then((data) => {
-                setData(data);
-                setLoading(false);
-            });
-        }, []); 
+        })
+        .then((res) => res.json())
+        .then((data) => {
+            setData(data);
+            setLoading(false);
+        });
+    }, []); 
+    
     const handleEdit = (id: number) => {
-      console.log(`Modificar votante con ID: ${id}`);
+        console.log(`Modificar votante con ID: ${id}`);
     };
-  
+
     const handleDelete = async (id: number) => {
+        try{
+            const response = await fetch(process.env.NEXT_PUBLIC_API_URL+"voters/delete_voter?id="+id,
+                {
+                    method:"DELETE",
+                    headers: {
+                        'accept': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                })
 
-      try{
-          const response = await fetch(process.env.NEXT_PUBLIC_API_URL+"voters/delete_voter?id="+id,
-              {
-                  method:"DELETE",
-                  headers: {
-                      'Authorization': `Bearer ${token}`
-                  }
-              })
+            if (!response.ok){
+                    const errorData = await response.json();
+                    throw new Error(errorData.message || 'Error al borrar votante');
+                }
+            
+            router.push("/dashboard")
+        }catch (err) {
+            showNotification({message:err instanceof Error ? err.message : 'Error desconocido',type:"error"})
+        } 
+    };
 
-          if (!response.ok){
-              const errorData = await response.json();
-              throw new Error(errorData.message || 'Error al borrar candidato');
-          }
-          
-          router.push("/dashboard")
-      }catch (err) {
-          showNotification({message:err instanceof Error ? err.message : 'Error desconocido',type:"error"})
-      } 
-  };
-
-  if (loading) return <div>Cargando...</div>;
-  
+    if (loading) return <div>Cargando...</div>;
+    
     return (
     <main>
       <div className="p-4 flex flex-col px-40">
