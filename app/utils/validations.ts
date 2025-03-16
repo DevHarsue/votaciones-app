@@ -31,6 +31,15 @@ export const validateName = (name: string)=>{
     return true
 }
 
+export const validateStarName = (name: string)=>{
+    const regex = /^[a-zñÑ][a-z0-9ñÑ ]*$/i;
+    if (!regex.test(name)){
+        return false
+    }
+
+    return true
+}
+
 export const validateEmail = (email: string)=>{
     const regex_email = /^[^@]+@[^@]+\.[^@]+$/;
     const regex_digits = /\+\d@/

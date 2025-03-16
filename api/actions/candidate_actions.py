@@ -113,3 +113,22 @@ class CandidateActions:
                     gender=candidate[0].gender,
                     image_url=candidate[0].image_url
                 ) for candidate in candidates]
+    
+    @session
+    def get_candidate_by_starname(self,session: Session,starname:str) -> CandidateResponse:
+        try:
+            query = select(Candidate).where(Candidate.starname==starname)
+            candidate_db = session.execute(query).one_or_none()[0]
+            
+            return CandidateResponse(
+                id=candidate_db.id,
+                name=candidate_db.name,
+                lastname=candidate_db.lastname,
+                starname=candidate_db.starname,
+                gender=candidate_db.gender,
+                image_url=candidate_db.image_url
+            )
+        except Exception as e:
+            print(e)
+            
+        return False

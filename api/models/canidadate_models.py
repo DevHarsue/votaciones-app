@@ -26,9 +26,9 @@ class CandidateRequest(BaseModel):
     @validator("starname")
     def validate_starname(cls, value:str):
         value = value.upper()
-        if not fullmatch(r"[A-Z\s]+",value):
+        if not fullmatch(r"^[A-Za-zñÑ][A-Za-z0-9ñÑ ]*$",value):
             raise ValueError("Invalid Starname")
-        return value
+        return value.upper()
     
     @validator("gender")
     def validate_gender(cls, value:str):
@@ -89,11 +89,19 @@ class CandidateFormUpdate(CandidateForm):
     
     def create_candidate(self,name,lastname,starname,gender):
         try:
-            self.candidate = CandidateUpdate()
-            self.candidate.name = name
-            self.candidate.lastname = lastname
-            self.candidate.starname = starname
-            self.candidate.gender = gender
+            candidate_data = {
+                "name": name,
+                "lastname": lastname,
+                "starname": starname,
+                "gender": gender
+            }
+            
+            processed_data = {
+                key: value.upper() 
+                for key, value in candidate_data.items() 
+                if value is not None
+            }
+            self.candidate = CandidateUpdate(**processed_data)
         except Exception as e:
             print(e)
             raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,detail=json.loads(e.json())[0])

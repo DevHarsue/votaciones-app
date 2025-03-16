@@ -2,7 +2,7 @@
 import { NormalButton } from '../../ui/components/buttons';
 import Link from 'next/link';
 import { useState } from 'react';
-import { validateName,validateGender } from '@/app/utils/validations';
+import { validateName,validateGender,validateStarName } from '@/app/utils/validations';
 import { useNotification } from '@/context/NotificationContext';
 import { useRouter } from 'next/navigation';
 import Cookies from 'js-cookie';
@@ -47,7 +47,7 @@ export default function IncripcionPage() {
             setLoading(false)
             return
         }
-        if (!validateName(formData.starname)){
+        if (!validateStarName(formData.starname)){
             showNotification({message:"Nombre de Estrella Invalido",type:"error"})
             setLoading(false)
             return
@@ -100,7 +100,6 @@ export default function IncripcionPage() {
     const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const MAX_SIZE_MB = 4;
         const MAX_BYTES = MAX_SIZE_MB * 1024 * 1024; // 4MB en bytes
-        const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
         
         if (e.target.files && e.target.files[0]) {
             const file = e.target.files[0];
