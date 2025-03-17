@@ -1,4 +1,4 @@
-from fastapi import APIRouter,HTTPException,status,Query
+from fastapi import APIRouter,HTTPException,status,Path
 from fastapi.responses import JSONResponse
 from typing import List
 from ..models.voter_models import VoterRequest,VoterResponse,VoterUpdate
@@ -46,8 +46,8 @@ def create_voter(voter: VoterRequest) -> VoterResponse:
                         status_code=status.HTTP_201_CREATED)
 
 
-@voters_router.put("/update_voter",status_code=status.HTTP_200_OK,dependencies=list_dependencies)
-def update_voter(voter: VoterUpdate,id: int=Query(gt=0)) -> VoterResponse:
+@voters_router.put("/update_voter/{id}",status_code=status.HTTP_200_OK,dependencies=list_dependencies)
+def update_voter(voter: VoterUpdate,id: int=Path(gt=0)) -> VoterResponse:
     actions = VoterActions()
     code_actions = CodeActions()
     
@@ -79,8 +79,8 @@ def update_voter(voter: VoterUpdate,id: int=Query(gt=0)) -> VoterResponse:
     return JSONResponse(content=voter.model_dump(),
                         status_code=status.HTTP_200_OK)
 
-@voters_router.delete("/delete_voter",status_code=status.HTTP_200_OK,dependencies=list_dependencies)
-def delete_voter(data: depend_data,id: int = Query(gt=0)) -> JSONResponse:
+@voters_router.delete("/delete_voter/{id}",status_code=status.HTTP_200_OK,dependencies=list_dependencies)
+def delete_voter(data: depend_data,id: int = Path(gt=0)) -> JSONResponse:
     if data["rol"]!="ADMIN":
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,detail="Unauthorized")
     actions = VoterActions()
@@ -91,3 +91,26 @@ def delete_voter(data: depend_data,id: int = Query(gt=0)) -> JSONResponse:
     return JSONResponse(content={"message":"Voter deleted"},
                         status_code=status.HTTP_200_OK)
     
+
+@voters_router.get("/get_voters_filter/{text_filter}",status_code=status.HTTP_200_OK,dependencies=list_dependencies)
+def get_voters_filter(data: depend_data,text_filter: str = Path()) -> List[VoterResponse]:
+    if data["rol"]!="ADMIN":
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,detail="Unauthorized")
+    
+    actions = VoterActions()
+    voters = actions.get_voters_filter(text_filter)
+    voters = [] if not voters else voters
+    
+    return JSONResponse(content=[voter.model_dump() for voter in voters],
+                        status_code=status.HTTP_200_OK)
+    
+@voters_router.get("/get_voter_by_id/{id}",status_code=status.HTTP_200_OK,dependencies=list_dependencies)
+def get_voter_by_id(data: depend_data,id: int = Path()) -> VoterResponse:
+    if data["rol"]!="ADMIN":
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,detail="Unauthorized")
+    
+    actions = VoterActions()
+    voter = actions.get_voter_by_id(id)
+    voter = [] if not voter else voter
+    return JSONResponse(content=voter.model_dump(),
+                        status_code=status.HTTP_200_OK)

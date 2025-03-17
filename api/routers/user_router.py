@@ -1,4 +1,4 @@
-from fastapi import APIRouter,status,Form,Depends,Query
+from fastapi import APIRouter,status,Form,Depends,Query,Path
 from typing import Annotated
 from fastapi.responses import JSONResponse
 from fastapi.exceptions import HTTPException
@@ -92,7 +92,7 @@ def delete_user(data:depend_data,username: str = Query()) -> JSONResponse:
         return JSONResponse(content={"message": "User deleted"},
                         status_code=status.HTTP_200_OK)
     else:
-        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,detail="User not deleted")
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,detail="User not deleted")
 
 @user_router.get("/get_users",status_code=status.HTTP_200_OK,tags=["User"],dependencies=list_dependencies)
 def get_users(data:depend_data) -> List[UserResponse]:
@@ -105,6 +105,25 @@ def get_users(data:depend_data) -> List[UserResponse]:
 
 @user_router.get("/validate_token",status_code=status.HTTP_200_OK,dependencies=list_dependencies)
 def validate_token(data:depend_data) -> List[UserResponse]:
-    print(data)
-    
     return JSONResponse(content={"message":"Token Validated"},status_code=status.HTTP_200_OK)
+
+@user_router.get("/get_users_filter/{text_filter}",status_code=status.HTTP_200_OK,tags=["User"],dependencies=list_dependencies)
+def get_users_filter(data:depend_data,text_filter:str = Path()) -> List[UserResponse]:
+    if data["rol"]!="ADMIN":
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,detail="Unauthorized")
+    
+    actions = UserActions()
+    users = actions.get_users_filter(text_filter=text_filter)
+    return JSONResponse(content=[user.model_dump() for user in users],status_code=status.HTTP_200_OK)
+
+@user_router.get("/get_user_by_username/{username}",status_code=status.HTTP_200_OK,tags=["User"],dependencies=list_dependencies)
+def get_user_by_username(data:depend_data,username:str = Path()) -> List[UserResponse]:
+    if data["rol"]!="ADMIN":
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,detail="Unauthorized")
+    
+    actions = UserActions()
+    user = actions.get_user_by_username(username=username)
+    if not user:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,detail="User not Found")
+        
+    return JSONResponse(content=user.model_dump(),status_code=status.HTTP_200_OK)

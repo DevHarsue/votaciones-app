@@ -27,7 +27,7 @@ def generate_code(code: CodeRequest):
     if not code:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,detail="Code not keeped")
     
-    # send_code(receiver=code.email,code=code_response.code)
+    send_code(receiver=code.email,code=code_response.code)
     
     model_data = code_response.model_dump()
     model_data['expire'] = model_data['expire'].isoformat()

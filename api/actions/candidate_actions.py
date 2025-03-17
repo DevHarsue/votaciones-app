@@ -1,4 +1,6 @@
 from sqlalchemy import select
+from sqlalchemy.sql.operators import ilike_op
+from typing import List
 from sqlalchemy.orm.session import Session
 from .session import session
 from ..models.canidadate_models import CandidateRequest,CandidateResponse,CandidateUpdate
@@ -50,15 +52,20 @@ class CandidateActions:
     @session
     def get_candidate(self,session: Session,id:int) -> CandidateResponse:
         query = select(Candidate).where(Candidate.id==id)
-        candidate_db = session.execute(query).one()[0]
-        return CandidateResponse(
-            id=candidate_db.id,
-            name=candidate_db.name,
-            lastname=candidate_db.lastname,
-            starname=candidate_db.starname,
-            gender=candidate_db.gender,
-            image_url=candidate_db.image_url
-        )
+        try:
+            candidate_db = session.execute(query).one_or_none()[0]
+            return CandidateResponse(
+                id=candidate_db.id,
+                name=candidate_db.name,
+                lastname=candidate_db.lastname,
+                starname=candidate_db.starname,
+                gender=candidate_db.gender,
+                image_url=candidate_db.image_url
+            )
+        except Exception as e:
+            print(e)
+            
+        return False
     
     @session
     def update_candidate(self,session: Session,id:int,candidate:CandidateUpdate) -> CandidateResponse:
@@ -102,7 +109,7 @@ class CandidateActions:
         return False
     
     @session
-    def get_candidates(self,session: Session) -> list[CandidateResponse]:
+    def get_candidates(self,session: Session) -> List[CandidateResponse]:
         query = select(Candidate)
         candidates = session.execute(query).all()
         return [CandidateResponse(
@@ -132,3 +139,24 @@ class CandidateActions:
             print(e)
             
         return False
+    
+    @session
+    def get_candidates_filter(self,session: Session,text_filter:str) -> List[CandidateResponse]:
+        try:
+            query = select(Candidate).where(
+                (ilike_op(Candidate.starname,f"%{text_filter}%")) |
+                (ilike_op(Candidate.name,f"%{text_filter}%")) |
+                (ilike_op(Candidate.lastname,f"%{text_filter}%"))    
+            )
+            candidadates = session.execute(query).fetchall()
+            return [CandidateResponse(
+                id=c[0].id,
+                name=c[0].name,
+                lastname=c[0].lastname,
+                starname=c[0].starname,
+                gender=c[0].gender,
+                image_url=c[0].image_url
+            ) for c in candidadates]
+        except Exception as e:
+            print(e)
+            return False

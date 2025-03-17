@@ -1,4 +1,5 @@
 from sqlalchemy import select
+from sqlalchemy.sql.operators import ilike_op
 from sqlalchemy.orm.session import Session
 from .session import session
 from ..models.voter_models import VoterRequest,VoterResponse,VoterUpdate
@@ -156,3 +157,24 @@ class VoterActions:
                 gender=voter[0].gender,
                 email=voter[0].email
             ) for voter in voters]
+        
+    @session
+    def get_voters_filter(self,session: Session,text_filter:str) -> list[VoterResponse]:
+        try:
+            query = select(Voter).where(
+                (ilike_op(Voter.name,f"%{text_filter}%")) |
+                (ilike_op(Voter.lastname,f"%{text_filter}%"))    
+            )
+            voters = session.execute(query).fetchall()
+            return [VoterResponse(
+                id=v[0].id,
+                nationality=v[0].nationality,
+                ci=v[0].ci,
+                name=v[0].name,
+                lastname=v[0].lastname,
+                gender=v[0].gender,
+                email=v[0].email
+            ) for v in voters]
+        except Exception as e:
+            print(e)
+            return False
