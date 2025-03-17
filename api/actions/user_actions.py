@@ -1,4 +1,5 @@
 from sqlalchemy import select
+from sqlalchemy.sql.operators import ilike_op
 from sqlalchemy.orm.session import Session
 from .session import session
 from ..models.user_models import UserRequest,UserResponse,UserUpdate
@@ -96,3 +97,20 @@ class UserActions:
         except Exception as e:
             print(e)
         return False
+    
+    @session
+    def get_users_filter(self,session: Session, text_filter: str) -> list[UserResponse]:
+        query = select(User).where(
+                (ilike_op(User.username,f"%{text_filter}%")) |
+                (ilike_op(User.email,f"%{text_filter}%")) 
+            )
+        users = session.execute(query).fetchall()
+        return [UserResponse(username=user[0].username,rol=user[0].rol,email=user[0].email) for user in users]
+    
+    @session
+    def get_user_by_username(self,session: Session, username: str) -> list[UserResponse]:
+        query = select(User).where(User.username==username.upper())
+        user = session.execute(query).one_or_none()
+        if not user:
+            return False
+        return UserResponse(username=user[0].username,rol=user[0].rol,email=user[0].email)

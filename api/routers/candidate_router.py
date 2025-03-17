@@ -1,4 +1,4 @@
-from fastapi import APIRouter,status,Depends,HTTPException,Query
+from fastapi import APIRouter,status,Depends,HTTPException,Path
 from fastapi.responses import JSONResponse
 from typing import Annotated,List
 import os
@@ -76,8 +76,8 @@ async def update_candidate(form_data: Annotated[CandidateFormUpdate,Depends()]) 
     return JSONResponse(content=candidate.model_dump(),
                         status_code=status.HTTP_200_OK)
 
-@candidate_router.delete("/delete_candidate",status_code=status.HTTP_200_OK,dependencies=list_dependencies)
-def delete_candidate(data: depend_data,id: int = Query(gt=0)) -> JSONResponse:
+@candidate_router.delete("/delete_candidate/{id}",status_code=status.HTTP_200_OK,dependencies=list_dependencies)
+def delete_candidate(data: depend_data,id: int = Path(gt=0)) -> JSONResponse:
     if data["rol"]!="ADMIN":
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,detail="Unauthorized")
     actions = CandidateActions()
@@ -87,3 +87,23 @@ def delete_candidate(data: depend_data,id: int = Query(gt=0)) -> JSONResponse:
                             status_code=status.HTTP_404_NOT_FOUND)
     return JSONResponse(content={"message":"Candidate deleted"},
                         status_code=status.HTTP_200_OK)
+    
+    
+@candidate_router.get("/get_candidate_by_id/{id}",status_code=status.HTTP_200_OK)
+def get_candidate_by_id(id: int = Path(gt=0)) -> CandidateResponse:
+    actions = CandidateActions()
+    candidate = actions.get_candidate(id=id)
+    if not candidate:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,detail="Candidate not Found")
+    
+    return JSONResponse(content=candidate.model_dump(),status_code=status.HTTP_200_OK)
+
+@candidate_router.get("/get_candidates_filter/{text_filter}",status_code=status.HTTP_200_OK)
+def get_candidates_filter(text_filter: str = Path()) -> List[CandidateResponse]:
+    actions = CandidateActions()
+    
+    candidates = actions.get_candidates_filter(text_filter)
+    candidates = [] if not candidates else candidates
+    
+    return JSONResponse(content=[c.model_dump() for c in candidates],status_code=status.HTTP_200_OK)
+    
