@@ -6,6 +6,8 @@ import { useEffect, useState } from "react";
 import { useNotification } from "@/context/NotificationContext";
 import { useRouter } from "next/navigation";
 import Cookies from "js-cookie";
+import Spin from "@/app/ui/components/spin";
+import { revalidatePath,revalidateTag } from "next/cache";
 
 interface Votantes {
     id: number
@@ -16,8 +18,6 @@ interface Votantes {
     image_url: string
 }
 
-
-
 export default function VotantesPage() {
     const [data, setData] = useState<[Votantes] | null>(null);
     const [loading, setLoading] = useState(true);
@@ -25,6 +25,8 @@ export default function VotantesPage() {
     const {showNotification} = useNotification()
     const router = useRouter()
     const token = Cookies.get('auth_token');
+    const [searchTerm, setSearchTerm] = useState(""); // Estado para el término de búsqueda
+
 
     
     useEffect(() => {
@@ -44,13 +46,12 @@ export default function VotantesPage() {
     }, [token]); 
     
     const handleEdit = (id: number) => {
-        console.log(`Modificar votante con ID: ${id}`);
+        router.push("votantes/updateVotante/"+id.toString())
     };
 
     const handleDelete = async (id: number) => {
-
         try{
-            const response = await fetch(process.env.NEXT_PUBLIC_API_URL+"voters/delete_voter?id="+id,
+            const response = await fetch(process.env.NEXT_PUBLIC_API_URL+"voters/delete_voter/"+id,
                 {
                     method:"DELETE",
                     headers: {
@@ -64,15 +65,21 @@ export default function VotantesPage() {
                     throw new Error(errorData.message || 'Error al borrar votante');
                 }
             
-            router.push("/dashboard")
+            showNotification({message:'Votante Eliminado Correctamente',type:"success"})
+            window.location.reload()
         }catch (err) {
             showNotification({message:err instanceof Error ? err.message : 'Error desconocido',type:"error"})
-        } 
+        } finally{
+            setLoading(false)
+        }
     };
 
-    if (loading) return <div>Cargando...</div>;
+    if (loading) return <Spin />;
     if (!data) return <div>No se encontraron Votantes</div>
-
+    // Filtrar artistas por nombre
+    const filteredData = data.filter((artista) =>
+        artista.name.toLowerCase().includes(searchTerm.toLowerCase())
+    );
     return (
         <main>
             <div className="p-4 flex flex-col px-40">

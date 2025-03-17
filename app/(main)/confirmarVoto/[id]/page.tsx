@@ -122,7 +122,7 @@ export default function ConfirmarVotoPage() {
             if (!response_vote.ok) throw new Error('Error en la solicitud voto');
 
             setLoading(false)
-            alert("Voto Realizado!")
+            showNotification({message: 'Voto Ejercido Correctamente', type:"success"});
             router.push("/resultados/")
 
         } catch (err) {
@@ -130,8 +130,6 @@ export default function ConfirmarVotoPage() {
         } finally {
             setLoading(false);
         }
-
-
 
     }
     const handleSendCode = async ()=>{

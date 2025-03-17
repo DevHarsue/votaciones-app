@@ -53,7 +53,11 @@ const handleCloseModal = () => {
       setSelectedArtist(null); // Cierra el modal después de la animación
     }, 200); // Duración de la animación fade-out (200ms)
 };
-
+const handleVote = (artist: Artist) => {
+    console.log("xx")
+    setVotedArtist(artist); // Guarda el artista votado
+    setSelectedArtist(null); // Cierra el modal
+};
 
     // const router = useRouter()
 
@@ -85,10 +89,32 @@ const handleCloseModal = () => {
                 onClose={handleCloseModal}
                 onVote={() => handleVote(selectedArtist)}
                 />
-                </div>
-            </Link>
-            </div>
         )}
+        {/* Div para mostrar el artista votado */}
+        {votedArtist && (
+                <div className="mt-8 p-6 bg-white rounded-lg shadow-md flex flex-col items-center">
+                    <h2 className="text-2xl font-bold mb-4">Has votado por:</h2>
+                    <div className="relative aspect-square w-32">
+                        <Image
+                            src={process.env.NEXT_PUBLIC_API_URL+votedArtist.image_url}
+                            alt={votedArtist.name}
+                            fill
+                            className="object-cover rounded-lg"
+                        />
+                    </div>
+                    <h3 className="text-xl font-semibold mt-4">{votedArtist.name}</h3>
+                    <Link href={"/confirmarVoto/"+votedArtist.id}>
+                        <div className="mt-4">
+                            <NormalButton
+                                text="Confirmar voto"
+                                color="bg-green-600"
+                                hoverClass="hover:bg-green-500"
+                                extraClass="w-full text-white"
+                            />
+                        </div>
+                    </Link>
+                </div>
+            )}
         <div className="mt-3">
             <Link href="/">
             <NormalButton

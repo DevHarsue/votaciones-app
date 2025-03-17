@@ -8,7 +8,7 @@ class VoterRequest(BaseModel):
     lastname: str
     gender: str
     email: str
-    code: int
+    code: int = None
     
     @validator("nationality")
     def validate_nationality(cls, value:str):
