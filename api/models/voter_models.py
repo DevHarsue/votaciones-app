@@ -8,6 +8,7 @@ class VoterRequest(BaseModel):
     lastname: str
     gender: str
     email: str
+    code: int
     
     @validator("nationality")
     def validate_nationality(cls, value:str):
@@ -51,6 +52,14 @@ class VoterRequest(BaseModel):
             raise ValueError("Invalid Email")
         
         return value
+    
+    @validator("code")
+    def validate_code(cls,value:int):
+        value_str = str(value)
+        if len(value_str)!=6:
+            raise ValueError("Invalid Code")
+        
+        return value
 
 class VoterUpdate(VoterRequest):
     nationality: str = None
@@ -68,4 +77,3 @@ class VoterResponse(BaseModel):
     lastname: str
     gender: str
     email: str
-    validated: bool

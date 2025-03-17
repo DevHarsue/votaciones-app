@@ -15,7 +15,7 @@ export const validateGender = (gender:string)=>{
 }
 
 export const validateCI = (ci: number)=>{
-    let ciString = ci.toString()
+    const ciString = ci.toString()
     if (ciString.length < 7 || ciString.length > 8){
         return false
     }
@@ -24,6 +24,15 @@ export const validateCI = (ci: number)=>{
 
 export const validateName = (name: string)=>{
     const regex = /^[A-Za-z]+$/;
+    if (!regex.test(name)){
+        return false
+    }
+
+    return true
+}
+
+export const validateStarName = (name: string)=>{
+    const regex = /^[a-zñÑ][a-z0-9ñÑ ]*$/i;
     if (!regex.test(name)){
         return false
     }

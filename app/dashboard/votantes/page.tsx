@@ -2,71 +2,76 @@
 import Link from "next/link";
 import DataRow from "../../ui/components/dataRow";
 import { NormalButton } from "../../ui/components/buttons";
-import { useToken } from "@/components/token-provider";
 import { useEffect, useState } from "react";
 import { useNotification } from "@/context/NotificationContext";
 import { useRouter } from "next/navigation";
+import Cookies from "js-cookie";
+
+interface Votantes {
+    id: number
+    name: string
+    lastname: string
+    starname: string
+    gender: string
+    image_url: string
+}
+
+
 
 export default function VotantesPage() {
-    const [data, setData] = useState<any[]>([]);
+    const [data, setData] = useState<[Votantes] | null>(null);
     const [loading, setLoading] = useState(true);
-    const [searchTerm, setSearchTerm] = useState("");
-    const token = useToken();
-    const { showNotification } = useNotification();
-    const router = useRouter();
 
+    const {showNotification} = useNotification()
+    const router = useRouter()
+    const token = Cookies.get('auth_token');
+
+    
     useEffect(() => {
-        // Obtener datos de la API
-        fetch(process.env.NEXT_PUBLIC_API_URL + "voters/get_voters", {
-            method: "GET",
+        if (!token) return;
+        fetch(process.env.NEXT_PUBLIC_API_URL+"voters/get_voters",{
+            method:"GET",
             headers: {
                 'accept': 'application/json',
                 'Authorization': `Bearer ${token}`
             },
         })
-            .then((res) => res.json())
-            .then((data) => {
-                setData(data);
-                setLoading(false);
-            })
-            .catch((error) => {
-                console.error("Error fetching data:", error);
-                setLoading(false);
-            });
-    }, [token]);
-
+        .then((res) => res.json())
+        .then((data) => {
+            setData(data);
+            setLoading(false);
+        });
+    }, [token]); 
+    
     const handleEdit = (id: number) => {
         console.log(`Modificar votante con ID: ${id}`);
     };
 
     const handleDelete = async (id: number) => {
-        try {
-            const response = await fetch(process.env.NEXT_PUBLIC_API_URL + "voters/delete_voter?id=" + id, {
-                method: "DELETE",
-                headers: {
-                    'Authorization': `Bearer ${token}`
+
+        try{
+            const response = await fetch(process.env.NEXT_PUBLIC_API_URL+"voters/delete_voter?id="+id,
+                {
+                    method:"DELETE",
+                    headers: {
+                        'accept': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                })
+
+            if (!response.ok){
+                    const errorData = await response.json();
+                    throw new Error(errorData.message || 'Error al borrar votante');
                 }
-            });
-
-            if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(errorData.message || 'Error al borrar votante');
-            }
-
-            router.push("/dashboard");
-        } catch (err) {
-            showNotification({ message: err instanceof Error ? err.message : 'Error desconocido', type: "error" });
-        }
+            
+            router.push("/dashboard")
+        }catch (err) {
+            showNotification({message:err instanceof Error ? err.message : 'Error desconocido',type:"error"})
+        } 
     };
 
-    // Filtrar votantes por nombre
-    const filteredData = data.filter((votante) =>
-        votante.name.toLowerCase().includes(searchTerm.toLowerCase())
-    );
-
-    if (loading) {
-        return <div>Cargando...</div>; // Muestra un loader mientras se cargan los datos
-    }
+    if (loading) return <div>Cargando...</div>;
+    if (!data) return <div>No se encontraron Votantes</div>
 
     return (
         <main>

@@ -1,20 +1,20 @@
 'use client';
 import Link from "next/link";
 import DataRow from "../../ui/components/dataRow";
+import { Artist } from "@/app/ui/types";
 import { NormalButton } from "../../ui/components/buttons";
 import { useEffect, useState } from "react";
-import { useToken } from "@/components/token-provider";
 import { useNotification } from "@/context/NotificationContext";
 import { useRouter } from "next/navigation";
+import Cookies from "js-cookie";
 
 export default function ArtistasPage() {
-    const [data, setData] = useState<any[]>([]);
+    const [data, setData] = useState<[Artist]|null>(null);
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState(""); // Estado para el término de búsqueda
-    const token = useToken();
     const { showNotification } = useNotification();
     const router = useRouter();
-
+    const token = Cookies.get('auth_token');    
     useEffect(() => {
         fetch(process.env.NEXT_PUBLIC_API_URL + "candidates/get_candidates")
             .then((res) => res.json())
@@ -25,28 +25,29 @@ export default function ArtistasPage() {
     }, []);
 
     const handleEdit = (id: number) => {
-        console.log(`Modificar artista con ID: ${id}`);
+        router.push("/dashboard/artistas/updateArtista/"+id)
     };
 
     const handleDelete = async (id: number) => {
-        try {
-            const response = await fetch(process.env.NEXT_PUBLIC_API_URL + "candidates/delete_candidate?id=" + id, {
-                method: "DELETE",
-                headers: {
-                    'accept': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                },
-            });
+        try{
+            const response = await fetch(process.env.NEXT_PUBLIC_API_URL+"candidates/delete_candidate?id="+id,
+                {
+                    method:"DELETE",
+                    headers: {
+                        'accept': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                })
 
-            if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(errorData.message || 'Error al borrar candidato');
-            }
-
-            router.push("/dashboard");
-        } catch (err) {
-            showNotification({ message: err instanceof Error ? err.message : 'Error desconocido', type: "error" });
-        }
+            if (!response.ok){
+                    const errorData = await response.json();
+                    throw new Error(errorData.message || 'Error al borrar candidato');
+                }
+            
+            router.push("/dashboard")
+        }catch (err) {
+            showNotification({message:err instanceof Error ? err.message : 'Error desconocido',type:"error"})
+        } 
     };
 
     // Filtrar artistas por nombre
@@ -55,6 +56,7 @@ export default function ArtistasPage() {
     );
 
     if (loading) return <div>Cargando...</div>;
+    if (!data) return <div>Sin Artistas</div>;
 
     return (
         <main>

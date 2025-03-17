@@ -1,13 +1,15 @@
 "use client"; // Necesario para manejar estados y eventos en Next.js
 import { NormalButton } from '../../../ui/components/buttons';
 import Link from 'next/link';
-import React, { useState } from 'react';
+import React from 'react';
+import { useState } from 'react';
 import { useParams } from 'next/navigation';
 import { validateEmail, validateNationality, validateName, validateCI, validateCode} from '../../../utils/validations';
 import { useNotification } from '@/context/NotificationContext';
 import { useRouter } from 'next/navigation';
+import Spin from '@/app/ui/components/spin';
 
-export default function confirmarVotoPage() {
+export default function ConfirmarVotoPage() {
     // Estados para manejar los datos del formulario
     const [nationality, setNationality] = useState('');
     const [ci, setCi] = useState("");
@@ -15,13 +17,13 @@ export default function confirmarVotoPage() {
     const [lastname, setLastname] = useState('');
     const [gender, setGender] = useState('');
     const [email, setEmail] = useState('');
+    const [emailFinal,setEmailFinal] = useState("")
     const [confirmationCode, setConfirmationCode] = useState('');
     const [showConfirmationCode, setShowConfirmationCode] = useState(false);
-
+    const [codeSend,setCodeSend] = useState(false)
+    // const [error,setError] = useState<Error | null>(null);    
     const params = useParams();
     const id = parseInt(params.id as string, 10);;
-    
-    const [voterId, setVoterId] = useState(0);
 
     const { showNotification } = useNotification();
 
@@ -29,7 +31,7 @@ export default function confirmarVotoPage() {
 
     const router = useRouter()
     
-    const handleSendCode = async () =>{
+    const handleSendDataVoter = async () =>{
 
         if (loading){
             return
@@ -60,11 +62,11 @@ export default function confirmarVotoPage() {
             return
         }
 
-        if (!validateEmail(email)){
-            showNotification( { message: 'Email Invalido', type: 'error' } )
+        const code = parseInt(confirmationCode)
+        if (!validateCode(code)){
+            showNotification( { message: 'Codigo Invalido', type: 'error' } )
             return
         }
-
 
 
         try {
@@ -80,16 +82,48 @@ export default function confirmarVotoPage() {
                     name: name,
                     lastname: lastname,
                     gender: gender[0],
-                    email: email
+                    email: emailFinal,
+                    code: code
                 }),
             });
+            if (response.status==409){
+                const error_message = await response.json()
+                const message = error_message.detail
 
+                if (message.includes("Email")){
+                    showNotification({message: "Ya existe un registro con ese correo electronico.", type:"error"});
+                }
+
+                if (message.includes("CI")){
+                    showNotification({message: "Ya existe un registro con esa Cedula", type:"error"});
+                }
+
+                if (message.includes("Code")){
+                    showNotification({message: "Codigo Incorrecto.", type:"error"});
+                }
+
+                return
+            }
             if (!response.ok) throw new Error('Error en la solicitud');
             
             const data = await response.json();
-            setVoterId(data.id)
-            showNotification({message: "Codigo Enviado", type:"success"});
-            setShowConfirmationCode(true)
+            console.log(data)
+            const response_vote = await fetch(process.env.NEXT_PUBLIC_API_URL+"vote/create_vote", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    voter_email: emailFinal,
+                    candidate_id: id
+                }),
+            });
+
+            if (!response_vote.ok) throw new Error('Error en la solicitud voto');
+
+            setLoading(false)
+            alert("Voto Realizado!")
+            router.push("/resultados/")
 
         } catch (err) {
             showNotification({message: err instanceof Error ? err.message : 'Error desconocido', type:"error"});
@@ -97,41 +131,36 @@ export default function confirmarVotoPage() {
             setLoading(false);
         }
 
+
+
     }
-    const handleSendVote = async ()=>{
-        if (loading){
+    const handleSendCode = async ()=>{
+        if (loading) return
+        setLoading(true)
+        
+        if (!validateEmail(email)){
+            showNotification( { message: 'Email Invalido', type: 'error' } )
+            setLoading(false)
             return
         }
-        const code = parseInt(confirmationCode)
-        if (!validateCode(code)){
-            showNotification( { message: 'Codigo Invalido', type: 'error' } )
-            return
-        }
-
+        setEmailFinal(email)
+        
         try{
-            setLoading(true)
-            const response = await fetch(process.env.NEXT_PUBLIC_API_URL+"voters/validate_voter/"+code.toString(),{method: 'GET'})
-
-            if (response.status == 400) throw new Error('Codigo Incorrecto');
-            if (!response.ok) throw new Error('Error en la solicitud');
-            
-            const response_vote = await fetch(process.env.NEXT_PUBLIC_API_URL+"vote/create_vote", {
+            const response = await fetch(process.env.NEXT_PUBLIC_API_URL+"code/generate_code",{
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    voter_id: voterId,
-                    candidate_id: id
-                }),
+                    email
+                })
             });
 
-            if (!response_vote.ok) throw new Error('Error en la solicitud voto');
+            if (!response.ok) throw new Error('Error en la solicitud');
 
-            alert("Voto Realizado!")
-            router.push("/resultados/")
-
-
+            setShowConfirmationCode(true)
+            setCodeSend(true)
+            showNotification({message: "Codigo Enviado", type:"success"});
         } catch (err) {
             showNotification({message: err instanceof Error ? err.message : 'Error desconocido', type:"error"});
         } finally {
@@ -141,8 +170,13 @@ export default function confirmarVotoPage() {
 
     }
 
+    // if (error) {
+    //     throw error; // Esto activará el error.tsx
+    // }
+
     return (
         <main className="min-h-screen flex items-center justify-center bg-gray-100 py-8">
+            {loading &&(<Spin />)}
             <div className="bg-white p-6 md:p-8 rounded-lg shadow-lg w-full max-w-md mx-4">
                 <h1 className="text-2xl md:text-3xl font-bold text-center mb-6">
                     Ingrese Sus Datos Para Confirmar Voto
@@ -178,7 +212,6 @@ export default function confirmarVotoPage() {
                             required
                         />
                     </div>
-
                     {/* Campo: Nombre */}
                     <div>
                         <label className="block text-sm font-medium text-gray-700">
@@ -223,7 +256,6 @@ export default function confirmarVotoPage() {
                             <option value="Femenino">Femenino</option>
                         </select>
                     </div>
-        
                     {/* Campo: Correo */}
                     <div>
                         <label className="block text-sm font-medium text-gray-700">
@@ -237,11 +269,10 @@ export default function confirmarVotoPage() {
                             required
                         />
                     </div>
-        
-                    {/* Botón: Confirmar Datos */}
+                    {/* Botón: Enviar Codigo */}
                     <div className="flex justify-center">
                         <NormalButton
-                            text={loading ? 'Enviando...' : "Confirmar Datos"}
+                            text={!codeSend ? (loading ? 'Enviando...' : "Enviar Codigo") : "Reenviar Codigo"  }
                             color="bg-green-600"
                             hoverClass="hover:bg-green-500"
                             extraClass="w-full md:w-auto text-white py-2 px-4 rounded-md transition-colors"
@@ -249,9 +280,9 @@ export default function confirmarVotoPage() {
                             onClick= {handleSendCode}
                         />
                     </div> 
-        
-                    {/* Campo: Código de Confirmación */}
-                    {showConfirmationCode && (    
+                    {showConfirmationCode &&(
+                    <>
+                        {/* Campo: Código de Confirmación */}
                         <div>
                             <label className="block text-sm font-medium text-gray-700 text-center">
                                 INGRESA EL CÓDIGO DE CONFIRMACIÓN
@@ -264,19 +295,17 @@ export default function confirmarVotoPage() {
                                 required
                             />
                         </div>
-                    )}
-                    {showConfirmationCode && (  
                         <div className="flex justify-center">
                             <NormalButton
                                 type='button'
-                                text={loading ? 'Enviando...' : "Validar voto"}
+                                text={loading ? 'Enviando...' : "Validar Voto"}
                                 color="bg-blue-600"
                                 hoverClass="hover:bg-blue-400"
                                 extraClass="text-white w-full py-2 px-4 rounded-md md:w-full transition-colors"
-                                onClick={handleSendVote} // Función para confirmar el voto
+                                onClick={handleSendDataVoter} // Función para confirmar el voto
                             />
                         </div>
-                    )}
+                    </>)}
                     {/* Botón: Volver a Inicio */}
                     <div className='mt-5'>
                         <Link href="/">

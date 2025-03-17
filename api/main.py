@@ -6,6 +6,7 @@ import os
 from .routers.main_router import main_router
 from .routers.user_router import user_router
 
+
 app = FastAPI(
     title="API CNU",
     description="API para un sistema de votaciones llamado CNU",
@@ -14,9 +15,7 @@ app = FastAPI(
 
 origins = [
     "http://localhost",
-    "http://localhost:3000",
-    "http://localhost:3000/dashboard",
-    "http://localhost:3000/dashboard/votantes",]
+    "http://localhost:3000"]
 
 app.add_middleware(
     CORSMiddleware,
