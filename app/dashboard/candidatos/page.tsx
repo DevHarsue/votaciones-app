@@ -25,7 +25,7 @@ export default function ArtistasPage() {
     }, []);
 
     const handleEdit = (id: number) => {
-        console.log(`Modificar artista con ID: ${id}`);
+        console.log(`Modificar Candidato con ID: ${id}`);
     };
 
     const handleDelete = async (id: number) => {
@@ -60,12 +60,12 @@ export default function ArtistasPage() {
         <main>
             <div className="p-4 flex flex-col px-40">
                 <h2 className="text-2xl font-bold mb-4 text-center">
-                    Gestión de Artistas
+                    Gestión de Candidatos
                 </h2>
                 {/* Input de búsqueda */}
                 <input
                     type="text"
-                    placeholder="Buscar artista por nombre..."
+                    placeholder="Buscar Candidato por nombre..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                     className="mb-4 p-2 border border-gray-300 rounded-md"

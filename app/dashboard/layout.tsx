@@ -18,14 +18,15 @@ export default async function RootDashboard({
         redirect("/login");
     }
     return (
-        <div className="flex min-h-screen flex-col p-0">
-            <Header / >
-            <main>
-              <TokenProvider token={session.user}>
-                {children}
-              </TokenProvider>
-            </main>
-            <Footer />
-        </div>
+      <div className="flex min-h-screen flex-col">
+        {/* Header */}
+        <Header />
+        {/* Contenido principal */}
+        <main className="flex-grow pt-24 md:pt-16 bg-gray-100">
+          <TokenProvider token={session.user}>{children}</TokenProvider>
+        </main>
+        {/* Footer */}
+        <Footer />
+      </div>
     );
-}
+  }

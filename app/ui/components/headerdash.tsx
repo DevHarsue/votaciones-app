@@ -38,7 +38,7 @@ export default function Dashboard() {
         </Link>
 
         {/* Botón de Artistas */}
-        {/* <Link href="/dashboard/usuarios" className="flex-grow">
+        <Link href="/dashboard/usuarios" className="flex-grow">
           <NormalButton
             text="Usuarios"
             color="bg-blue-900"
@@ -47,10 +47,10 @@ export default function Dashboard() {
             type="button"
             onClick={() => console.log("Artistas clickeado")}
           />
-        </Link> */}
+        </Link>
 
         {/* Botón de Votantes */}
-        {/* <Link href="/dashboard/votantes" className="flex-grow">
+        <Link href="/dashboard/votantes" className="flex-grow">
           <NormalButton
             text="Votantes"
             color="bg-blue-900"
@@ -59,7 +59,19 @@ export default function Dashboard() {
             type="button"
             onClick={() => console.log("Votantes clickeado")}
           />
-        </Link> */}
+        </Link>
+
+        {/* Botón de Candidatos */}
+        <Link href="/dashboard/candidatos" className="flex-grow">
+          <NormalButton
+            text="Candidatos"
+            color="bg-blue-900"
+            hoverClass="hover:bg-blue-800"
+            extraClass="w-full md:w-full text-white py-3 px-4 rounded-none transition-colors text-center border-l-2 border-blue-800"
+            type="button"
+            onClick={() => console.log("Candidatos clickeado")}
+          />
+        </Link>
       </div>
     </header>
   );
