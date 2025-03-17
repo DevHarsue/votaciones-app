@@ -60,6 +60,18 @@ export default function Dashboard() {
             onClick={() => console.log("Votantes clickeado")}
           />
         </Link>
+
+        {/* Botón de Candidatos */}
+        <Link href="/dashboard/candidatos" className="flex-grow">
+          <NormalButton
+            text="Candidatos"
+            color="bg-blue-900"
+            hoverClass="hover:bg-blue-800"
+            extraClass="w-full md:w-full text-white py-3 px-4 rounded-none transition-colors text-center border-l-2 border-blue-800"
+            type="button"
+            onClick={() => console.log("Candidatos clickeado")}
+          />
+        </Link>
       </div>
     </header>
   );

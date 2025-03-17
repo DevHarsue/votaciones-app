@@ -9,8 +9,8 @@ export default {
   theme: {
     extend: {
       animation: {
-        'fade-in': 'fade-in 0.2s ease-in forwards',
-        'fade-out': 'fade-out 0.2s ease-out forwards',
+        'fade-in': 'fade-in 0.5s ease-in forwards',
+        'fade-out': 'fade-out 0.5s ease-out forwards',
         'slide-down': 'slide-down 0.5s ease-in forwards',
       },
       keyframes: {
