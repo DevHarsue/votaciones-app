@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 import { useNotification } from "@/context/NotificationContext";
 import { useRouter } from "next/navigation";
 import Cookies from "js-cookie";
+import Spin from "@/app/ui/components/spin";
 
 export default function ArtistasPage() {
     const [data, setData] = useState<[Artist]|null>(null);
@@ -30,7 +31,7 @@ export default function ArtistasPage() {
 
     const handleDelete = async (id: number) => {
         try{
-            const response = await fetch(process.env.NEXT_PUBLIC_API_URL+"candidates/delete_candidate?id="+id,
+            const response = await fetch(process.env.NEXT_PUBLIC_API_URL+"candidates/delete_candidate/"+id,
                 {
                     method:"DELETE",
                     headers: {
@@ -44,20 +45,22 @@ export default function ArtistasPage() {
                     throw new Error(errorData.message || 'Error al borrar candidato');
                 }
             
-            router.push("/dashboard")
+            showNotification({message:'Candidato Eliminado Correctamente',type:"success"})
+            window.location.reload()
         }catch (err) {
             showNotification({message:err instanceof Error ? err.message : 'Error desconocido',type:"error"})
-        } 
+        } finally{
+            setLoading(false)
+        }
     };
 
+    if (loading) return <Spin />;
+    if (!data) return <div>Sin Artistas</div>;
+    
     // Filtrar artistas por nombre
     const filteredData = data.filter((artista) =>
-        artista.name.toLowerCase().includes(searchTerm.toLowerCase())
+        artista.starname.toLowerCase().includes(searchTerm.toLowerCase())
     );
-
-    if (loading) return <div>Cargando...</div>;
-    if (!data) return <div>Sin Artistas</div>;
-
     return (
         <main>
             <div className="p-4 flex flex-col px-40">
@@ -75,7 +78,7 @@ export default function ArtistasPage() {
                 {filteredData.map((artista) => (
                     <DataRow
                         key={artista.id}
-                        name={artista.name}
+                        name={artista.starname}
                         onEdit={() => handleEdit(artista.id)}
                         onDelete={() => handleDelete(artista.id)}
                     />

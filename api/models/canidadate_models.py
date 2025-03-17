@@ -99,8 +99,9 @@ class CandidateFormUpdate(CandidateForm):
             processed_data = {
                 key: value.upper() 
                 for key, value in candidate_data.items() 
-                if value is not None
+                if value
             }
+            print(processed_data)
             self.candidate = CandidateUpdate(**processed_data)
         except Exception as e:
             print(e)

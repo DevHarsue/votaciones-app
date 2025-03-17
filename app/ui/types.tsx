@@ -6,3 +6,13 @@ export interface Artist {
     image_url: string;
     gender: string;
 }
+
+export interface Voter {
+    id: number
+    nationality: string
+    ci: number
+    name: string
+    lastname: string
+    gender: string
+    email: string
+}

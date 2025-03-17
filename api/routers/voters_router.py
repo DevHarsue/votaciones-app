@@ -29,7 +29,7 @@ def create_voter(voter: VoterRequest) -> VoterResponse:
     if voter_exists:
         raise HTTPException(status_code=status.HTTP_409_CONFLICT,detail="Email already exists")
     
-    voter_exists = actions.get_voter_by_ci(nationality=voter.nationality,ci=voter.ci)
+    voter_exists = actions.get_voter_by_ci(ci=voter.ci)
     if voter_exists:
         raise HTTPException(status_code=status.HTTP_409_CONFLICT,detail="CI already exists")
         
@@ -57,19 +57,19 @@ def update_voter(voter: VoterUpdate,id: int=Path(gt=0)) -> VoterResponse:
     
     if voter.email:
         voter_exists = actions.get_voter(email=voter.email)
-        if voter_exists:
-            raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,detail="Email already exists")
+        if voter_exists and voter_exists.id!=id:
+            raise HTTPException(status_code=status.HTTP_409_CONFLICT,detail="Email already exists")
     
     if voter.nationality or voter.ci:
-        voter_exists = actions.get_voter_by_ci(nationality=voter.nationality,ci=voter.ci)
-        if voter_exists:
-            raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,detail="CI already exists")
+        voter_exists = actions.get_voter_by_ci(ci=voter.ci)
+        if voter_exists and voter_exists.id!=id:
+            raise HTTPException(status_code=status.HTTP_409_CONFLICT,detail="CI already exists")
     
-    voter_db = actions.get_voter_by_id(id)
-    if not code_actions.validate_code(code=voter.code,email=voter_db.email):
-        raise HTTPException(status_code=status.HTTP_409_CONFLICT,detail="Code Incorrect")
+    # voter_db = actions.get_voter_by_id(id)
+    # if not code_actions.validate_code(code=voter.code,email=voter_db.email):
+    #     raise HTTPException(status_code=status.HTTP_409_CONFLICT,detail="Code Incorrect")
         
-    code_actions.delete_code(email=voter_db.email)
+    # code_actions.delete_code(email=voter_db.email)
         
         
     voter = actions.update_voter(id,voter)
@@ -111,6 +111,7 @@ def get_voter_by_id(data: depend_data,id: int = Path()) -> VoterResponse:
     
     actions = VoterActions()
     voter = actions.get_voter_by_id(id)
-    voter = [] if not voter else voter
+    if not voter:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,detail="Voter not Found")
     return JSONResponse(content=voter.model_dump(),
                         status_code=status.HTTP_200_OK)

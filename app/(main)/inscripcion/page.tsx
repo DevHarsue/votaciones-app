@@ -88,7 +88,8 @@ export default function IncripcionPage() {
                 throw new Error(errorData.message || 'Error al crear candidato');
             }
             // const data = await response.json();
-            alert('Candidato creado exitosamente!');
+            showNotification({message: 'Candidato creado exitosamente!', type:"success"});
+
             router.push("votaciones")
         }catch (err) {
             showNotification({message:err instanceof Error ? err.message : 'Error desconocido',type:"error"})
@@ -107,14 +108,16 @@ export default function IncripcionPage() {
             const file = e.target.files[0];
             // Validar tipo de archivo
             if (!file.type.startsWith('image/')) {
-                alert('Por favor, selecciona un archivo de imagen válido');
+                showNotification({message: 'Por favor, selecciona un archivo de imagen válido', type:"error"});
+
                 e.target.value = ''; // Limpiar input
                 setImage(null);
                 return;
             }
             // Validar tamaño máximo
             if (file.size > MAX_BYTES) {
-                alert(`El archivo es demasiado grande. Máximo permitido: ${MAX_SIZE_MB}MB`);
+                showNotification({message: `El archivo es demasiado grande. Máximo permitido: ${MAX_SIZE_MB}MB`, type:"error"});
+
                 e.target.value = '';
                 setImage(null);
                 return;

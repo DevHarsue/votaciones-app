@@ -55,9 +55,9 @@ class VoterActions:
             )
     
     @session
-    def get_voter_by_ci(self,session: Session,nationality: str, ci: int) -> VoterResponse:
+    def get_voter_by_ci(self,session: Session,ci: int) -> VoterResponse:
         try:
-            query = select(Voter).where(Voter.nationality==nationality,Voter.ci==ci)
+            query = select(Voter).where(Voter.ci==ci)
             voter = session.execute(query).one()[0]
         except Exception as e:
             print(e)

@@ -3,7 +3,6 @@ import Link from "next/link";
 import DataRow from "../../ui/components/dataRow";
 import { NormalButton } from "../../ui/components/buttons";
 import { useEffect, useState } from "react";
-import { useToken } from "@/components/token-provider";
 import { useNotification } from "@/context/NotificationContext";
 import { useRouter } from "next/navigation";
 
@@ -11,7 +10,6 @@ export default function ArtistasPage() {
     const [data, setData] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState(""); // Estado para el término de búsqueda
-    const token = useToken();
     const { showNotification } = useNotification();
     const router = useRouter();
 

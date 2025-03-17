@@ -56,7 +56,7 @@ def get_candidates() -> List[CandidateResponse]:
 async def update_candidate(form_data: Annotated[CandidateFormUpdate,Depends()]) -> CandidateResponse:
     actions = CandidateActions()
     candidate_exists = actions.get_candidate_by_starname(starname=form_data.candidate.starname)
-    if candidate_exists:
+    if candidate_exists and candidate_exists.id!=form_data.id:
         raise HTTPException(status_code=status.HTTP_409_CONFLICT,detail="Starname already exists")
 
     path_image = actions.get_candidate(id=form_data.id).image_url
