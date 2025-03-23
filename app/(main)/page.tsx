@@ -5,26 +5,26 @@ import Image from "next/image";
 
 export default function CNUApp(){
     return (
-        <main className="my-4 mx-4 lg:mx-auto lg:max-w-4xl">
-            <section className="container mx-auto px-4 py-0">
-                <div className="flex justify-center">
+        <main className="my-10 mx-4 lg:mx-auto lg:min-w-4xl">
+            <section className="flex flex-col md:flex-row mx-auto px-8 py-0 w-4xl pb-40">
+                <div className="h-full md:w-min-1/4">
                     <Image
                     src="/animals-description.png"
                     alt="Descripción de CNU"
-                    width="800"
-                    height="800"
-                    className="w-full max-w-md h-auto rounded-lg shadow-lg"
+                    width="600"
+                    height="400"
+                    className="w-full h-full rounded-lg shadow-lg items-center"
                     />
                 </div>
                 
-                <div className={`${lusitana.className} mt-6`}>
-                    <h2 className='text-3xl md:text-4xl font-bold text-center text-gray-800 mb-6'>
-                        CNU: Donde la fauna se convierte en estrella.
+                <div className={`${lusitana.className} pt-5 px-2 px-10 md:w-1/2 md:pt-20 text-center bg-gray-500 bg-opacity-20 p-6 rounded-lg border-2 border-gray-300 shadow-lg`}>
+                    <h2 className='text-3xl md:text-5xl font-bold text-gray-800 mb-2  md:text-left shadow-sm'>
+                        CNU: Donde la Fauna se Convierte en Estrella
                     </h2>
-                    <p className="text-lg text-gray-700 text-center md:text-left leading-relaxed">
+                    <p className="text-gray-700 text-lg text-center md:text-left leading-relaxed mt-8 mb-2 ">
                     Bienvenido al Consejo Nacional Único, el escenario digital donde los animales toman el micrófono, afinan sus instrumentos y compiten por el título de <span className="font-semibold">Mejor Artista Musical del Reino Animal</span>. Desde el rugido gutural de <span className="italic">Axl León Roses</span> hasta el trino melódico de <span className="italic">Canario Bieber</span>, en CNU descubrirás talentos salvajes que rompen las barreras de lo convencional.
                     </p>
-                    <p className="text-lg text-gray-700 text-center md:text-left leading-relaxed mt-4">
+                    <p className="text-lg  text-gray-700 text-center md:text-left leading-relaxed mt-4 ">
                     ¿Quién se llevará el premio al mejor artista? ¿Será el lobo <span className="italic">Casablancas</span> con su estilo indie, la rana <span className="italic">Aurelio Wonder</span> con su ritmo jazzero, o el elefante <span className="italic">Minaj</span> que arrasa en las listas de éxitos? ¡Tú decides! Vota, comparte y celebra la diversión más animal del mundo digital.
                     </p>
                 </div>

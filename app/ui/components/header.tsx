@@ -1,30 +1,35 @@
 "use client"; // Necesario para manejar estados y eventos en Next.js
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import { NormalButton } from "./buttons";
 import Link from "next/link";
 import Cookies from "js-cookie";
-import { useEffect,useRef } from "react";
 
 export default function Header() {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
-    const toggleMenu = () => {
-        setIsMenuOpen(!isMenuOpen);
-    };
-
     const [isAuthenticated, setIsAuthenticated] = useState(false);
+    const [userName, setUserName] = useState("Usuario"); // Nombre del usuario
+    const [userImage, setUserImage] = useState("/default-user.png"); // Imagen del usuario
+    const menuRef = useRef<HTMLDivElement | null>(null);
+
+    // Verificar autenticación al cargar el componente
     useEffect(() => {
-        const token = Cookies.get('auth_token')
-        setIsAuthenticated(token ? true : false);
+        const token = Cookies.get('auth_token');
+        const user = JSON.parse(localStorage.getItem('user') || '{}'); // Obtener datos del usuario
+        if (token && user) {
+            setIsAuthenticated(true);
+            setUserName(user.name || "Usuario");
+            setUserImage(user.image || "/default-user.png");
+        }
     }, []);
 
-    const menuRef = useRef<HTMLDivElement | null>(null);;
-
-    const handleClickOutside = (event:Event) => {
+    // Cerrar menú al hacer clic fuera
+    const handleClickOutside = (event: Event) => {
         if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
-            setIsMenuOpen(false); // Cierra el menú si haces clic fuera de él
+            setIsMenuOpen(false);
         }
     };
+
     useEffect(() => {
         document.addEventListener("mousedown", handleClickOutside);
         return () => {
@@ -32,65 +37,76 @@ export default function Header() {
         };
     }, []);
 
+    // Manejar cierre de sesión
+    const handleLogout = () => {
+        Cookies.remove('auth_token');
+        localStorage.removeItem('user');
+        setIsAuthenticated(false);
+        window.location.href = "/"; // Redirigir a la página principal
+    };
 
     return (
-        <header className="flex flex-col items-center h-30 bg-blue-800 p-2 relative">
-            <Link href="/">
-                <Image
-                src="/animals-logo1.png"
-                width="300"
-                height="300"
-                alt="CNU Logo"
-                className="w-20 h-20 rounded-full overflow-hidden mb-1 cursor-pointer"
-                />
-            </Link>
-            <h1 className="text-4xl font-bold text-custom-beige">CNU</h1>
+        <header className="flex flex-col md:flex-row items-center justify-between bg-blue-800 p-1 w-full">
+            {/* Logo y nombre de la empresa */}
+            <div className="flex items-center space-x-2 pl-4">
+                <Link href="/">
+                    <Image
+                        src="/animals-logo1.png"
+                        width={80}
+                        height={80}
+                        alt="CNU Logo"
+                        className="w-16 h-16 rounded-full cursor-pointer"
+                    />
+                </Link>
+                <h1 className="text-4xl font-bold text-custom-beige">CNU</h1>
+            </div>
 
-            {/* Botón con flecha hacia abajo */}
-            <div className="relative">
-                <NormalButton
-                    text={
-                        <div className="flex items-center">
-                            <span className="text-white text-2xl">&#9660;</span> {/* Flecha hacia abajo */}
+            {/* Botones sesion iniciada */}
+            <div className="flex items-center space-x-4 mt-4 md:mt-0">
+                {isAuthenticated ? (
+                    <div className="flex items-center space-x-8 md:pr-10">
+                        <div className="flex items-center space-x-2">
+                            <Image
+                                src={userImage}
+                                width={40}
+                                height={40}
+                                alt="User Image"
+                                className="w-10 h-10 rounded-full bg-red-200"
+                            />
+                            <span className="text-white">{userName}</span>
                         </div>
-                    }
-                    color="bg-transparent"
-                    hoverClass="hover:bg-blue-700"
-                    extraClass="text-white py-2 px-4 mb-2 md:mb-0 transition-colors rounded-full"
-                    type="button"
-                    onClick={toggleMenu}
-                />
-
-                {/* Menú desplegable */}
-                <div
-                    ref={menuRef}
-                    className={`absolute mt-2 left-1/2 transform -translate-x-1/2 w-48 bg-blue-800 rounded-md p-2 border-black shadow-lg z-10 transition-opacity duration-500 ease-in-out ${
-                    isMenuOpen ? "opacity-100" : "opacity-0 pointer-events-none"
-                    }`}
-                >
-                    <div className="flex flex-col p-2 space-y-2">
-                        <Link href={!isAuthenticated ? "/login" : "/dashboard"} className="w-full">
+                        <NormalButton
+                            text="CERRAR SESIÓN 🔒 "
+                            color="bg-transparent"
+                            hoverClass="hover:bg-red-700"
+                            extraClass="text-white py-2 px-4 rounded-md border "
+                            type="button"
+                            onClick={handleLogout}
+                        />
+                    </div>
+                ) : (
+                    // {/* Botones sin iniciar sesion */}
+                    <div className="flex flex-col md:flex-row justify-center items-start space-x-2 md:pr-10 w-auto text-1xl">
+                        <Link href="/login">
                             <NormalButton
-                                text={!isAuthenticated ? "INICIAR SESION" : "DASHBOARD"}
+                                text="INICIAR SESIÓN 🔓 "
                                 color="bg-transparent"
-                                hoverClass="hover:bg-blue-500"
-                                extraClass="w-full text-white py-2 px-4 rounded-md md:w-full transition-colors border-3 border-y border-white rounded-sm"
+                                hoverClass="hover:text-blue-400"
+                                extraClass="text-white py-2 px-4 rounded-md"
                                 type="button"
-                                onClick={toggleMenu}
                             />
                         </Link>
-                        {!isAuthenticated &&(<Link href="/register" className="w-full">
+                        <Link href="/register">
                             <NormalButton
-                                text="REGISTRO"
+                                text="REGISTRARSE 👤 "
                                 color="bg-transparent"
-                                hoverClass="hover:bg-blue-500"
-                                extraClass="w-full text-white py-2 px-4 rounded-md md:w-full transition-colors border-3 border-y border-white rounded-sm"
+                                hoverClass="hover:text-blue-400"
+                                extraClass="text-white py-2 px-2 rounded-md w-full"
                                 type="button"
-                                onClick={toggleMenu}
                             />
-                        </Link>)}
+                        </Link>
                     </div>
-                </div>
+                )}
             </div>
         </header>
     );
