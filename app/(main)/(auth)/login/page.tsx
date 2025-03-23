@@ -16,8 +16,6 @@ export default function LoginPage() {
     const [password, setPassword] = useState('');
 
     const [loading, setLoading] = useState(false);
-    const [error, setError] = useState("");
-    console.log(error)
     const router = useRouter();
     const {showNotification} = useNotification()
 
@@ -25,7 +23,6 @@ export default function LoginPage() {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setLoading(true)
-        setError("");
         const formData = "username="+username+"&password="+password
         try {
             const response = await fetch(process.env.NEXT_PUBLIC_API_URL+'token', {
@@ -46,7 +43,7 @@ export default function LoginPage() {
             Cookies.set('auth_token', data.access_token, { secure: true, sameSite: 'strict' });
             router.push('/dashboard');
         } catch (err) {
-            setError(err instanceof Error ? err.message : 'Error desconocido');
+            console.log(err)
         } finally {
             setLoading(false);
         }

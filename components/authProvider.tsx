@@ -23,7 +23,8 @@ export default function AuthProvider({
                 });
                 
                 if (!response.ok) throw new Error('Token inválido');
-                
+                const data = await response.json()
+                console.log(data)
             } catch (error) {
                 console.log(error)
                 Cookies.remove('auth_token');
