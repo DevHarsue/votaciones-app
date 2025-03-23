@@ -1,5 +1,5 @@
 from jose import jwt
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, UTC
 from fastapi import HTTPException, status
 from .env import ALGORITHM, SECRET_KEY
 from ..models.user_models import UserResponse
@@ -20,10 +20,13 @@ def generate_code() -> int:
 def generate_token_user(user: UserResponse):
     try:
         payload = {
-            "sub": json.dumps({"username":str(user.username), 
-                    "email":str(user.email), 
-                    "rol":str(user.rol)}),
-            "exp": datetime.utcnow() + timedelta(days=30)
+            "sub": json.dumps(
+                    {
+                        "id":str(user.id), 
+                        "email":str(user.email), 
+                        "rol":str(user.rol)
+                    }),
+            "exp": datetime.now(UTC) + timedelta(days=30)
         }
         token = jwt.encode(payload, SECRET_KEY, algorithm=ALGORITHM)
         return token

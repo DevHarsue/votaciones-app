@@ -2,7 +2,7 @@ from sqlalchemy import select
 from sqlalchemy.orm.session import Session
 from .session import session
 from ..db.models import Code
-from datetime import datetime,timedelta
+from datetime import datetime,timedelta,UTC
 from ..utils.security import generate_code
 from ..models.code_models import CodeRequest,CodeResponse
 
@@ -10,7 +10,7 @@ class CodeActions:
     @session
     def create_code(self,session:Session,code: CodeRequest) -> CodeResponse:
         try:
-            expire = datetime.utcnow() + timedelta(minutes=10)
+            expire = datetime.now(UTC) + timedelta(minutes=10)
             code_db = Code(
                 code=generate_code(),
                 expire=expire,

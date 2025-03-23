@@ -2,29 +2,18 @@ from fastapi import APIRouter,status,Depends,HTTPException,Path
 from fastapi.responses import JSONResponse
 from typing import Annotated,List
 import os
-import uuid
-from .token import list_dependencies
+from .token import list_dependencies,depend_data
 from ..actions.user_actions import UserActions
 from ..actions.candidate_actions import CandidateActions
 from ..models.canidadate_models import CandidateForm,CandidateResponse,CandidateFormUpdate
-from ..utils.depends import depend_data
+from ..utils.images import create_image
 
 candidate_router = APIRouter()
-
-async def create_image(image):
-    file_name = f"{uuid.uuid4()}{os.path.splitext(image.filename)[1]}"
-    file_path = os.path.join("uploads", file_name)
-
-    with open(file_path, "wb") as buffer:
-        contenido = await image.read()
-        buffer.write(contenido)
-        
-    return file_path
 
 @candidate_router.post("/create_candidate",status_code=status.HTTP_201_CREATED,dependencies=list_dependencies)
 async def create_candidate(form_data: Annotated[CandidateForm,Depends()],data: depend_data) -> CandidateResponse:
     actions_user = UserActions()
-    user_id = actions_user.validate_user_by_username(username=data["username"])
+    user_id = actions_user.validate_user_by_email(email=data["email"])
     if not user_id:
         raise HTTPException(status_code=status.HTTP_405_METHOD_NOT_ALLOWED,detail="User not Exists")
     
@@ -53,8 +42,48 @@ def get_candidates() -> List[CandidateResponse]:
                         status_code=status.HTTP_200_OK)
     
 @candidate_router.put("/update_candidate",status_code=status.HTTP_200_OK,dependencies=list_dependencies)
-async def update_candidate(form_data: Annotated[CandidateFormUpdate,Depends()]) -> CandidateResponse:
+async def update_candidate(form_data: Annotated[CandidateFormUpdate,Depends()],data:depend_data) -> CandidateResponse:
+    if data["rol"]!="ADMIN":
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,detail="Unauthorized")
+    
+    candidate = actions.get_candidate(id=form_data.id)
+    if not candidate:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,detail="Candidate not found")
+    
     actions = CandidateActions()
+    candidate_exists = actions.get_candidate_by_starname(starname=form_data.candidate.starname)
+    if candidate_exists and candidate_exists.id!=form_data.id:
+        raise HTTPException(status_code=status.HTTP_409_CONFLICT,detail="Starname already exists")
+
+    path_image = actions.get_candidate(id=form_data.id).image_url
+    candidate = actions.update_candidate(id=form_data.id,candidate=form_data.candidate)
+    if form_data.image:
+        if os.path.exists(path_image):
+            try:
+                os.remove(path_image)
+            except Exception as e:
+                print(f"Error al borrar: {e}")
+        file_path = await create_image(form_data.image)
+        actions.assign_image(image_url=file_path,id=candidate.id)
+        candidate.image_url = file_path
+        
+    if not candidate:
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,detail="Error updating candidate")
+    return JSONResponse(content=candidate.model_dump(),
+                        status_code=status.HTTP_200_OK)
+    
+@candidate_router.put("/update_self_candidate",status_code=status.HTTP_200_OK,dependencies=list_dependencies)
+async def update_self_candidate(form_data: Annotated[CandidateFormUpdate,Depends()],data:depend_data) -> CandidateResponse:
+    
+    actions = CandidateActions()
+    
+    candidate_user_id = actions.get_candidate_user_id(id=form_data.id)
+    if not candidate_user_id:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,detail="Candidate not found")
+    if int(data["id"])!=candidate_user_id:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,detail="Unauthorized")
+        
+    
     candidate_exists = actions.get_candidate_by_starname(starname=form_data.candidate.starname)
     if candidate_exists and candidate_exists.id!=form_data.id:
         raise HTTPException(status_code=status.HTTP_409_CONFLICT,detail="Starname already exists")
@@ -78,9 +107,16 @@ async def update_candidate(form_data: Annotated[CandidateFormUpdate,Depends()]) 
 
 @candidate_router.delete("/delete_candidate/{id}",status_code=status.HTTP_200_OK,dependencies=list_dependencies)
 def delete_candidate(data: depend_data,id: int = Path(gt=0)) -> JSONResponse:
-    if data["rol"]!="ADMIN":
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,detail="Unauthorized")
     actions = CandidateActions()
+    if data["rol"]!="ADMIN":
+        candidate_user_id = actions.get_candidate_user_id(id=id)
+        if not candidate_user_id:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,detail="Candidate not found")
+        
+        if int(data["id"])!=candidate_user_id:
+            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,detail="Unauthorized")
+    
+    
     candidate = actions.delete_candidate(id=id)
     if not candidate:
         return JSONResponse(content={"message":"Candidate not found"},

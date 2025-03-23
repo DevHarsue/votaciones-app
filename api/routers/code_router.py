@@ -3,8 +3,7 @@ from fastapi.responses import JSONResponse
 from ..actions.code_actions import CodeActions
 from ..models.code_models import CodeRequest
 from ..utils.emails import SenderEmail
-from .token import list_dependencies
-from ..utils.depends import depend_data
+from .token import list_dependencies,depend_data
 
 code_router = APIRouter()
 
