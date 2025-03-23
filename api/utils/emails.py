@@ -23,10 +23,10 @@ class SenderEmail:
         msg['To'] = receiver
         msg['Subject'] = subject
         images = {
-            "logo": "api/model_email/animals-logo1.png"
+            "logo": "api/utils/model_email/animals-logo1.png"
         }
         
-        with open("api\model_email\index.html",encoding="utf-8") as f:
+        with open("api/utils/model_email/index.html",encoding="utf-8") as f:
             html = f.read()
         
         body_html = transform(html).replace("{{ code }}",str(body) )

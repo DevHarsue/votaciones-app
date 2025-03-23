@@ -1,9 +1,8 @@
-from fastapi import APIRouter,status,HTTPException
+from fastapi import APIRouter,status,HTTPException,Query
 from fastapi.responses import JSONResponse
-from ..models.votes_models import VoteRequest,VoteUpdate,TotalVotesResponse
+from ..models.votes_models import TotalVotesResponse
 from ..actions.votes_actions import VoteActions
-from ..utils.depends import depend_data
-from .token import list_dependencies
+from .token import list_dependencies,depend_data
 vote_router = APIRouter()
 
 @vote_router.get("/get_votes",status_code=status.HTTP_200_OK)
@@ -13,20 +12,20 @@ def get_votes() -> TotalVotesResponse:
     
     return JSONResponse(content=votes.model_dump(),status_code=status.HTTP_200_OK)
 
-@vote_router.post("/create_vote",status_code=status.HTTP_201_CREATED)
-def create_vote(vote:VoteRequest) -> JSONResponse:
+@vote_router.post("/create_vote",status_code=status.HTTP_201_CREATED,dependencies=list_dependencies)
+def create_vote(data:depend_data,candidate_id: int=Query(gt=0)) -> JSONResponse:
     actions = VoteActions()
-    vote_confirm = actions.create_vote(vote)
+    vote_confirm = actions.create_vote(candidate_id=candidate_id,user_id=int(data["id"]))
     if not vote_confirm:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,detail="Error in voting registration")
 
     return JSONResponse(content={"message":"successful voting"},status_code=status.HTTP_201_CREATED)
     
 
-@vote_router.put("/update_vote",status_code=status.HTTP_200_OK)
-def update_vote(vote: VoteUpdate) -> JSONResponse:
+@vote_router.put("/update_vote",status_code=status.HTTP_200_OK,dependencies=list_dependencies)
+def update_vote(data: depend_data,candidate_id: int=Query(gt=0)) -> JSONResponse:
     actions = VoteActions()
-    vote_update = actions.update_vote(vote)
+    vote_update = actions.update_vote(candidate_id=candidate_id,user_id=int(data["id"]))
     
     if not vote_update:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,detail="Vote not Updated")

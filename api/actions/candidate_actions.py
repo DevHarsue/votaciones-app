@@ -160,3 +160,14 @@ class CandidateActions:
         except Exception as e:
             print(e)
             return False
+        
+    @session
+    def get_candidate_user_id(self,session: Session,id:int) -> CandidateResponse:
+        query = select(Candidate).where(Candidate.id==id)
+        try:
+            candidate_db = session.execute(query).one_or_none()[0]
+            return candidate_db.user_id
+        except Exception as e:
+            print(e)
+            
+        return False

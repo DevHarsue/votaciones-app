@@ -9,7 +9,7 @@ class CandidateRequest(BaseModel):
     starname: str
     gender: str
     
-    @validator("name")
+    @validator("name",)
     def validate_name(cls, value:str):
         value = value.upper()
         if not fullmatch(r"[A-Z\s]+",value):
@@ -33,7 +33,7 @@ class CandidateRequest(BaseModel):
     @validator("gender")
     def validate_gender(cls, value:str):
         value = value.upper()
-        if value != "M" and value != "F":
+        if value != "M" and value != "F" and value!="O":
             raise ValueError("Invalid Gender")
         return value
     
@@ -101,7 +101,6 @@ class CandidateFormUpdate(CandidateForm):
                 for key, value in candidate_data.items() 
                 if value
             }
-            print(processed_data)
             self.candidate = CandidateUpdate(**processed_data)
         except Exception as e:
             print(e)

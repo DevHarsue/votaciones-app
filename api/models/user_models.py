@@ -1,12 +1,50 @@
 from pydantic import BaseModel,validator
+from fastapi import Form,HTTPException,UploadFile,File,status
+import json
 from re import fullmatch,findall
 
 class UserRequest(BaseModel):
+    nationality: str
+    ci: int
+    name: str
+    lastname: str
+    gender: str
     email: str
-    username: str
     password: str
-    rol: str
-    code: int
+    
+    @validator("nationality")
+    def validate_nationality(cls, value:str):
+        value = value.upper()
+        if value != "V" and value != "E":
+            raise ValueError("Invalid Nationality")
+        return value
+    
+    @validator("ci")
+    def validate_ci(cls, value:int):
+        if not fullmatch(r"\d{7,8}",str(value)):
+            raise ValueError("Invalid CI")
+        return value
+    
+    @validator("name")
+    def validate_name(cls, value:str):
+        value = value.upper()
+        if not fullmatch(r"[A-Z\s]+",value):
+            raise ValueError("Invalid Name")
+        return value
+    
+    @validator("lastname")
+    def validate_lastname(cls, value:str):
+        value = value.upper()
+        if not fullmatch(r"[A-Z\s]+",value):
+            raise ValueError("Invalid Lastname")
+        return value
+    
+    @validator("gender")
+    def validate_gender(cls, value:str):
+        value = value.upper()
+        if value != "M" and value != "F" and value !="O":
+            raise ValueError("Invalid Gender")
+        return value
     
     @validator("email")
     def validate_email(cls,value:str):
@@ -14,18 +52,6 @@ class UserRequest(BaseModel):
         value = value.upper()
         if (not fullmatch(regex,value) or len(findall(r"\+\d\@",value)) > 0):
             raise ValueError("Invalid Email")
-        
-        return value
-    
-    @validator("username")
-    def validate_username(cls,value:str):
-        value = value.upper()
-        if len(value) < 4:
-            raise ValueError("Username must have at least 4 characters")
-        if value.isnumeric():
-            raise ValueError("Username must have at least one letter")
-        if " " in value:
-            raise ValueError("Username cannot have spaces")
         
         return value
     
@@ -39,60 +65,101 @@ class UserRequest(BaseModel):
             )
         
         return value
-    
-    @validator("rol")
-    def validate_rol(cls,value:str):
-        value = value.upper()
-        if value not in ["ADMIN","USER"]:
-            raise ValueError("Invalid Rol")
-        
-        return value
-    
-    @validator("code")
-    def validate_code(cls,value:int):
-        value_str = str(value)
-        if len(value_str)!=6:
-            raise ValueError("Invalid Code")
-        
-        return value
 
+class UserForm:
+    def __init__(self,
+        nationality: str = Form(...),
+        ci: int = Form(...),
+        name: str = Form(...),
+        lastname: str = Form(...),
+        gender: str = Form(...),
+        email: str = Form(...),
+        password: str = Form(...),
+        code: int = Form(gt=0),
+        image: UploadFile=File(...)):
+        
+        self.code = code
+        self.image = image
+        
+        self.create_user(nationality,ci,name,lastname,gender,email,password)
+    
+    def create_user(self,nationality,ci,name,lastname,gender,email,password):
+        try:
+            self.user = UserRequest(
+                                        nationality=nationality,
+                                        ci=ci,
+                                        name=name,
+                                        lastname=lastname,
+                                        gender=gender,
+                                        email=email,
+                                        password=password
+                                    )
+        except Exception as e:
+            print(e)
+            raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,detail=json.loads(e.json())[0])
+        
     
 class UserUpdate(UserRequest):
+    nationality: str = None
+    ci: int = None
+    name: str = None
+    lastname: str = None
+    gender: str = None
     email: str = None
-    username: str = None
     password: str = None
-    rol: str = None
-
-class UserDelete(BaseModel):
-    email: str
-    username: str
+    code: int = None
     
-    @validator("email")
-    def validate_email(cls,value:str):
-        value = value.upper()
-        return value
+class UserFormUpdate:
+    def __init__(self, 
+                    nationality: str = Form(""),
+                    ci: int = Form(0),
+                    name: str = Form(""),
+                    lastname: str = Form(""),
+                    gender: str = Form(""),
+                    email: str = Form(""),
+                    password: str = Form(""),
+                    image: UploadFile=File(None)):
+        self.image = image
+        self.create_user(
+                            nationality.upper(),
+                            ci,
+                            name.upper(),
+                            lastname.upper(),
+                            gender.upper(),
+                            email.upper(),
+                            password
+                        )
     
-    @validator("username")
-    def validate_username(cls,value:str):
-        value = value.upper()
-        return value
+    def create_user(self,nationality,ci,name,lastname,gender,email,password):
+        try:
+            user_data = {
+                "nationality":nationality,
+                "ci":ci,
+                "name":name,
+                "lastname":lastname,
+                "gender":gender,
+                "email":email,
+                "password":password
+            }
+            
+            processed_data = {
+                key: value
+                for key, value in user_data.items() 
+                if value
+            }
+            self.user = UserUpdate(**processed_data)
+        except Exception as e:
+            print(e)
+            raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,detail=json.loads(e.json())[0])
+        
     
 class UserResponse(BaseModel):
-    username: str
+    id: int
+    nationality: str
+    ci: int
+    name: str
+    lastname: str
+    gender: str
     email: str
     rol: str
-    
-    @validator("email")
-    def validate_email(cls,value:str):
-        value = value.upper()
-        return value
-    
-    @validator("username")
-    def validate_username(cls,value:str):
-        value = value.upper()
-        return value
-    
-    @validator("rol")
-    def validate_rol(cls,value:str):
-        value = value.upper()
-        return value
+    image_url: str = None
