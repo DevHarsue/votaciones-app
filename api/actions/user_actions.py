@@ -126,7 +126,6 @@ class UserActions:
     def get_users(self,session: Session) -> list[UserResponse]:
         query = select(User)
         users = session.execute(query).fetchall()
-        print(users[0][0])
         return [UserResponse(
                     id=user[0].id,
                     nationality=user[0].nationality,

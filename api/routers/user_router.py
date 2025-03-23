@@ -161,8 +161,10 @@ def get_users(data:depend_data) -> List[UserResponse]:
     return JSONResponse(content=[user.model_dump() for user in users],status_code=status.HTTP_200_OK)
 
 @user_router.get("/validate_token",status_code=status.HTTP_200_OK,dependencies=list_dependencies)
-def validate_token(_:depend_data) -> JSONResponse:
-    return JSONResponse(content={"message":"Token Validated"},status_code=status.HTTP_200_OK)
+def validate_token(data:depend_data) -> JSONResponse:
+    actions = UserActions()
+    user = actions.get_user_by_id(int(data["id"]))
+    return JSONResponse(content=user.model_dump(),status_code=status.HTTP_200_OK)
 
 @user_router.get("/get_users_filter/{text_filter}",status_code=status.HTTP_200_OK,tags=["User"],dependencies=list_dependencies)
 def get_users_filter(data:depend_data,text_filter:str = Path()) -> List[UserResponse]:
@@ -172,6 +174,7 @@ def get_users_filter(data:depend_data,text_filter:str = Path()) -> List[UserResp
     actions = UserActions()
     users = actions.get_users_filter(text_filter=text_filter)
     return JSONResponse(content=[user.model_dump() for user in users],status_code=status.HTTP_200_OK)
+
 
 @user_router.get("/get_user_by_id/{id}",status_code=status.HTTP_200_OK,tags=["User"],dependencies=list_dependencies)
 def get_user_by_id(data:depend_data,id:int = Path()) -> List[UserResponse]:
@@ -184,3 +187,4 @@ def get_user_by_id(data:depend_data,id:int = Path()) -> List[UserResponse]:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,detail="User not Found")
         
     return JSONResponse(content=user.model_dump(),status_code=status.HTTP_200_OK)
+
