@@ -12,6 +12,7 @@ import Spin from '@/app/ui/components/spin';
 export default function IncripcionPage() {
     const [image, setImage] = useState<File | null>(null);
     const { showNotification } = useNotification();
+        const [imagePreview, setImagePreview] = useState<string | null>(null);
     const [formData, setFormData] = useState({
         name: '',
         lastname: '',
@@ -125,6 +126,7 @@ export default function IncripcionPage() {
         
             // Si pasa las validaciones
             setImage(file);
+            setImagePreview(URL.createObjectURL(file)); // Vista previa de la imagen
         }
     };
 
@@ -207,6 +209,13 @@ export default function IncripcionPage() {
                             required
                             />
                     </div>
+
+                    {/* Vista previa de la imagen */}
+                    {imagePreview && (
+                        <div className="mt-4 flex items-center justify-center">
+                            <img src={imagePreview} alt="Vista previa de la imagen" className="w-32 h-32 rounded-sm object-cover" />
+                        </div>
+                    )}
 
                     <NormalButton
                         text='Enviar Solicitud'
