@@ -1,15 +1,14 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect ,useState} from 'react';
 import { useRouter } from 'next/navigation';
 import Cookies from 'js-cookie';
+import { useUser } from '@/context/user-context';
 
-export default function AuthProvider({
-    children,
-}: {
-    children: React.ReactNode;
-}) {
+export default function AuthProvider({children}: {children: React.ReactNode;}) {
+
     const router = useRouter();
+    const { setUser } = useUser(); 
 
     useEffect(() => {
         const validateToken = async () => {
@@ -24,7 +23,11 @@ export default function AuthProvider({
                 
                 if (!response.ok) throw new Error('Token inválido');
                 const data = await response.json()
-                console.log(data)
+                const user_data = {
+                    "name":data.name,
+                    "image":data.image_url
+                }
+                setUser(user_data);
             } catch (error) {
                 console.log(error)
                 Cookies.remove('auth_token');
@@ -35,5 +38,5 @@ export default function AuthProvider({
         validateToken();
     }, [router]);
 
-    return <>{children}</>;
+    return <>{children}</>
 }

@@ -30,6 +30,9 @@ export default function ArtistasPage() {
     };
 
     const handleDelete = async (id: number) => {
+        if (!confirm("¿Desea Eliminar el Artista?")){
+            return
+        }
         try{
             const response = await fetch(process.env.NEXT_PUBLIC_API_URL+"candidates/delete_candidate/"+id,
                 {
@@ -79,6 +82,7 @@ export default function ArtistasPage() {
                     <DataRow
                         key={artista.id}
                         name={artista.starname}
+                        image={artista.image_url}
                         onEdit={() => handleEdit(artista.id)}
                         onDelete={() => handleDelete(artista.id)}
                     />

@@ -7,18 +7,10 @@ import { useNotification } from "@/context/NotificationContext";
 import { useRouter } from "next/navigation";
 import Cookies from "js-cookie";
 import Spin from "@/app/ui/components/spin";
+import { User } from "@/app/ui/types";
 
-interface Votantes {
-    id: number
-    name: string
-    lastname: string
-    starname: string
-    gender: string
-    image_url: string
-}
-
-export default function VotantesPage() {
-    const [data, setData] = useState<[Votantes] | null>(null);
+export default function UsuariosPage() {
+    const [data, setData] = useState<[User] | null>(null);
     const [loading, setLoading] = useState(true);
 
     const {showNotification} = useNotification()
@@ -40,18 +32,20 @@ export default function VotantesPage() {
         .then((res) => res.json())
         .then((data) => {
             setData(data);
-            console.log(data)
             setLoading(false);
         });
     }, [token]); 
     
     const handleEdit = (id: number) => {
-        router.push("votantes/updateVotante/"+id.toString())
+        router.push("usuarios/updateUsuario/"+id.toString())
     };
 
-    const handleDelete = async (id: number) => {
+    const handleDelete = async (email: string) => {
+        if (!confirm("¿Desea Eliminar el Usuario?")){
+            return
+        }
         try{
-            const response = await fetch(process.env.NEXT_PUBLIC_API_URL+"voters/delete_voter/"+id,
+            const response = await fetch(process.env.NEXT_PUBLIC_API_URL+"delete_user/"+email,
                 {
                     method:"DELETE",
                     headers: {
@@ -62,10 +56,10 @@ export default function VotantesPage() {
 
             if (!response.ok){
                     const errorData = await response.json();
-                    throw new Error(errorData.message || 'Error al borrar votante');
+                    throw new Error(errorData.message || 'Error al borrar usuario');
                 }
             
-            showNotification({message:'Votante Eliminado Correctamente',type:"success"})
+            showNotification({message:'Usuario Eliminado Correctamente',type:"success"})
             window.location.reload()
         }catch (err) {
             showNotification({message:err instanceof Error ? err.message : 'Error desconocido',type:"error"})
@@ -75,31 +69,32 @@ export default function VotantesPage() {
     };
 
     if (loading) return <Spin />;
-    if (!data) return <div>No se encontraron Votantes</div>
-    // Filtrar artistas por nombre
-    const filteredData = data.filter((artista) =>
-        artista.name.toLowerCase().includes(searchTerm.toLowerCase())
+    if (!data) return <div>No se encontraron Usuarios</div>
+
+    const filteredData = data.filter((usuario) =>
+        usuario.name.toLowerCase().includes(searchTerm.toLowerCase())
     );
     return (
         <main>
             <div className="p-4 flex flex-col px-40">
                 <h2 className="text-2xl font-bold mb-4 text-center">
-                    Gestión de Votantes
+                    Gestión de Usuarios
                 </h2>
                 {/* Input de búsqueda */}
                 <input
                     type="text"
-                    placeholder="Buscar votante por nombre..."
+                    placeholder="Buscar Usuarios por nombre..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                     className="mb-4 p-2 border border-gray-300 rounded-md"
                 />
-                {filteredData.map((votante) => (
+                {filteredData.map((usuario) => (
                     <DataRow
-                        key={votante.id}
-                        name={votante.name}
-                        onEdit={() => handleEdit(votante.id)}
-                        onDelete={() => handleDelete(votante.id)}
+                        key={usuario.id}
+                        name={usuario.name + " " + usuario.lastname}
+                        image={usuario.image_url}
+                        onEdit={() => handleEdit(usuario.id)}
+                        onDelete={() => handleDelete(usuario.email)}
                     />
                 ))}
             </div>

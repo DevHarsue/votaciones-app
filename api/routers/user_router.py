@@ -103,11 +103,11 @@ async def update_self_user(data:depend_data,form_data: Annotated[UserFormUpdate,
     
     return JSONResponse(content=user_response.model_dump(),status_code=status.HTTP_200_OK)
 
-@user_router.put("/update_user",status_code=status.HTTP_200_OK,tags=["User"],dependencies=list_dependencies)
-async def update_user(data:depend_data,form_data: Annotated[UserFormUpdate,Depends()],id: int = Form(gt=0)) -> JSONResponse:
+@user_router.put("/update_user/{id}",status_code=status.HTTP_200_OK,tags=["User"],dependencies=list_dependencies)
+async def update_user(data:depend_data,form_data: Annotated[UserFormUpdate,Depends()],id: int = Path(gt=0)) -> JSONResponse:
     if data["rol"]!="ADMIN":
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,detail="Unauthorized")
-    
+    print(form_data.user)
     actions = UserActions()
     user_id = actions.validate_user_by_email(email=form_data.user.email)
     if user_id and id!=user_id :

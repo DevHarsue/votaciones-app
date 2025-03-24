@@ -7,7 +7,7 @@ export interface Artist {
     gender: string;
 }
 
-export interface Voter {
+export interface User {
     id: number
     nationality: string
     ci: number
@@ -15,4 +15,6 @@ export interface Voter {
     lastname: string
     gender: string
     email: string
+    rol: string
+    image_url: string
 }
