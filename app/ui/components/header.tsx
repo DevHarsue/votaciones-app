@@ -43,7 +43,7 @@ export default function Header() {
     };
 
     return (
-        <header className="flex flex-col md:flex-row items-center justify-between bg-blue-800 p-1 w-full">
+        <header className="flex flex-col md:flex-row items-center justify-between border border-blue-900 border-opacity-50 bg-blue-800 p-1 w-full shadow-lg">
             {/* Logo y nombre de la empresa */}
             <div className="flex items-center space-x-2 pl-4">
                 <Link href="/">
@@ -72,11 +72,20 @@ export default function Header() {
                             />
                             <span className="text-white">{user.name}</span>
                         </div>
+                        <Link href="/dashboard">
+                            <NormalButton
+                                text="ACCEDER AL DASHBOARD"
+                                color="bg-transparent"
+                                hoverClass="hover:bg-blue-400"
+                                extraClass="text-white py-2 px-4 rounded-md border border-opacity-30 border-gray-800 shadow-lg"
+                                type="button"
+                            />
+                        </Link>
                         <NormalButton
                             text="CERRAR SESIÓN 🔒 "
                             color="bg-transparent"
                             hoverClass="hover:bg-red-700"
-                            extraClass="text-white py-2 px-4 rounded-md border "
+                            extraClass="text-white py-2 px-4 rounded-md border border-opacity-30 border-gray-800 shadow-lg"
                             type="button"
                             onClick={handleLogout}
                         />
@@ -93,7 +102,7 @@ export default function Header() {
                                 type="button"
                             />
                         </Link>
-                        <Link href="/register">
+                        <Link href="registro">
                             <NormalButton
                                 text="REGISTRARSE 👤 "
                                 color="bg-transparent"
