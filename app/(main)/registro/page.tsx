@@ -2,7 +2,7 @@
 import { NormalButton } from '../../ui/components/buttons';
 import Link from 'next/link';
 import { useState } from 'react';
-import { validateEmail, validateNationality, validateName, validateCI } from '@/app/utils/validations';
+import { validateEmail, validateNationality, validateName, validateCI,validateCode, validateGender, validatePassword } from '@/app/utils/validations';
 import { useNotification } from '@/context/NotificationContext';
 import { useRouter } from 'next/navigation';
 import Cookies from 'js-cookie';
@@ -11,27 +11,23 @@ import Spin from '@/app/ui/components/spin';
 export default function RegistroPage() {
     const [image, setImage] = useState<File | null>(null);
     const [imagePreview, setImagePreview] = useState<string | null>(null);
+    const [showConfirmationCode, setShowConfirmationCode] = useState(false);
+    const [codeSend,setCodeSend] = useState(false)
+    const [confirmationCode, setConfirmationCode] = useState('');
     const { showNotification } = useNotification();
-    const [formData, setFormData] = useState({
-        nationality: '',
-        ci: '',
-        name: '',
-        lastname: '',
-        gender: '',
-        email: '',
-        password: '',
-    });
+    const [nationality, setNationality] = useState("");
+    const [ci, setCi] = useState("");
+    const [name, setName] = useState("");
+    const [lastname, setLastname] = useState("");
+    const [gender, setGender] = useState("");
+    const [email, setEmail] = useState("");
+    const [emailFinal, setEmailFinal] = useState("");
+    const [password, setPassword] = useState("");
+    const [passwordValidated, setPasswordValidated] = useState("");
+
     const [loading, setLoading] = useState(false);
 
     const token = Cookies.get('auth_token');
-
-    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-        const { name, value } = e.target;
-        setFormData(prevState => ({
-            ...prevState,  // Mantenemos todo el estado anterior
-            [name]: value  // Actualizamos solo el campo modificado
-        }));
-    };
 
     const router = useRouter();
 
@@ -40,27 +36,60 @@ export default function RegistroPage() {
         setLoading(true);
 
         // Validaciones
-        if (!validateNationality(formData.nationality)) {
+        console.log(nationality)
+        if (!validateNationality(nationality)) {
             showNotification({ message: "Seleccione su nacionalidad", type: "error" });
             setLoading(false);
             return;
         }
-        if (!validateName(formData.name)) {
+        const ci_int = parseInt(ci)
+        if (!validateCI(ci_int)){
+            showNotification( { message: 'Cedula Invalida', type: 'error' } )
+            setLoading(false);
+            return
+        }
+        if (!validateName(name)) {
             showNotification({ message: "Nombre Invalido", type: "error" });
             setLoading(false);
             return;
         }
-        if (!validateName(formData.lastname)) {
+        if (!validateName(lastname)) {
             showNotification({ message: "Apellido Invalido", type: "error" });
             setLoading(false);
             return;
         }
-        if (!validateEmail(formData.email)) {
-            showNotification({ message: "Correo Invalido", type: "error" });
+
+        if (!validateGender(gender)){
+            showNotification( { message: 'Seleccione un Genero', type: 'error' } )
             setLoading(false);
-            return;
+            return
         }
 
+        if (!validatePassword(password)){
+            showNotification( { message: 'Contraseña Invalida', type: 'error' } )
+            setLoading(false);
+            return
+        }
+
+        if (password!=passwordValidated){
+            showNotification( { message: 'Las Contraseñas no Coinciden', type: 'error' } )
+            setLoading(false);
+            return
+        }
+
+        if (!showConfirmationCode){
+            showNotification( { message: 'Envia el codigo de Confirmación', type: 'error' } )
+            setLoading(false);
+            return
+        }
+
+        const code = parseInt(confirmationCode)
+        if (!validateCode(code)){
+            showNotification( { message: 'Codigo Invalido', type: 'error' } )
+            setLoading(false);
+            return
+        }
+        
         if (!image) {
             showNotification({ message: "Seleccione una imagen", type: "error" });
             setLoading(false);
@@ -69,16 +98,17 @@ export default function RegistroPage() {
 
         try {
             const form = new FormData();
-            form.append('nationality', formData.nationality);
-            form.append('ci', formData.ci);
-            form.append('name', formData.name);
-            form.append('lastname', formData.lastname);
-            form.append('gender', formData.gender[0]);
-            form.append('email', formData.email);
-            form.append('password', formData.password);
+            form.append('nationality', nationality[0]);
+            form.append('ci', ci);
+            form.append('name', name);
+            form.append('lastname', lastname);
+            form.append('gender', gender[0]);
+            form.append('email', emailFinal);
+            form.append('password', password);
+            form.append('code', code.toString());
             form.append('image', image);
 
-            const response = await fetch(process.env.NEXT_PUBLIC_API_URL + 'candidates/create_candidate', {
+            const response = await fetch(process.env.NEXT_PUBLIC_API_URL + 'register_user', {
                 method: 'POST',
                 headers: {
                     'accept': 'application/json',
@@ -88,9 +118,16 @@ export default function RegistroPage() {
             });
 
             if (response.status == 409) {
-                const errorData = await response.json();
-                console.log(errorData);
-                showNotification({ message: "El Nombre de Usuario ya está siendo Usado", type: "error" });
+                const error_message = await response.json()
+                const message = error_message.detail
+
+                if (message.includes("Email")){
+                    showNotification({message: "Ya existe un registro con ese correo electronico.", type:"error"});
+                }
+
+                if (message.includes("CI")){
+                    showNotification({message: "Ya existe un registro con esa Cedula", type:"error"});
+                }
                 return;
             }
             if (!response.ok) {
@@ -99,7 +136,7 @@ export default function RegistroPage() {
             }
 
             showNotification({ message: 'Registro de Usuario Exitoso!', type: "success" });
-            router.push("/");
+            router.push("/login");
         } catch (err) {
             if (err instanceof Error) {
                 showNotification({ message: err.message, type: "error" });
@@ -112,6 +149,42 @@ export default function RegistroPage() {
             setLoading(false);
         }
     };
+
+    const handleSendCode = async ()=>{
+        if (loading) return
+        setLoading(true)
+        
+        if (!validateEmail(email)){
+            showNotification( { message: 'Email Invalido', type: 'error' } )
+            setLoading(false)
+            return
+        }
+        setEmailFinal(email)
+        
+        try{
+            const response = await fetch(process.env.NEXT_PUBLIC_API_URL+"code/generate_code",{
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    email
+                })
+            });
+
+            if (!response.ok) throw new Error('Error en la solicitud');
+
+            setShowConfirmationCode(true)
+            setCodeSend(true)
+            showNotification({message: "Codigo Enviado", type:"success"});
+        } catch (err) {
+            showNotification({message: err instanceof Error ? err.message : 'Error desconocido', type:"error"});
+        } finally {
+            setLoading(false);
+        }
+        
+
+        }
 
     // Función para manejar la selección de la imagen
     const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -149,6 +222,40 @@ export default function RegistroPage() {
                     REGISTRO DE USUARIO
                 </h1>
                 <form className="space-y-4">
+                    {/* Campo: Nacionalidad */}
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700">
+                            Nacionalidad
+                        </label>
+                        <select
+                            value={nationality}
+                            onChange={e=>setNationality(e.target.value)}
+                            name='nationality'
+                            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            required
+                        >
+                            <option value="" disabled>Selecciona tu nacionalidad</option>
+                            <option>Venezolano</option>
+                            <option>Extranjero</option>
+                        </select>
+                    </div>
+
+                    {/* Campo: Cédula */}
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700">
+                            Cédula
+                        </label>
+                        <input
+                            name='ci'
+                            type="number"
+                            value={ci}
+                            onChange={e=>setCi(e.target.value)}
+                            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            required
+                            minLength={7}
+                            maxLength={8}
+                        />
+                    </div>
                     {/* Campo: Nombre */}
                     <div>
                         <label className="block text-sm font-medium text-gray-700">
@@ -157,8 +264,8 @@ export default function RegistroPage() {
                         <input
                             name='name'
                             type="text"
-                            value={formData.name}
-                            onChange={handleInputChange}
+                            value={name}
+                            onChange={e=>setName(e.target.value)}
                             className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                             required
                         />
@@ -172,45 +279,10 @@ export default function RegistroPage() {
                         <input
                             name='lastname'
                             type="text"
-                            value={formData.lastname}
-                            onChange={handleInputChange}
+                            value={lastname}
+                            onChange={e=>setLastname(e.target.value)}
                             className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                             required
-                        />
-                    </div>
-
-                    {/* Campo: Nacionalidad */}
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700">
-                            Nacionalidad
-                        </label>
-                        <select
-                            value={formData.nationality}
-                            onChange={handleInputChange}
-                            name='nationality'
-                            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            required
-                        >
-                            <option value="" disabled>Selecciona tu nacionalidad</option>
-                            <option value="V">Venezolano</option>
-                            <option value="E">Extranjero</option>
-                        </select>
-                    </div>
-
-                    {/* Campo: Cédula */}
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700">
-                            Cédula
-                        </label>
-                        <input
-                            name='ci'
-                            type="number"
-                            value={formData.ci}
-                            onChange={handleInputChange}
-                            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            required
-                            minLength={7}
-                            maxLength={8}
                         />
                     </div>
 
@@ -220,34 +292,18 @@ export default function RegistroPage() {
                             Género
                         </label>
                         <select
-                            value={formData.gender}
-                            onChange={handleInputChange}
+                            value={gender}
+                            onChange={e=>setGender(e.target.value)}
                             name='gender'
                             className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                             required
                         >
                             <option value="" disabled>Selecciona un género</option>
-                            <option value="M">Masculino</option>
-                            <option value="F">Femenino</option>
-                            <option value="O">Otro</option>
+                            <option>Masculino</option>
+                            <option>Femenino</option>
+                            <option>Otro</option>
                         </select>
                     </div>
-
-                    {/* Campo: Email */}
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700">
-                            Email
-                        </label>
-                        <input
-                            name='email'
-                            type="text"
-                            value={formData.email}
-                            onChange={handleInputChange}
-                            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            required
-                        />
-                    </div>
-
                     {/* Campo: Password */}
                     <div>
                         <label className="block text-sm font-medium text-gray-700">
@@ -256,12 +312,68 @@ export default function RegistroPage() {
                         <input
                             name='password'
                             type="password"
-                            value={formData.password}
-                            onChange={handleInputChange}
+                            value={password}
+                            onChange={e=>setPassword(e.target.value)}
                             className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                             required
                         />
                     </div>
+                    {/* Campo: PasswordValidated */}
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700">
+                            Confirmar Contraseña
+                        </label>
+                        <input
+                            name='password'
+                            type="password"
+                            value={passwordValidated}
+                            onChange={e=>setPasswordValidated(e.target.value)}
+                            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            required
+                        />
+                    </div>
+                    {/* Campo: Email */}
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700">
+                            Email
+                        </label>
+                        <input
+                            name='email'
+                            type="text"
+                            value={email}
+                            onChange={e=>setEmail(e.target.value)}
+                            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            required
+                        />
+                    </div>
+                    {/* Botón: Enviar Codigo */}
+                    <div className="flex justify-center">
+                        <NormalButton
+                            text={!codeSend ? (loading ? 'Enviando...' : "Enviar Codigo") : "Reenviar Codigo"  }
+                            color="bg-green-600"
+                            hoverClass="hover:bg-green-500"
+                            extraClass="w-full md:w-auto text-white py-2 px-4 rounded-md transition-colors"
+                            type="button"
+                            onClick= {handleSendCode}
+                        />
+                    </div> 
+                    {showConfirmationCode &&(
+                    <>
+                        {/* Campo: Código de Confirmación */}
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 text-center">
+                                INGRESA EL CÓDIGO DE CONFIRMACIÓN
+                            </label>
+                            <input
+                                type="number"
+                                value={confirmationCode}
+                                onChange={(e) => setConfirmationCode(e.target.value)}
+                                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                required
+                            />
+                        </div>
+                    </>)}
+                    
 
                     {/* Campo: Imagen */}
                     <div>

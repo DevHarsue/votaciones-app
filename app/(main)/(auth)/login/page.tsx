@@ -61,7 +61,7 @@ export default function LoginPage() {
                     {/* Campo: Nombre de usuario */}
                     <div>
                         <label className="block text-sm font-medium text-gray-700">
-                            Nombre de Usuario
+                            Correo Electronico
                         </label>
                             <input
                             type="text"
