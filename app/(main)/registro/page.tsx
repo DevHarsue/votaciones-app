@@ -3,7 +3,6 @@ import { NormalButton } from '../../ui/components/buttons';
 import Link from 'next/link';
 import { useState } from 'react';
 import { validateEmail, validateNationality, validateName, validateCI,validateCode, validateGender, validatePassword } from '@/app/utils/validations';
-
 import { useNotification } from '@/context/NotificationContext';
 import { useRouter } from 'next/navigation';
 import Cookies from 'js-cookie';

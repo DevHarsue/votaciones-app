@@ -4,21 +4,24 @@ import Image from "next/image";
 import { NormalButton } from "./buttons";
 import Link from "next/link";
 import Cookies from "js-cookie";
-import { useUser } from "@/context/user-context";
 
 export default function Header() {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [isAuthenticated, setIsAuthenticated] = useState(false);
+    const [userName, setUserName] = useState("Usuario"); // Nombre del usuario
+    const [userImage, setUserImage] = useState("/default-user.png"); // Imagen del usuario
     const menuRef = useRef<HTMLDivElement | null>(null);
-    const { user } = useUser();
 
     // Verificar autenticación al cargar el componente
     useEffect(() => {
         const token = Cookies.get('auth_token');
+        const user = JSON.parse(localStorage.getItem('user') || '{}'); // Obtener datos del usuario
         if (token && user) {
             setIsAuthenticated(true);
+            setUserName(user.name || "Usuario");
+            setUserImage(user.image || "/default-user.png");
         }
-    }, [user]);
+    }, []);
 
     // Cerrar menú al hacer clic fuera
     const handleClickOutside = (event: Event) => {
@@ -60,32 +63,26 @@ export default function Header() {
 
             {/* Botones sesion iniciada */}
             <div className="flex items-center space-x-4 mt-4 md:mt-0">
-                {isAuthenticated && user ? (
+                {isAuthenticated ? (
                     <div className="flex items-center space-x-8 md:pr-10">
                         <div className="flex items-center space-x-2">
                             <Image
-                                src={process.env.NEXT_PUBLIC_API_URL+user?.image}
+                                src={userImage}
                                 width={40}
                                 height={40}
                                 alt="User Image"
                                 className="w-10 h-10 rounded-full bg-red-200"
                             />
-                            <span className="text-white">{user.name}</span>
+                            <Link href="/dashboard">
+                                <span className="text-white cursor:pointer hover:text-blue-400 px-2">{userName}
+                                </span>
+                            </Link>
                         </div>
-                        <Link href="/dashboard">
-                            <NormalButton
-                                text="ACCEDER AL DASHBOARD"
-                                color="bg-transparent"
-                                hoverClass="hover:bg-blue-400"
-                                extraClass="text-white py-2 px-4 rounded-md border border-opacity-30 border-gray-800 shadow-lg"
-                                type="button"
-                            />
-                        </Link>
                         <NormalButton
                             text="CERRAR SESIÓN 🔒 "
                             color="bg-transparent"
                             hoverClass="hover:bg-red-700"
-                            extraClass="text-white py-2 px-4 rounded-md border border-opacity-30 border-gray-800 shadow-lg"
+                            extraClass="text-white py-2 px-4 rounded-md border "
                             type="button"
                             onClick={handleLogout}
                         />
@@ -102,7 +99,7 @@ export default function Header() {
                                 type="button"
                             />
                         </Link>
-                        <Link href="registro">
+                        <Link href="/registro">
                             <NormalButton
                                 text="REGISTRARSE 👤 "
                                 color="bg-transparent"

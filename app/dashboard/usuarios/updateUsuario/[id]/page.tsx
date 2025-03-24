@@ -20,6 +20,7 @@ export default function UpdateVotante() {
     const [email, setEmail] = useState("");
     const [imageUrl, setImageUrl] = useState("");
     const [image, setImage] = useState<File | null>(null);
+    const [imagePreview, setImagePreview] = useState<string | null>(null);
 
     const [data, setData] = useState<User | null>(null);
     const [loading, setLoading] = useState(true);
@@ -278,17 +279,25 @@ export default function UpdateVotante() {
                             required
                         />
                     </div>
-                    {/* Campo: Imagen */}
+                   {/* Campo: Imagen */}
                     <div>
-                        <label className="block text-sm font-medium text-gray-700">Imagen del Artista</label>
-                        <input
-                        type="file"
-                        onChange={handleImageChange}
-                        className="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-semibold file:cursor-pointer file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
-                        accept="image/*"
-                        required
-                        />
-                    </div>
+                            <label className="block text-sm font-medium text-gray-700">Imagen de Usuario</label>
+                            <input
+                                type="file"
+                                onChange={handleImageChange}
+                                className="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-semibold file:cursor-pointer file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+                                accept="image/*"
+                                required
+                            />
+                        </div>
+
+                    {/* Vista previa de la imagen */}
+                    {imagePreview && (
+                        <div className="mt-4 flex items-center justify-center">
+                            <img src={imagePreview} alt="Vista previa de la imagen" className="w-32 h-32 rounded-full object-cover" />
+                        </div>
+                    )}
+                    
                     <div className="flex justify-center">
                         <NormalButton
                             type='button'
