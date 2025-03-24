@@ -3,6 +3,7 @@ import { NormalButton } from '../../ui/components/buttons';
 import Link from 'next/link';
 import { useState } from 'react';
 import { validateEmail, validateNationality, validateName, validateCI,validateCode, validateGender, validatePassword } from '@/app/utils/validations';
+
 import { useNotification } from '@/context/NotificationContext';
 import { useRouter } from 'next/navigation';
 import Cookies from 'js-cookie';
@@ -11,6 +12,7 @@ import Spin from '@/app/ui/components/spin';
 export default function RegistroPage() {
     const [image, setImage] = useState<File | null>(null);
     const [imagePreview, setImagePreview] = useState<string | null>(null);
+
     const [showConfirmationCode, setShowConfirmationCode] = useState(false);
     const [codeSend,setCodeSend] = useState(false)
     const [confirmationCode, setConfirmationCode] = useState('');
@@ -29,6 +31,7 @@ export default function RegistroPage() {
 
     const token = Cookies.get('auth_token');
 
+
     const router = useRouter();
 
     // Función para manejar el envío del formulario
@@ -36,12 +39,14 @@ export default function RegistroPage() {
         setLoading(true);
 
         // Validaciones
+
         console.log(nationality)
         if (!validateNationality(nationality)) {
             showNotification({ message: "Seleccione su nacionalidad", type: "error" });
             setLoading(false);
             return;
         }
+
         const ci_int = parseInt(ci)
         if (!validateCI(ci_int)){
             showNotification( { message: 'Cedula Invalida', type: 'error' } )
@@ -185,7 +190,6 @@ export default function RegistroPage() {
         
 
         }
-
     // Función para manejar la selección de la imagen
     const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const MAX_SIZE_MB = 4;
@@ -222,6 +226,7 @@ export default function RegistroPage() {
                     REGISTRO DE USUARIO
                 </h1>
                 <form className="space-y-4">
+
                     {/* Campo: Nacionalidad */}
                     <div>
                         <label className="block text-sm font-medium text-gray-700">
@@ -292,6 +297,7 @@ export default function RegistroPage() {
                             Género
                         </label>
                         <select
+
                             value={gender}
                             onChange={e=>setGender(e.target.value)}
                             name='gender'
@@ -299,6 +305,7 @@ export default function RegistroPage() {
                             required
                         >
                             <option value="" disabled>Selecciona un género</option>
+
                             <option>Masculino</option>
                             <option>Femenino</option>
                             <option>Otro</option>
