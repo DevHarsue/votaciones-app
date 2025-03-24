@@ -45,12 +45,12 @@ def get_candidates() -> List[CandidateResponse]:
 async def update_candidate(form_data: Annotated[CandidateFormUpdate,Depends()],data:depend_data) -> CandidateResponse:
     if data["rol"]!="ADMIN":
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,detail="Unauthorized")
+    actions = CandidateActions()
     
     candidate = actions.get_candidate(id=form_data.id)
     if not candidate:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,detail="Candidate not found")
     
-    actions = CandidateActions()
     candidate_exists = actions.get_candidate_by_starname(starname=form_data.candidate.starname)
     if candidate_exists and candidate_exists.id!=form_data.id:
         raise HTTPException(status_code=status.HTTP_409_CONFLICT,detail="Starname already exists")

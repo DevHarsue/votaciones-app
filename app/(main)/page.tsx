@@ -6,7 +6,7 @@ import Image from "next/image";
 export default function CNUApp(){
     return (
         <main className="my-10 mx-4 lg:mx-auto lg:min-w-4xl">
-            <section className="flex flex-col md:flex-row mx-auto px-8 py-0 w-4xl pb-40">
+            <section className="flex flex-col md:flex-row mx-auto px-8 py-10 w-4xl pb-40">
                 <div className="h-full md:w-min-1/4">
                     <Image
                     src="/animals-description.png"

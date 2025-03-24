@@ -15,7 +15,7 @@ export function middleware(request: NextRequest) {
     // Rutas públicas
     const publicRoutes = ['/login', '/register'];
     // Rutas protegidas
-    const protectedRoutes = ['/dashboard', '/inscripcion'];
+    const protectedRoutes = ['/dashboard', '/inscripcion',"/votaciones"];
 
     if (token && publicRoutes.includes(pathname)) {
         return NextResponse.redirect(new URL('/dashboard', request.url));

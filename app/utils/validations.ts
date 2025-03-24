@@ -8,7 +8,7 @@ export const validateNationality = (nationality:string)=>{
 }
 
 export const validateGender = (gender:string)=>{
-    if (gender == "Masculino" || gender == "Femenino"){
+    if (gender == "Masculino" || gender == "Femenino" || gender=="Otro"){
         return true
     }
     return false
@@ -44,6 +44,14 @@ export const validateEmail = (email: string)=>{
     const regex_email = /^[^@]+@[^@]+\.[^@]+$/;
     const regex_digits = /\+\d@/
     if (regex_email.test(email) && !regex_digits.test(email)){
+        return true
+    }
+    return false
+}
+
+export const validatePassword = (password: string)=>{
+    const regex_password = /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[^a-zA-Z0-9]).{8,}$/;
+    if (regex_password.test(password)){
         return true
     }
     return false

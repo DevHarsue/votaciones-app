@@ -3,9 +3,10 @@ import { useState, useEffect } from "react";
 import { useNotification } from "@/context/NotificationContext";
 import { useRouter, useParams } from "next/navigation";
 import Cookies from "js-cookie";
-import { Voter } from "@/app/ui/types";
 import Spin from "@/app/ui/components/spin";
+import Image from "next/image";
 import Link from "next/link";
+import { User } from "@/app/ui/types";
 import { NormalButton } from "@/app/ui/components/buttons";
 import { validateGender, validateCI,validateNationality,validateName,validateEmail } from "@/app/utils/validations";
 
@@ -17,8 +18,10 @@ export default function UpdateVotante() {
     const [lastname, setLastname] = useState("");
     const [gender, setGender] = useState("");
     const [email, setEmail] = useState("");
+    const [imageUrl, setImageUrl] = useState("");
+    const [image, setImage] = useState<File | null>(null);
 
-    const [data, setData] = useState<Voter | null>(null);
+    const [data, setData] = useState<User | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<Error | null>(null);
     const token = Cookies.get('auth_token');
@@ -28,7 +31,7 @@ export default function UpdateVotante() {
     const router = useRouter()
 
     useEffect(()=>{
-        fetch(process.env.NEXT_PUBLIC_API_URL+"voters/get_voter_by_id/"+id,
+        fetch(process.env.NEXT_PUBLIC_API_URL+"get_user_by_id/"+id,
             {
                 method:"GET",
                 headers: {
@@ -38,8 +41,8 @@ export default function UpdateVotante() {
             }
         ).then(response=>{
             if (!response.ok){
-                showNotification( {message: "Votante no Encontrado", type: "error"} )
-                router.push("/dashboard/votantes")
+                showNotification( {message: "Usuario no Encontrado", type: "error"} )
+                router.push("/dashboard/usuarios")
             }
             return response.json()
         }).then(data=>{
@@ -50,6 +53,7 @@ export default function UpdateVotante() {
             setCi(data.ci)
             setNationality(data.nationality=="V"? "Venezolano":"Extranjero")
             setEmail(data.email)
+            setImageUrl(data.image_url)
 
             setLoading(false)
         })
@@ -84,25 +88,33 @@ export default function UpdateVotante() {
                 showNotification( { message: 'Seleccione un Genero', type: 'error' } )
                 return
             }
-            const body ={
-                nationality: nationality[0],
-                ci: ci_int,
-                name: name,
-                lastname: lastname,
-                gender: gender[0],
-                email: email
+            if (!validateEmail(email)){
+                showNotification( { message: 'Email Invalido', type: 'error' } )
+                return
             }
-
-
+            
+            
             try {
+                const form = new FormData();
+                form.append('nationality', nationality[0]);
+                form.append('ci', ci);
+                form.append('name', name);
+                form.append('lastname', lastname);
+                form.append('gender', gender[0]);
+                form.append('email', email);
+                form.append("password","")
+                if(image){
+                    form.append('image', image);
+                }
+                console.log(form.entries().forEach(e=>console.log(e)))
                 setLoading(true);
-                const response = await fetch(process.env.NEXT_PUBLIC_API_URL+"voters/update_voter/"+id, {
+                const response = await fetch(process.env.NEXT_PUBLIC_API_URL+"update_user/"+id, {
                     method: 'PUT',
                     headers: {
-                        'Content-Type': 'application/json',
+                        'accept': 'application/json',
                         'Authorization': `Bearer ${token}`
                     },
-                    body: JSON.stringify(body),
+                    body: form
                 });
                 if (response.status==409){
                     const error_message = await response.json()
@@ -121,17 +133,42 @@ export default function UpdateVotante() {
                 if (!response.ok) throw new Error('Error en la solicitud');
                 
                 
-                showNotification({message: 'Votante Actualizado Correctamente', type:"success"});
-                router.push("/dashboard/votantes")
+                showNotification({message: 'Usuario Actualizado Correctamente', type:"success"});
+                router.push("/dashboard/usuarios")
             } catch (err) {
                 showNotification({message: err instanceof Error ? err.message : 'Error desconocido', type:"error"});
             } finally {
                 setLoading(false);
             }
-    
-    
-    
         }
+
+    const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const MAX_SIZE_MB = 4;
+        const MAX_BYTES = MAX_SIZE_MB * 1024 * 1024; // 4MB en bytes
+        
+        if (e.target.files && e.target.files[0]) {
+            const file = e.target.files[0];
+            // Validar tipo de archivo
+            if (!file.type.startsWith('image/')) {
+                showNotification({message: 'Por favor, selecciona un archivo de imagen válido', type:"error"});
+    
+                e.target.value = ''; // Limpiar input
+                setImage(null);
+                return;
+            }
+            // Validar tamaño máximo
+            if (file.size > MAX_BYTES) {
+                showNotification({message: `El archivo es demasiado grande. Máximo permitido: ${MAX_SIZE_MB}MB`, type:"error"});
+    
+                e.target.value = '';
+                setImage(null);
+                return;
+            }
+        
+            // Si pasa las validaciones
+            setImage(file);
+        }
+    };
     
     if (error) {
         throw error; // Esto activará el error.tsx
@@ -143,9 +180,17 @@ export default function UpdateVotante() {
         <div className="min-h-screen flex items-center justify-center bg-gray-100 "> 
             <div className="">
                 <h1 className="text-3xl font-bold text-center mb-10">
-                    Modificar Votante
+                    Modificar Usuario
                 </h1>
                 <form className="">
+                    <div className="relative aspect-square">
+                                <Image
+                                src={process.env.NEXT_PUBLIC_API_URL+imageUrl}
+                                alt={"Imagen Actual"}
+                                className="w-10 h-10 rounded-full bg-red-200 object-cover"
+                                fill
+                                />
+                    </div>
                     {/* Campo: Nacionalidad */}
                     <div>
                         <label className="block text-sm font-medium text-gray-700">
@@ -233,13 +278,24 @@ export default function UpdateVotante() {
                             required
                         />
                     </div>
+                    {/* Campo: Imagen */}
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700">Imagen del Artista</label>
+                        <input
+                        type="file"
+                        onChange={handleImageChange}
+                        className="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-semibold file:cursor-pointer file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+                        accept="image/*"
+                        required
+                        />
+                    </div>
                     <div className="flex justify-center">
                         <NormalButton
                             type='button'
-                            text={loading ? 'Enviando...' : "Actualizar Votante"}
+                            text={loading ? 'Enviando...' : "Actualizar Usuario"}
                             color="bg-blue-600"
                             hoverClass="hover:bg-blue-400"
-                            extraClass="text-white w-full py-2 px-4 rounded-md md:w-full transition-colors"
+                            extraClass="text-white w-full py-2 px-4 rounded-md md:w-full transition-colors mt-4"
                             onClick={handleSendDataVoter} // Función para confirmar el voto
                         />
                     </div>

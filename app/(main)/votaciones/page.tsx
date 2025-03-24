@@ -7,14 +7,19 @@ import { Artist } from '../../ui/types';
 import { NormalButton } from '../../ui/components/buttons';
 import Image from 'next/image';
 import Link from 'next/link';
-// import { useRouter } from 'next/navigation';
+import Cookies from 'js-cookie';
+import { useRouter } from 'next/navigation';
 import Spin from '@/app/ui/components/spin';
+import { useNotification } from '@/context/NotificationContext';
 
 export default function VotacionesPage() {
 
     const [data, setData] = useState<[Artist]|null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<Error | null>(null);
+    const token = Cookies.get('auth_token');
+    const { showNotification } = useNotification();
+    const router = useRouter();
 
     useEffect(() => {
             fetch(process.env.NEXT_PUBLIC_API_URL+"candidates/get_candidates")
@@ -33,33 +38,74 @@ export default function VotacionesPage() {
     const [votedArtist, setVotedArtist] = useState<Artist | null>(null);
     const [isModalClosing, setIsModalClosing] = useState(false); // Estado para controlar el cierre del modal
 
-useEffect(() => {
-    fetch(process.env.NEXT_PUBLIC_API_URL + 'candidates/get_candidates')
-    .then((res) => res.json())
-    .then((data) => {
-        setData(data);
-        setLoading(false);
-});
-}, []);
+    useEffect(() => {
+        fetch(process.env.NEXT_PUBLIC_API_URL + 'candidates/get_candidates')
+        .then((res) => res.json())
+        .then((data) => {
+            setData(data);
+            setLoading(false);
+    });
+    }, []);
 
-const handleArtistClick = (artist: Artist) => {
-    setSelectedArtist(artist);
-    setIsModalClosing(false); // Reinicia el estado de cierre
-};
+    const handleArtistClick = (artist: Artist) => {
+        setSelectedArtist(artist);
+        setIsModalClosing(false); // Reinicia el estado de cierre
+    };
 
-const handleCloseModal = () => {
-    setIsModalClosing(true); // Activa la animación de cierre
-    setTimeout(() => {
-      setSelectedArtist(null); // Cierra el modal después de la animación
-    }, 200); // Duración de la animación fade-out (200ms)
-};
-const handleVote = (artist: Artist) => {
-    console.log("xx")
-    setVotedArtist(artist); // Guarda el artista votado
-    setSelectedArtist(null); // Cierra el modal
-};
+    const handleCloseModal = () => {
+        setIsModalClosing(true); // Activa la animación de cierre
+        setTimeout(() => {
+        setSelectedArtist(null); // Cierra el modal después de la animación
+        }, 200); // Duración de la animación fade-out (200ms)
+    };
+    const handleVote = (artist: Artist) => {
+        setVotedArtist(artist); // Guarda el artista votado
+        setSelectedArtist(null); // Cierra el modal
+    };
 
-    // const router = useRouter()
+    const handleSendDataVoter = async () =>{
+        
+        if (loading){
+            return
+        }
+
+        try {
+            console.log(votedArtist?.id)
+            setLoading(true);
+            const response_vote = await fetch(process.env.NEXT_PUBLIC_API_URL+"vote/create_vote/"+votedArtist?.id, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+    
+                setLoading(false)
+                if (!response_vote.ok) {
+                    const response_vote_update = await fetch(process.env.NEXT_PUBLIC_API_URL+"vote/update_vote/"+votedArtist?.id, {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${token}`
+                        }
+                    });
+                    if (!response_vote_update.ok){
+                        const message = await response_vote.json()
+                        console.log(message)
+                        showNotification({message: 'Error al Votar', type:"error"});
+                        return
+                    }
+                }
+    
+                showNotification({message: 'Voto Ejercido Correctamente', type:"success"});
+                router.push("/resultados/")
+    
+            } catch (err) {
+                showNotification({message: err instanceof Error ? err.message : 'Error desconocido', type:"error"});
+            } finally {
+                setLoading(false);
+            }
+    }
 
     if (error) {
         throw error; // Esto activará el error.tsx
@@ -103,16 +149,15 @@ const handleVote = (artist: Artist) => {
                         />
                     </div>
                     <h3 className="text-xl font-semibold mt-4">{votedArtist.name}</h3>
-                    <Link href={"/confirmarVoto/"+votedArtist.id}>
                         <div className="mt-4">
                             <NormalButton
                                 text="Confirmar voto"
                                 color="bg-green-600"
                                 hoverClass="hover:bg-green-500"
                                 extraClass="w-full text-white"
+                                onClick={handleSendDataVoter}
                             />
                         </div>
-                    </Link>
                 </div>
             )}
         <div className="mt-3">

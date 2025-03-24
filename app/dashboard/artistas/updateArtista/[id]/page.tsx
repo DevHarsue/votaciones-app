@@ -162,8 +162,9 @@ export default function UpdateArtista() {
                                         <Image
                                         src={process.env.NEXT_PUBLIC_API_URL+imageUrl}
                                         alt={"Imagen Actual"}
+                                        className="w-10 h-10 rounded-full bg-red-200 object-cover"
                                         fill
-                                        className="object-cover"
+
                                         />
                             </div>
                           {/* Campo: Nombre */}
