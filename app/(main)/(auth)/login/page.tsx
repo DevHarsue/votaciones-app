@@ -41,7 +41,7 @@ export default function LoginPage() {
             }
             if (!response.ok) throw new Error(data.error || 'Error de autenticación');
             Cookies.set('auth_token', data.access_token, { secure: true, sameSite: 'strict' });
-            router.push('/dashboard');
+            window.location.assign("/");
         } catch (err) {
             console.log(err)
         } finally {

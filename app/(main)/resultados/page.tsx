@@ -66,13 +66,13 @@ export default function ResultadosPage() {
                     <div className="relative w-16 h-16 mr-4">
                     <Image
                         src={process.env.NEXT_PUBLIC_API_URL+artist.data_candidate.image_url}
-                        alt={artist.data_candidate.name}
+                        alt={artist.data_candidate.starname}
                         fill
                         className="object-cover rounded-lg"
                     />
                     </div>
                     <div>
-                    <h2 className="text-xl font-bold">{artist.data_candidate.name}</h2>
+                    <h2 className="text-xl font-bold">{artist.data_candidate.starname}</h2>
                     <p className="text-gray-600">{artist.total_votes} votos</p>
                     </div>
                 </div>

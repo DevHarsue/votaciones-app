@@ -62,24 +62,18 @@ export default function Header() {
             <div className="flex items-center space-x-4 mt-4 md:mt-0">
                 {isAuthenticated && user ? (
                     <div className="flex items-center space-x-8 md:pr-10">
-                        <div className="flex items-center space-x-2">
-                            <Image
-                                src={process.env.NEXT_PUBLIC_API_URL+user?.image}
-                                width={40}
-                                height={40}
-                                alt="User Image"
-                                className="w-10 h-10 rounded-full bg-red-200"
-                            />
-                            <span className="text-white">{user.name}</span>
-                        </div>
                         <Link href="/dashboard">
-                            <NormalButton
-                                text="ACCEDER AL DASHBOARD"
-                                color="bg-transparent"
-                                hoverClass="hover:bg-blue-400"
-                                extraClass="text-white py-2 px-4 rounded-md border border-opacity-30 border-gray-800 shadow-lg"
-                                type="button"
-                            />
+                            <div className="flex items-center space-x-2">
+                                <Image
+                                    src={process.env.NEXT_PUBLIC_API_URL+user?.image}
+                                    width={40}
+                                    height={40}
+                                    alt="User Image"
+                                    className="w-10 h-10 rounded-full bg-red-200"
+                                />
+                                <span className="text-white cursor:pointer hover:text-blue-400 px-2">{user.name}</span>
+                            </div>
+
                         </Link>
                         <NormalButton
                             text="CERRAR SESIÓN 🔒 "

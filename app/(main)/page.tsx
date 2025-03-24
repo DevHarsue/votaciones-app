@@ -17,7 +17,7 @@ export default function CNUApp(){
                     />
                 </div>
                 
-                <div className={`${lusitana.className} pt-5 px-2 px-10 md:w-1/2 md:pt-20 text-center bg-gray-500 bg-opacity-20 p-6 rounded-lg border-2 border-gray-300 shadow-lg`}>
+                <div className={`${lusitana.className} pt-5 px-10 md:w-1/2 md:pt-20 text-center bg-gray-500 bg-opacity-20 p-6 rounded-lg border-2 border-gray-300 border-opacity-30 shadow-lg`}>
                     <h2 className='text-3xl md:text-5xl font-bold text-gray-800 mb-2  md:text-left shadow-sm'>
                         CNU: Donde la Fauna se Convierte en Estrella
                     </h2>
