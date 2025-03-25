@@ -4,6 +4,7 @@ import Image from "next/image";
 import { NormalButton } from "./buttons";
 import Link from "next/link";
 import Cookies from "js-cookie";
+import { useUser } from "@/context/user-context";
 
 export default function Header() {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -11,6 +12,7 @@ export default function Header() {
     const [userName, setUserName] = useState("Usuario"); // Nombre del usuario
     const [userImage, setUserImage] = useState("/default-user.png"); // Imagen del usuario
     const menuRef = useRef<HTMLDivElement | null>(null);
+    const { user } = useUser();
 
     // Verificar autenticación al cargar el componente
     useEffect(() => {
@@ -63,7 +65,7 @@ export default function Header() {
 
             {/* Botones sesion iniciada */}
             <div className="flex items-center space-x-4 mt-4 md:mt-0">
-                {isAuthenticated ? (
+                {isAuthenticated && user? (
                     <div className="flex items-center space-x-8 md:pr-10">
                         <Link href="/dashboard">
                             <div className="flex items-center space-x-2">
