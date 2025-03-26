@@ -9,13 +9,14 @@ import { validateName,validateGender,validateStarName } from "@/app/utils/valida
 import Image from "next/image";
 
 export default function UpdateArtista() {
-  
+
     const [name, setName] = useState("");
     const [lastname, setLastname] = useState("");
     const [starname, setStarname] = useState("");
     const [gender, setGender] = useState("");
     const [image, setImage] = useState<File | null>(null);
     const [imageUrl, setimageUrl] = useState("")
+    const [imagePreview, setImagePreview] = useState<string | null>(null);
     const [loading, setLoading] = useState(true);
     const params = useParams();
     const id = parseInt(params.id as string, 10);
@@ -24,12 +25,12 @@ export default function UpdateArtista() {
     const router = useRouter()
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-      const { name } = e.target;
-      if (name=="starname") setStarname(e.target.value)
-      if (name=="name") setName(e.target.value)
-      if (name=="lastname") setLastname(e.target.value)
-      if (name=="gender") setGender(e.target.value)
-  };
+        const { name } = e.target;
+            if (name=="starname") setStarname(e.target.value)
+            if (name=="name") setName(e.target.value)
+            if (name=="lastname") setLastname(e.target.value)
+            if (name=="gender") setGender(e.target.value)
+};
 
     const handleSubmit = async () => {
         setLoading(true)
@@ -103,12 +104,12 @@ export default function UpdateArtista() {
         },
         })
         .then((res) => {
-          if (!res.ok){
+            if (!res.ok){
             showNotification( {message: "Artista no Encontrado", type: "error"} )
 
             router.push("/dashboard/artistas")
-          }
-          return res.json()
+        }
+        return res.json()
         }).then((data) => {
             setName(data.name);
             setLastname(data.lastname);
@@ -121,31 +122,33 @@ export default function UpdateArtista() {
 
     // Función para manejar la selección de la imagen
     const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-      const MAX_SIZE_MB = 4;
-      const MAX_BYTES = MAX_SIZE_MB * 1024 * 1024; // 4MB en bytes
-      
-      if (e.target.files && e.target.files[0]) {
-          const file = e.target.files[0];
+        const MAX_SIZE_MB = 4;
+        const MAX_BYTES = MAX_SIZE_MB * 1024 * 1024; // 4MB en bytes
+
+        if (e.target.files && e.target.files[0]) {
+        const file = e.target.files[0];
           // Validar tipo de archivo
-          if (!file.type.startsWith('image/')) {
-              showNotification({message: 'Por favor, selecciona un archivo de imagen válido', type:"error"});
+        if (!file.type.startsWith('image/')) {
+            showNotification({message: 'Por favor, selecciona un archivo de imagen válido', type:"error"});
 
-              e.target.value = ''; // Limpiar input
-              setImage(null);
-              return;
-          }
+        e.target.value = ''; // Limpiar input
+        setImage(null);
+            return;
+        }
           // Validar tamaño máximo
-          if (file.size > MAX_BYTES) {
-              showNotification({message: `El archivo es demasiado grande. Máximo permitido: ${MAX_SIZE_MB}MB`, type:"error"});
+        if (file.size > MAX_BYTES) {
+            showNotification({message: `El archivo es demasiado grande. Máximo permitido: ${MAX_SIZE_MB}MB`, type:"error"});
 
-              e.target.value = '';
-              setImage(null);
-              return;
-          }
+        e.target.value = '';
+        setImage(null);
+            return;
+        }
       
           // Si pasa las validaciones
-          setImage(file);
-      }
+        setImage(file);
+        setImagePreview(URL.createObjectURL(file)); // Vista previa de la imagen
+        }
+      
   };
 
     if (loading) return <Spin />;
@@ -153,101 +156,111 @@ export default function UpdateArtista() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 "> 
-    <div className="">
-      <h1 className="text-3xl font-bold text-center mb-10">
-        Modificar Artista
-        </h1>
-      <form className="space-y-4 mb-5 mt-5">
+        <div className="">
+            <h1 className="text-3xl font-bold text-center mb-10">
+                Modificar Artista
+            </h1>
+            <form className="space-y-4 mb-5 mt-5">
                         <div className="relative aspect-square">
-                                        <Image
-                                        src={process.env.NEXT_PUBLIC_API_URL+imageUrl}
-                                        alt={"Imagen Actual"}
-                                        className="w-10 h-10 rounded-full bg-red-200 object-cover"
-                                        fill
-
-                                        />
-                            </div>
+                            <Image
+                            src={process.env.NEXT_PUBLIC_API_URL+imageUrl}
+                            alt={"Imagen Actual"}
+                            className="w-10 h-10 rounded-sm bg-red-200 object-cover"
+                            fill
+                            />
+                        </div>
                           {/* Campo: Nombre */}
-                          <div>
-                              <label className="block text-sm font-medium text-gray-700">
-                                  Nombre
-                              </label>
-                                  <input
-                                  name='name'
-                                  type="text"
-                                  value={name}
-                                  onChange={handleInputChange}
-                                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                  required
-                                  />
-                          </div>
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700">
+                                Nombre
+                            </label>
+                            <input
+                                name='name'
+                                type="text"
+                                value={name}
+                                onChange={handleInputChange}
+                                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                required
+                            />
+                        </div>
       
                           {/* Campo: Apellido */}
-                          <div>
-                              <label className="block text-sm font-medium text-gray-700">Apellido</label>
-                                  <input
-                                  name='lastname'
-                                  type="text"
-                                  value={lastname}
-                                  onChange={handleInputChange}
-                                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                  required
-                                  />
-                          </div>
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700">
+                                Apellido
+                            </label>
+                            <input
+                                name='lastname'
+                                type="text"
+                                value={lastname}
+                                onChange={handleInputChange}
+                                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                required
+                            />
+                        </div>
       
                           {/* Campo: Nombre Artístico */}
-                          <div>
-                              <label className="block text-sm font-medium text-gray-700">Nombre Artístico</label>
-                                  <input
-                                  type="text"
-                                  name='starname'
-                                  value={starname}
-                                  onChange={handleInputChange}
-                                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                  required
-                                  />
-                          </div>
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700">Nombre Artístico
+                            </label>
+                            <input
+                                type="text"
+                                name='starname'
+                                value={starname}
+                                onChange={handleInputChange}
+                                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                required
+                            />
+                        </div>
       
                           {/* Campo: Género */}
-                          <div>
-                              <label className="block text-sm font-medium text-gray-700">
-                                  Género
-                              </label>
-                                  <select
-                                  value={gender}
-                                  onChange={handleInputChange}
-                                  name='gender'
-                                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                  required
-                                  >
-                                      <option value="" disabled>Selecciona un género</option>
-                                      <option value="Masculino">Masculino</option>
-                                      <option value="Femenino">Femenino</option>
-                                  </select>
-                          </div>
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700">
+                                Género
+                            </label>
+                            <select
+                                value={gender}
+                                onChange={handleInputChange}
+                                name='gender'
+                                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                required
+                            >
+                                <option value="" disabled>Selecciona un género</option>
+                                <option value="Masculino">Masculino</option>
+                                <option value="Femenino">Femenino</option>
+                            </select>
+                        </div>
       
                           {/* Campo: Imagen */}
-                          <div>
-                              <label className="block text-sm font-medium text-gray-700">Imagen del Artista</label>
-                                  <input
-                                  type="file"
-                                  onChange={handleImageChange}
-                                  className="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-semibold file:cursor-pointer file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
-                                  accept="image/*"
-                                  required
-                                  />
-                          </div>
-      
-                          <NormalButton
-                              text='Enviar Solicitud'
-                              color='bg-custom-green-400'
-                              hoverClass='hover:bg-custom-green-500'
-                              extraClass='w-full text-white py-2 px-4 rounded-md md:w-full transition-colors'
-                              type='button'
-                              onClick={handleSubmit}
-                          />
-                      </form>
-      </div>
-  </div>  
-  );
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700">
+                                Imagen del   Artista
+                            </label>
+                            <input
+                                type="file"
+                                onChange={handleImageChange}
+                                className="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-semibold file:cursor-pointer file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+                                accept="image/*"
+                                required
+                            />
+                        </div>
+                        {/* Vista previa de la imagen */}
+                        {imagePreview && (
+                            <div className="mt-4 flex items-center justify-center">
+                                <img src={imagePreview} alt="Vista previa de la imagen" className="w-32 h-32 rounded-sm object-cover" />
+                            </div>
+                        )}
+
+                        <NormalButton
+                            text='Enviar Solicitud'
+                            color='bg-custom-green-400'
+                            hoverClass='hover:bg-custom-green-500'
+                            extraClass='w-full text-white py-2 px-4 rounded-md md:w-full transition-colors'
+                            type='button'
+                            onClick={handleSubmit}
+                        />
+                    </form>
+    </div>
+</div>  
+);
 }

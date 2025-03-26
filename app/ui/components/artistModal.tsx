@@ -14,7 +14,7 @@ return (
             <div className="relative aspect-square">
                 <Image
                     src={process.env.NEXT_PUBLIC_API_URL+artist.image_url}
-                    alt={artist.name}
+                    alt={artist.starname}
                     fill
                     className="object-cover"
                 />
@@ -35,7 +35,7 @@ return (
                         onClick={onVote}
                         className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-500 transition-colors"
                         >
-                        Votar por {artist.name}
+                        Votar por {artist.starname}
                         </button>
                     </div>
             </div>

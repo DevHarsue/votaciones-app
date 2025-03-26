@@ -148,7 +148,7 @@ export default function VotacionesPage() {
                             className="object-cover rounded-lg"
                         />
                     </div>
-                    <h3 className="text-xl font-semibold mt-4">{votedArtist.name}</h3>
+                    <h3 className="text-xl font-semibold mt-4">{votedArtist.starname}</h3>
                         <div className="mt-4">
                             <NormalButton
                                 text="Confirmar voto"
