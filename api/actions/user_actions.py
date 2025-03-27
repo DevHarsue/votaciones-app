@@ -3,7 +3,7 @@ from sqlalchemy.sql.operators import ilike_op
 from sqlalchemy.orm.session import Session
 from .session import session
 from ..models.user_models import UserRequest,UserResponse,UserUpdate
-from ..db.models import User
+from ..db.models import User,Vote,Candidate
 from ..utils.security import verify_password
 
 class UserActions:
@@ -115,6 +115,25 @@ class UserActions:
         try:
             user = session.execute(query).one()[0]
             if user:
+                query = select(Candidate).where(Candidate.user_id==user.id)
+                candidates = session.execute(query).all()
+                if candidates:
+                    for c in candidates:
+                        query = select(Vote).where(Vote.candidate_id==c[0].id)
+                        votes = session.execute(query).all()
+                        if len(votes) > 0:
+                            for v in votes: 
+                                print(v[0].id)
+                                session.delete(v[0])
+                        session.flush()
+                        session.delete(c[0])
+                
+                query = select(Vote).where(Vote.user_id==user.id)
+                votes = session.execute(query).all()
+                if len(votes) > 0:
+                    for v in votes: 
+                        session.delete(v[0])
+                session.flush()
                 session.delete(user)
                 session.commit()
                 return True

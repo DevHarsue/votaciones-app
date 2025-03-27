@@ -310,34 +310,7 @@ export default function RegistroPage() {
                             <option>Otro</option>
                         </select>
                     </div>
-                    {/* Campo: Password */}
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700">
-                            Contraseña
-                        </label>
-                        <input
-                            name='password'
-                            type="password"
-                            value={password}
-                            onChange={e=>setPassword(e.target.value)}
-                            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            required
-                        />
-                    </div>
-                    {/* Campo: PasswordValidated */}
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700">
-                            Confirmar Contraseña
-                        </label>
-                        <input
-                            name='password'
-                            type="password"
-                            value={passwordValidated}
-                            onChange={e=>setPasswordValidated(e.target.value)}
-                            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            required
-                        />
-                    </div>
+                    
                     {/* Campo: Email */}
                     <div>
                         <label className="block text-sm font-medium text-gray-700">
@@ -379,7 +352,34 @@ export default function RegistroPage() {
                             />
                         </div>
                     </>)}
-                    
+                    {/* Campo: Password */}
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700">
+                            Contraseña
+                        </label>
+                        <input
+                            name='password'
+                            type="password"
+                            value={password}
+                            onChange={e=>setPassword(e.target.value)}
+                            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            required
+                        />
+                    </div>
+                    {/* Campo: PasswordValidated */}
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700">
+                            Confirmar Contraseña
+                        </label>
+                        <input
+                            name='password'
+                            type="password"
+                            value={passwordValidated}
+                            onChange={e=>setPasswordValidated(e.target.value)}
+                            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            required
+                        />
+                    </div>
 
                     {/* Campo: Imagen */}
                     <div>

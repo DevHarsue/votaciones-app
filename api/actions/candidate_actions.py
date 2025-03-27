@@ -93,7 +93,6 @@ class CandidateActions:
         try:
             query = select(Vote).where(Vote.candidate_id==id)
             votes = session.execute(query).all()
-            print(votes)
             if len(votes) > 0:
                 for v in votes: 
                     session.delete(v[0])

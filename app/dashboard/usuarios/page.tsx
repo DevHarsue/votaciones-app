@@ -29,7 +29,7 @@ export default function UsuariosPage() {
                 'Authorization': `Bearer ${token}`
             },
         })
-        .then((res) => res.json())
+        .then((res) => res.status==401 ? window.location.assign("/login"): res.json() )
         .then((data) => {
             setData(data);
             setLoading(false);
@@ -70,7 +70,6 @@ export default function UsuariosPage() {
 
     if (loading) return <Spin />;
     if (!data) return <div>No se encontraron Usuarios</div>
-
     const filteredData = data.filter((usuario) =>
         usuario.name.toLowerCase().includes(searchTerm.toLowerCase())
     );
