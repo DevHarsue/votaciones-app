@@ -5,6 +5,7 @@ import Image from "next/image";
 import { NormalButton } from "../ui/components/buttons";
 import Link from "next/link";
 import Spin from "../ui/components/spin";
+import { use } from "react";
 
 export default function Dashboard(){
     const {user} = useUser()
@@ -12,7 +13,7 @@ export default function Dashboard(){
     console.log(process.env.NEXT_PUBLIC_API_URL+user.image_url)
     return(
     <main className='pl-10 flex flex-col items-center'>
-        <h1 className=''>
+        <h1 className="text-2xl font-bold mb-4 text-center">
             INFORMACION PERSONAL
         </h1>
         <div className="">
@@ -26,27 +27,23 @@ export default function Dashboard(){
             </div>
             {/* Campo: Nacionalidad */}
             <div>
-                <p>{user.nationality=="V" ? "Venezolano" : "Extranjero"}</p>
+                <p className="text-xl font-semibold ">Nacionalidad: {user.nationality=="V" ? "Venezolano" : "Extranjero"}</p>
             </div>
             {/* Campo: Cédula */}
             <div>
-                <p>{user.ci}</p>
+                <p className="text-xl font-semibold">Cedula: {user.ci}</p>
             </div>
             {/* Campo: Nombre */}
             <div>
-                <p>{user.name}</p>
-            </div>
-            {/* Campo: Apellido */}
-            <div>
-                <p>{user.lastname}</p>
+                <p className="text-xl font-semibold">Nombre Completo: {user.name} {user.lastname}</p>
             </div>
             {/* Campo: Genero */}
             <div>
-                <p>{user.gender == "M" ? "Masculino": user.gender=="F"? "Femenino" : "Otro"}</p>
+                <p className="text-xl font-semibold">Genero: {user.gender == "M" ? "Masculino": user.gender=="F"? "Femenino" : "Otro"}</p>
             </div>
             {/* Campo: Email */}
             <div>
-                <p>{user.email}</p>
+                <p className="text-xl font-semibold">Email: {user.email}</p>
             </div>
             
             <div className="flex justify-center">

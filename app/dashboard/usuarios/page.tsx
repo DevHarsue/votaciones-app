@@ -71,7 +71,7 @@ export default function UsuariosPage() {
     if (loading) return <Spin />;
     if (!data) return <div>No se encontraron Usuarios</div>
     const filteredData = data.filter((usuario) =>
-        usuario.name.toLowerCase().includes(searchTerm.toLowerCase())
+        (usuario.name+" "+usuario.lastname).toLowerCase().includes(searchTerm.toLowerCase())
     );
     return (
         <main>
