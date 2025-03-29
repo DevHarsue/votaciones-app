@@ -25,6 +25,16 @@ export default function Dashboard() {
 
       {/* Botones en fila */}
       <div className="w-full flex flex-col md:flex-row gap-0">
+        {/* Botón de Inicio */}
+        <Link href="/dashboard" className="flex-grow">
+          <NormalButton
+            text="Inicio"
+            color="bg-blue-900"
+            hoverClass="hover:bg-blue-800"
+            extraClass="w-full md:w-full text-white py-3 px-4 rounded-none transition-colors text-center border-l-2 border-blue-800"
+            type="button"
+          />
+        </Link>
         {/* Botón de Usuarios */}
         <Link href="/dashboard/artistas" className="flex-grow">
           <NormalButton
@@ -33,7 +43,6 @@ export default function Dashboard() {
             hoverClass="hover:bg-blue-800"
             extraClass="w-full md:w-full text-white py-3 px-4 rounded-none transition-colors text-center border-l-2 border-blue-800"
             type="button"
-            onClick={() => console.log("Usuarios clickeado")}
           />
         </Link>
 
@@ -45,7 +54,6 @@ export default function Dashboard() {
             hoverClass="hover:bg-blue-800"
             extraClass="w-full md:w-full text-white py-3 px-4 rounded-none transition-colors text-center border-l-2 border-blue-800"
             type="button"
-            onClick={() => console.log("Votantes clickeado")}
           />
         </Link>
 

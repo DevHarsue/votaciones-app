@@ -3,8 +3,15 @@
 import { createContext, useContext, useState } from 'react';
 
 export type User = {
+    id: number;
+    nationality: string;
+    ci: number;
     name: string;
-    image: string;
+    lastname: string;
+    gender: string;
+    email: string;
+    rol: string;
+    image_url: string;
 };
 
 type UserContextType = {

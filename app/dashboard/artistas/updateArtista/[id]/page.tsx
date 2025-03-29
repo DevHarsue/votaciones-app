@@ -113,7 +113,7 @@ export default function UpdateArtista() {
             setName(data.name);
             setLastname(data.lastname);
             setStarname(data.starname);
-            setGender(data.gender == "M" ? "Masculino" : "Femenino");
+            setGender(data.gender == "M" ? "Masculino" : data.gender== "F" ? "Femenino": "Otro");
             setimageUrl(data.image_url)
             setLoading(false);
         });
@@ -223,6 +223,7 @@ export default function UpdateArtista() {
                                       <option value="" disabled>Selecciona un género</option>
                                       <option value="Masculino">Masculino</option>
                                       <option value="Femenino">Femenino</option>
+                                      <option value="Otro">Otro</option>
                                   </select>
                           </div>
       

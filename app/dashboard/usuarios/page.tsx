@@ -97,7 +97,7 @@ export default function UsuariosPage() {
                     />
                 ))}
             </div>
-            <Link href="/">
+            <Link href="/dashboard">
                 <NormalButton
                     text='Volver a Inicio'
                     color='text-blue-600'

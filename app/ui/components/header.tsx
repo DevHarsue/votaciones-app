@@ -21,7 +21,7 @@ export default function Header() {
         if (token && user) {
             setIsAuthenticated(true);
             setUserName(user.name || "Usuario");
-            setUserImage(user.image || "/default-user.png");
+            setUserImage(user.image_url || "/default-user.png");
         }
     }, []);
 
@@ -70,7 +70,7 @@ export default function Header() {
                         <Link href="/dashboard">
                             <div className="flex items-center space-x-2">
                                 <Image
-                                    src={process.env.NEXT_PUBLIC_API_URL+user?.image}
+                                    src={process.env.NEXT_PUBLIC_API_URL+user?.image_url}
                                     width={40}
                                     height={40}
                                     alt="User Image"

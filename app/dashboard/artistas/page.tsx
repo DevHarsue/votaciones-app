@@ -90,7 +90,7 @@ export default function ArtistasPage() {
             </div>
             {/* Botón: Volver a Inicio */}
             <div className='mt-5'>
-                <Link href="/">
+                <Link href="/dashboard">
                     <NormalButton
                         text='Volver a Inicio'
                         color='text-blue-600'

@@ -3,7 +3,7 @@ from typing import Annotated
 from fastapi.responses import JSONResponse
 from fastapi.exceptions import HTTPException
 from typing import List
-from ..models.user_models import UserResponse,UserForm,UserFormUpdate
+from ..models.user_models import UserResponse,UserForm,UserFormUpdate,UserPasswordUpdate
 from ..actions.user_actions import UserActions
 from ..actions.code_actions import CodeActions
 from ..utils.security import hash_password,generate_token_user
@@ -84,7 +84,6 @@ async def update_self_user(data:depend_data,form_data: Annotated[UserFormUpdate,
         raise HTTPException(status_code=status.HTTP_409_CONFLICT,detail="Code Incorrect")
     
     
-    form_data.user.password = hash_password(form_data.user.password) if form_data.user.password else None
     user_response = actions.update_user(email=data["email"],user=form_data.user)
     if not user_response:
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,detail="User not updated")
@@ -102,6 +101,22 @@ async def update_self_user(data:depend_data,form_data: Annotated[UserFormUpdate,
     code_actions.delete_code(email=data["email"])
     
     return JSONResponse(content=user_response.model_dump(),status_code=status.HTTP_200_OK)
+
+@user_router.put("/update_self_password",status_code=status.HTTP_200_OK,tags=["User"],dependencies=list_dependencies)
+async def update_self_password(data:depend_data,user_password: UserPasswordUpdate) -> JSONResponse:
+    actions = UserActions()
+    user = actions.authenticate_user(email=data["email"],password=user_password.old_password)
+    if not user:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,detail="Incorrect Password")
+    
+    user = actions.update_password(email=data["email"],password=user_password.new_password)
+    if not user:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,detail="Password not changed")
+    
+    return JSONResponse(content=user.model_dump(),status_code=status.HTTP_200_OK)
+        
+    
+    
 
 @user_router.put("/update_user/{id}",status_code=status.HTTP_200_OK,tags=["User"],dependencies=list_dependencies)
 async def update_user(data:depend_data,form_data: Annotated[UserFormUpdate,Depends()],id: int = Path(gt=0)) -> JSONResponse:
