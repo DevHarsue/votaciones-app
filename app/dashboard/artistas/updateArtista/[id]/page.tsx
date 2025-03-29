@@ -167,7 +167,7 @@ export default function UpdateArtista() {
                             <Image
                             src={process.env.NEXT_PUBLIC_API_URL+imageUrl}
                             alt={"Imagen Actual"}
-                            className="w-10 h-10 rounded-sm bg-red-200 object-cover"
+                            className="w-10 h-10 rounded-full bg-red-200 object-cover"
                             fill
                             />
                         </div>
@@ -250,7 +250,7 @@ export default function UpdateArtista() {
                         {/* Vista previa de la imagen */}
                         {imagePreview && (
                             <div className="mt-4 flex items-center justify-center">
-                                <img src={imagePreview} alt="Vista previa de la imagen" className="w-32 h-32 rounded-sm object-cover" />
+                                <img src={imagePreview} alt="Vista previa de la imagen" className="w-32 h-32 rounded-full object-cover" />
                             </div>
                         )}
 

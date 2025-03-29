@@ -214,7 +214,7 @@ export default function IncripcionPage() {
                     {/* Vista previa de la imagen */}
                     {imagePreview && (
                         <div className="mt-4 flex items-center justify-center">
-                            <img src={imagePreview} alt="Vista previa de la imagen" className="w-32 h-32 rounded-sm object-cover" />
+                            <img src={imagePreview} alt="Vista previa de la imagen" className="w-32 h-32 rounded-full object-cover" />
                         </div>
                     )}
 

@@ -207,6 +207,7 @@ export default function UpdateVotante() {
         
             // Si pasa las validaciones
             setImage(file);
+            setImagePreview(URL.createObjectURL(file)); // Vista previa de la imagen
         }
     };
     

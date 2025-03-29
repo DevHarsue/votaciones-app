@@ -74,7 +74,7 @@ export default function UpdateVotante() {
         <div className="min-h-screen flex items-center justify-center bg-gray-100 "> 
             <div className="">
                 <h1 className="text-3xl font-bold text-center mb-10">
-                    Actualizar Datos
+                    Actualizar Contraseña
                 </h1>
                 <form className="">
                     {/* Campo: OldPassword */}

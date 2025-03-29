@@ -26,7 +26,7 @@ def generate_code(code: CodeRequest):
     if not code:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,detail="Code not keeped")
     
-    # send_code(receiver=code.email,code=code_response.code)
+    send_code(receiver=code.email,code=code_response.code)
 
     
     return JSONResponse(content=code_response.model_dump(),status_code=status.HTTP_201_CREATED)
