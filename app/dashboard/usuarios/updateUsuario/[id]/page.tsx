@@ -55,7 +55,6 @@ export default function UpdateVotante() {
             setNationality(data.nationality=="V"? "Venezolano":"Extranjero")
             setEmail(data.email)
             setImageUrl(data.image_url)
-
             setLoading(false)
         })
     },[id,token])
@@ -168,6 +167,7 @@ export default function UpdateVotante() {
         
             // Si pasa las validaciones
             setImage(file);
+            setImagePreview(URL.createObjectURL(file)); // Vista previa de la imagen
         }
     };
     
