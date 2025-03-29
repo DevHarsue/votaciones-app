@@ -10,10 +10,8 @@ class CodeActions:
     @session
     def create_code(self,session:Session,code: CodeRequest) -> CodeResponse:
         try:
-            expire = datetime.now(UTC) + timedelta(minutes=10)
             code_db = Code(
                 code=generate_code(),
-                expire=expire,
                 email=code.email
             )
             session.add(code_db)
@@ -22,7 +20,7 @@ class CodeActions:
             print(e)
             return False
         
-        return CodeResponse(email=code_db.email,code=code_db.code,expire=code_db.expire)
+        return CodeResponse(email=code_db.email,code=code_db.code)
 
     @session
     def validate_code(self,session:Session,code: int,email:str) -> CodeResponse:
@@ -33,7 +31,7 @@ class CodeActions:
             print(e)
             return False
         
-        return CodeResponse(email=code_db.email,code=code_db.code,expire=code_db.expire)
+        return CodeResponse(email=code_db.email,code=code_db.code)
         
     
     @session

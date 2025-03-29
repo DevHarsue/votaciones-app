@@ -1,4 +1,4 @@
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine,text
 from sqlalchemy.orm import sessionmaker,declarative_base
 from ..utils.env import USER,PASSWORD,HOST,DATABASE
 
@@ -10,3 +10,4 @@ Session = sessionmaker(bind=engine)
 
 # Para crear el modelo 
 Base = declarative_base()
+

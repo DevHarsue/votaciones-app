@@ -1,5 +1,6 @@
-from sqlalchemy import Column, Integer,ForeignKey,Text,CHAR,DATE,DateTime,Enum
+from sqlalchemy import Column, Integer,ForeignKey,Text,CHAR,DATE,TIMESTAMP,Enum,text
 from .config import Base,engine
+from apscheduler.schedulers.background import BackgroundScheduler
 
 roles = ("ADMIN","USER")
 nationalities = ("V","E")
@@ -30,7 +31,7 @@ class Code(Base):
     id = Column(Integer, primary_key=True,autoincrement=True)
     code = Column(Integer,nullable=False)
     email = Column(Text, nullable=False,unique=True)
-    expire = Column(DateTime,nullable=False)
+    created_at = Column(TIMESTAMP, server_default=text("CURRENT_TIMESTAMP"))
 
 class Candidate(Base):
     __tablename__ = 'candidates'
@@ -49,5 +50,15 @@ class Vote(Base):
     user_id = Column(Integer, ForeignKey('users.id'),nullable=False,unique=True)
     candidate_id = Column(Integer, ForeignKey('candidates.id'),nullable=False)
     voting_date = Column(DATE,nullable=False)
+
+def delete_codes_expires():
+    with engine.connect() as connection:
+        connection.execute(text("DELETE FROM codes WHERE created_at < NOW() - INTERVAL '5 minutes'"))
+        connection.commit()
+
+# Configura el scheduler
+scheduler = BackgroundScheduler()
+scheduler.add_job(delete_codes_expires, 'interval', minutes=1)  # Ejecutar cada minuto
+scheduler.start()
 
 Base.metadata.create_all(bind=engine)

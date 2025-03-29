@@ -1,6 +1,5 @@
 from pydantic import BaseModel,validator
 from re import findall,fullmatch
-from datetime import datetime
 
 class CodeRequest(BaseModel):
     email: str
@@ -19,4 +18,3 @@ class CodeRequest(BaseModel):
 class CodeResponse(CodeRequest):
     email: str
     code: int
-    expire: datetime

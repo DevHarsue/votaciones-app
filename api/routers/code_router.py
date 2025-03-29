@@ -27,11 +27,9 @@ def generate_code(code: CodeRequest):
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,detail="Code not keeped")
     
     # send_code(receiver=code.email,code=code_response.code)
+
     
-    model_data = code_response.model_dump()
-    model_data['expire'] = model_data['expire'].isoformat()
-    
-    return JSONResponse(content=model_data,status_code=status.HTTP_201_CREATED)
+    return JSONResponse(content=code_response.model_dump(),status_code=status.HTTP_201_CREATED)
     
 
 @code_router.delete("/delete_codes",status_code=status.HTTP_200_OK,dependencies=list_dependencies)
