@@ -170,3 +170,16 @@ class CandidateActions:
             print(e)
             
         return False
+    
+    @session
+    def get_candidates_by_user_id(self,session: Session,user_id:int) -> List[CandidateResponse]:
+        query = select(Candidate).where(Candidate.user_id==user_id)
+        candidates = session.execute(query).all()
+        return [CandidateResponse(
+                    id=candidate[0].id,
+                    name=candidate[0].name,
+                    lastname=candidate[0].lastname,
+                    starname=candidate[0].starname,
+                    gender=candidate[0].gender,
+                    image_url=candidate[0].image_url
+                ) for candidate in candidates]

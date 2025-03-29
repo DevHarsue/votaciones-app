@@ -7,6 +7,7 @@ import Spin from "@/app/ui/components/spin";
 import { NormalButton } from "@/app/ui/components/buttons";
 import { validateName,validateGender,validateStarName } from "@/app/utils/validations";
 import Image from "next/image";
+import { useUser } from "@/context/user-context";
 
 export default function UpdateArtista() {
   
@@ -22,7 +23,8 @@ export default function UpdateArtista() {
     const token = Cookies.get('auth_token');
     const {showNotification} = useNotification()
     const router = useRouter()
-
+    const {user} = useUser()
+    
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
       const { name } = e.target;
       if (name=="starname") setStarname(e.target.value)
@@ -65,7 +67,7 @@ export default function UpdateArtista() {
                 form.append('image', image);
             }
             
-            const response = await fetch(process.env.NEXT_PUBLIC_API_URL+'candidates/update_candidate/', {
+            const response = await fetch(process.env.NEXT_PUBLIC_API_URL+(user?.rol=="ADMIN" ? "candidates/update_candidate" : "candidates/update_self_candidate"), {
                 method: 'PUT',
                 headers: {
                     'accept': 'application/json',

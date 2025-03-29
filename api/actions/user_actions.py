@@ -9,7 +9,7 @@ from ..utils.security import verify_password,hash_password
 class UserActions:
     
     @session
-    def create_user(self,session: Session,user: UserRequest, rol: str = "ADMIN") -> UserResponse:
+    def create_user(self,session: Session,user: UserRequest, rol: str = "USER") -> UserResponse:
         user = User(
             nationality = user.nationality,
             ci = user.ci,

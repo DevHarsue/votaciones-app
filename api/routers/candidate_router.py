@@ -74,7 +74,6 @@ async def update_candidate(form_data: Annotated[CandidateFormUpdate,Depends()],d
     
 @candidate_router.put("/update_self_candidate",status_code=status.HTTP_200_OK,dependencies=list_dependencies)
 async def update_self_candidate(form_data: Annotated[CandidateFormUpdate,Depends()],data:depend_data) -> CandidateResponse:
-    
     actions = CandidateActions()
     
     candidate_user_id = actions.get_candidate_user_id(id=form_data.id)
@@ -143,3 +142,10 @@ def get_candidates_filter(text_filter: str = Path()) -> List[CandidateResponse]:
     
     return JSONResponse(content=[c.model_dump() for c in candidates],status_code=status.HTTP_200_OK)
     
+
+@candidate_router.get("/get_candidates_self",status_code=status.HTTP_200_OK,dependencies=list_dependencies)
+def get_candidates_self(data:depend_data) -> List[CandidateResponse]:
+    actions = CandidateActions()
+    candidates = actions.get_candidates_by_user_id(int(data["id"]))
+    return JSONResponse(content=[candidate.model_dump() for candidate in candidates],
+                        status_code=status.HTTP_200_OK)

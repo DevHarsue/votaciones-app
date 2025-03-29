@@ -8,6 +8,7 @@ import { useNotification } from "@/context/NotificationContext";
 import { useRouter } from "next/navigation";
 import Cookies from "js-cookie";
 import Spin from "@/app/ui/components/spin";
+import { useUser } from "@/context/user-context";
 
 export default function ArtistasPage() {
     const [data, setData] = useState<[Artist]|null>(null);
@@ -16,14 +17,26 @@ export default function ArtistasPage() {
     const { showNotification } = useNotification();
     const router = useRouter();
     const token = Cookies.get('auth_token');    
+    const {user} = useUser()
     useEffect(() => {
-        fetch(process.env.NEXT_PUBLIC_API_URL + "candidates/get_candidates")
-            .then((res) => res.json())
-            .then((data) => {
-                setData(data);
-                setLoading(false);
+        setLoading(true)
+        if (user!=null){
+            fetch(
+                process.env.NEXT_PUBLIC_API_URL + (user?.rol=="ADMIN" ? "candidates/get_candidates" : "candidates/get_candidates_self"),
+                {
+                    method:"GET",
+                    headers: {
+                        'accept': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                })
+                .then((res) => res.json())
+                .then((data) => {
+                    setData(data);
+                    setLoading(false);
             });
-    }, []);
+        }
+    }, [user]);
 
     const handleEdit = (id: number) => {
         router.push("/dashboard/artistas/updateArtista/"+id)
