@@ -12,7 +12,7 @@ import Spin from '@/app/ui/components/spin';
 export default function IncripcionPage() {
     const [image, setImage] = useState<File | null>(null);
     const { showNotification } = useNotification();
-        const [imagePreview, setImagePreview] = useState<string | null>(null);
+    const [imagePreview, setImagePreview] = useState<string | null>(null);
     const [formData, setFormData] = useState({
         name: '',
         lastname: '',
