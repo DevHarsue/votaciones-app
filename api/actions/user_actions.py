@@ -4,12 +4,12 @@ from sqlalchemy.orm.session import Session
 from .session import session
 from ..models.user_models import UserRequest,UserResponse,UserUpdate
 from ..db.models import User,Vote,Candidate
-from ..utils.security import verify_password
+from ..utils.security import verify_password,hash_password
 
 class UserActions:
     
     @session
-    def create_user(self,session: Session,user: UserRequest, rol: str = "ADMIN") -> UserResponse:
+    def create_user(self,session: Session,user: UserRequest, rol: str = "USER") -> UserResponse:
         user = User(
             nationality = user.nationality,
             ci = user.ci,
@@ -68,7 +68,8 @@ class UserActions:
                     lastname=user_db.lastname,
                     gender=user_db.gender,
                     email=user_db.email,
-                    rol=user_db.rol
+                    rol=user_db.rol,
+                    image_url=user_db.image_url
                 )
         except Exception as e:
             print(e)    
@@ -93,7 +94,6 @@ class UserActions:
             user_db.lastname = user.lastname if user.lastname else user_db.lastname
             user_db.gender = user.gender if user.gender else user_db.gender
             user_db.email = user.email if user.email else user_db.email
-            user_db.password = user.password if user.password else user_db.password
             user_db.rol = rol if rol!="" else user_db.rol
             session.commit()
             return UserResponse(
@@ -216,3 +216,26 @@ class UserActions:
                     rol=user_db.rol,
                     image_url=user_db.image_url
                 )
+    
+    @session
+    def update_password(self,session: Session,email:str,password:str) -> UserResponse:
+        query = select(User).where(User.email==email)
+        try:
+            user_db = session.execute(query).one()[0]
+            user_db.password = hash_password(password=password)
+            session.commit()
+            return UserResponse(
+                id=user_db.id,
+                nationality=user_db.nationality,
+                ci=user_db.ci,
+                name=user_db.name,
+                lastname=user_db.lastname,
+                gender=user_db.gender,
+                email=user_db.email,
+                rol=user_db.rol,
+                image_url=user_db.image_url
+                
+            )
+        except Exception as e:
+            print(e)    
+        return None

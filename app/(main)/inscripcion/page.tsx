@@ -195,6 +195,7 @@ export default function IncripcionPage() {
                                 <option value="" disabled>Selecciona un género</option>
                                 <option value="Masculino">Masculino</option>
                                 <option value="Femenino">Femenino</option>
+                                <option value="Otro">Otro</option>
                             </select>
                     </div>
 

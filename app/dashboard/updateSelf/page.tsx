@@ -8,7 +8,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { User } from "@/app/ui/types";
 import { NormalButton } from "@/app/ui/components/buttons";
-import { validateGender, validateCI,validateNationality,validateName,validateEmail } from "@/app/utils/validations";
+import { validateGender, validateCI, validateNationality, validateName, validateEmail, validateCode } from "@/app/utils/validations";
+import { useUser } from "@/context/user-context";
 
 
 export default function UpdateVotante() {
@@ -27,37 +28,32 @@ export default function UpdateVotante() {
     const [error, setError] = useState<Error | null>(null);
     const token = Cookies.get('auth_token');
     const params = useParams();
-    const id = parseInt(params.id as string, 10);;
     const {showNotification} = useNotification()
     const router = useRouter()
 
+    const { user, setUser } = useUser()
+
+    const [showConfirmationCode, setShowConfirmationCode] = useState(false);
+    const [codeSend,setCodeSend] = useState(false)
+    const [emailFinal, setEmailFinal] = useState("");
+    const [confirmationCode, setConfirmationCode] = useState('');
+
+
     useEffect(()=>{
-        fetch(process.env.NEXT_PUBLIC_API_URL+"get_user_by_id/"+id,
-            {
-                method:"GET",
-                headers: {
-                    'accept': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                },
-            }
-        ).then(response=>{
-            if (!response.ok){
-                showNotification( {message: "Usuario no Encontrado", type: "error"} )
-                router.push("/dashboard/usuarios")
-            }
-            return response.json()
-        }).then(data=>{
-            setData(data)
-            setName(data.name)
-            setLastname(data.lastname)
-            setGender(data.gender=="M" ? "Masculino" : data.gender =="F" ? "Femenino" : "Otro")
-            setCi(data.ci)
-            setNationality(data.nationality=="V"? "Venezolano":"Extranjero")
-            setEmail(data.email)
-            setImageUrl(data.image_url)
-            setLoading(false)
-        })
-    },[id,token])
+
+        setLoading(true)
+        if (user!=null){
+            setData(user)
+            setName(user.name)
+            setLastname(user.lastname)
+            setGender(user.gender=="M" ? "Masculino" : user.gender=="F" ? "Femenino": "Otro")
+            setCi(user.ci.toString())
+            setNationality(user.nationality=="V"? "Venezolano":"Extranjero")
+            setEmail(user.email)
+            setImageUrl(user.image_url)
+        }
+        setLoading(false)
+    },[user])
     
     const handleSendDataVoter = async () =>{
             if (!data) return
@@ -88,12 +84,18 @@ export default function UpdateVotante() {
                 showNotification( { message: 'Seleccione un Genero', type: 'error' } )
                 return
             }
-            if (!validateEmail(email)){
-                showNotification( { message: 'Email Invalido', type: 'error' } )
+            if (!showConfirmationCode){
+                showNotification( { message: 'Envia el codigo de Confirmación', type: 'error' } )
+                setLoading(false);
                 return
             }
             
-            
+            const code = parseInt(confirmationCode)
+            if (!validateCode(code)){
+                showNotification( { message: 'Codigo Invalido', type: 'error' } )
+                setLoading(false);
+                return
+            }
             try {
                 const form = new FormData();
                 form.append('nationality', nationality[0]);
@@ -101,14 +103,14 @@ export default function UpdateVotante() {
                 form.append('name', name);
                 form.append('lastname', lastname);
                 form.append('gender', gender[0]);
-                form.append('email', email);
-                form.append("password","")
+                form.append('email', emailFinal);
+                form.append('code', code.toString());
                 if(image){
                     form.append('image', image);
                 }
                 console.log(form.entries().forEach(e=>console.log(e)))
                 setLoading(true);
-                const response = await fetch(process.env.NEXT_PUBLIC_API_URL+"update_user/"+id, {
+                const response = await fetch(process.env.NEXT_PUBLIC_API_URL+"update_self_user/", {
                     method: 'PUT',
                     headers: {
                         'accept': 'application/json',
@@ -121,27 +123,65 @@ export default function UpdateVotante() {
                     const message = error_message.detail
     
                     if (message.includes("Email")){
-                        showNotification({message: "Ya existe un registro con ese correo electronico.", type:"error"});
+                        showNotification({message: "Correo enlazado a otra cuenta.", type:"error"});
                     }
     
                     if (message.includes("CI")){
-                        showNotification({message: "Ya existe un registro con esa Cedula", type:"error"});
+                        showNotification({message: "Cedula enlazada a otra cuenta", type:"error"});
                     }
     
                     return
                 }
                 if (!response.ok) throw new Error('Error en la solicitud');
                 
-                
-                showNotification({message: 'Usuario Actualizado Correctamente', type:"success"});
-                router.push("/dashboard/usuarios")
+                const data = await response.json()
+                setUser(data)
+                showNotification({message: 'Datos Actualizados Correctamente', type:"success"});
+
+                router.push("/dashboard")
             } catch (err) {
                 showNotification({message: err instanceof Error ? err.message : 'Error desconocido', type:"error"});
             } finally {
                 setLoading(false);
             }
-        }
+    }
 
+    const handleSendCode = async ()=>{
+        if (loading) return
+        setLoading(true)
+        
+        if (!validateEmail(email)){
+            showNotification( { message: 'Email Invalido', type: 'error' } )
+            setLoading(false)
+            return
+        }
+        setEmailFinal(email)
+        
+        try{
+            const response = await fetch(process.env.NEXT_PUBLIC_API_URL+"code/generate_code",{
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    email
+                })
+            });
+
+            if (!response.ok) throw new Error('Error en la solicitud');
+
+            setShowConfirmationCode(true)
+            setCodeSend(true)
+            showNotification({message: "Codigo Enviado", type:"success"});
+        } catch (err) {
+            showNotification({message: err instanceof Error ? err.message : 'Error desconocido', type:"error"});
+        } finally {
+            setLoading(false);
+        }
+        
+
+    }
+    
     const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const MAX_SIZE_MB = 4;
         const MAX_BYTES = MAX_SIZE_MB * 1024 * 1024; // 4MB en bytes
@@ -167,7 +207,6 @@ export default function UpdateVotante() {
         
             // Si pasa las validaciones
             setImage(file);
-            setImagePreview(URL.createObjectURL(file)); // Vista previa de la imagen
         }
     };
     
@@ -175,13 +214,13 @@ export default function UpdateVotante() {
         throw error; // Esto activará el error.tsx
     }
 
-    if (loading) return <Spin />;
+    if (loading || data==null) return <Spin />;
 
     return (
         <div className="min-h-screen flex items-center justify-center bg-gray-100 "> 
             <div className="">
                 <h1 className="text-3xl font-bold text-center mb-10">
-                    Modificar Usuario
+                    Actualizar Datos
                 </h1>
                 <form className="">
                     <div className="relative aspect-square">
@@ -280,17 +319,44 @@ export default function UpdateVotante() {
                             required
                         />
                     </div>
-                   {/* Campo: Imagen */}
-                    <div>
-                            <label className="block text-sm font-medium text-gray-700">Imagen de Usuario</label>
+                    {/* Botón: Enviar Codigo */}
+                    <div className="flex justify-center py-2">
+                        <NormalButton
+                            text={!codeSend ? (loading ? 'Enviando...' : "Enviar Codigo") : "Reenviar Codigo"  }
+                            color="bg-green-600"
+                            hoverClass="hover:bg-green-500"
+                            extraClass="w-full md:w-auto text-white py-2 px-4 rounded-md transition-colors"
+                            type="button"
+                            onClick= {handleSendCode}
+                        />
+                    </div> 
+                    {showConfirmationCode &&(
+                    <>
+                        {/* Campo: Código de Confirmación */}
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 text-center">
+                                INGRESA EL CÓDIGO DE CONFIRMACIÓN
+                            </label>
                             <input
-                                type="file"
-                                onChange={handleImageChange}
-                                className="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-semibold file:cursor-pointer file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
-                                accept="image/*"
+                                type="number"
+                                value={confirmationCode}
+                                onChange={(e) => setConfirmationCode(e.target.value)}
+                                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                                 required
                             />
                         </div>
+                    </>)}
+                    {/* Campo: Imagen */}
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700">Imagen de Usuario</label>
+                        <input
+                            type="file"
+                            onChange={handleImageChange}
+                            className="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-semibold file:cursor-pointer file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+                            accept="image/*"
+                            required
+                        />
+                    </div>
 
                     {/* Vista previa de la imagen */}
                     {imagePreview && (

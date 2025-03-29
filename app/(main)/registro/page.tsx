@@ -38,8 +38,6 @@ export default function RegistroPage() {
         setLoading(true);
 
         // Validaciones
-
-        console.log(nationality)
         if (!validateNationality(nationality)) {
             showNotification({ message: "Seleccione su nacionalidad", type: "error" });
             setLoading(false);
@@ -188,7 +186,7 @@ export default function RegistroPage() {
         }
         
 
-        }
+    }
     // Función para manejar la selección de la imagen
     const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const MAX_SIZE_MB = 4;

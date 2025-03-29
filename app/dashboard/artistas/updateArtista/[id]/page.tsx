@@ -7,6 +7,7 @@ import Spin from "@/app/ui/components/spin";
 import { NormalButton } from "@/app/ui/components/buttons";
 import { validateName,validateGender,validateStarName } from "@/app/utils/validations";
 import Image from "next/image";
+import { useUser } from "@/context/user-context";
 
 export default function UpdateArtista() {
 
@@ -23,7 +24,8 @@ export default function UpdateArtista() {
     const token = Cookies.get('auth_token');
     const {showNotification} = useNotification()
     const router = useRouter()
-
+    const {user} = useUser()
+    
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const { name } = e.target;
             if (name=="starname") setStarname(e.target.value)
@@ -66,7 +68,7 @@ export default function UpdateArtista() {
                 form.append('image', image);
             }
             
-            const response = await fetch(process.env.NEXT_PUBLIC_API_URL+'candidates/update_candidate/', {
+            const response = await fetch(process.env.NEXT_PUBLIC_API_URL+(user?.rol=="ADMIN" ? "candidates/update_candidate" : "candidates/update_self_candidate"), {
                 method: 'PUT',
                 headers: {
                     'accept': 'application/json',
@@ -114,7 +116,7 @@ export default function UpdateArtista() {
             setName(data.name);
             setLastname(data.lastname);
             setStarname(data.starname);
-            setGender(data.gender == "M" ? "Masculino" : "Femenino");
+            setGender(data.gender == "M" ? "Masculino" : data.gender== "F" ? "Femenino": "Otro");
             setimageUrl(data.image_url)
             setLoading(false);
         });
@@ -214,22 +216,23 @@ export default function UpdateArtista() {
                         </div>
       
                           {/* Campo: Género */}
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700">
-                                Género
-                            </label>
-                            <select
-                                value={gender}
-                                onChange={handleInputChange}
-                                name='gender'
-                                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                required
-                            >
-                                <option value="" disabled>Selecciona un género</option>
-                                <option value="Masculino">Masculino</option>
-                                <option value="Femenino">Femenino</option>
-                            </select>
-                        </div>
+                          <div>
+                              <label className="block text-sm font-medium text-gray-700">
+                                  Género
+                              </label>
+                                  <select
+                                  value={gender}
+                                  onChange={handleInputChange}
+                                  name='gender'
+                                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                  required
+                                  >
+                                      <option value="" disabled>Selecciona un género</option>
+                                      <option value="Masculino">Masculino</option>
+                                      <option value="Femenino">Femenino</option>
+                                      <option value="Otro">Otro</option>
+                                  </select>
+                          </div>
       
                           {/* Campo: Imagen */}
                         <div>

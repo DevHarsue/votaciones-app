@@ -23,11 +23,7 @@ export default function AuthProvider({children}: {children: React.ReactNode;}) {
                 
                 if (!response.ok) throw new Error('Token inválido');
                 const data = await response.json()
-                const user_data = {
-                    "name":data.name,
-                    "image":data.image_url
-                }
-                setUser(user_data);
+                setUser(data);
             } catch (error) {
                 console.log(error)
                 Cookies.remove('auth_token');

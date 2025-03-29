@@ -1,4 +1,4 @@
-from pydantic import BaseModel,validator
+from pydantic import BaseModel,validator,field_validator
 from fastapi import Form,HTTPException,UploadFile,File,status
 import json
 from re import fullmatch,findall
@@ -106,8 +106,25 @@ class UserUpdate(UserRequest):
     lastname: str = None
     gender: str = None
     email: str = None
-    password: str = None
     code: int = None
+    password: str = None
+    
+    
+class UserPasswordUpdate(BaseModel):
+    new_password: str 
+    old_password: str
+    
+    @field_validator("new_password","old_password")
+    def validate_password(cls, value: str):
+        regex = r'^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[^a-zA-Z0-9]).{8,}$'
+        if not fullmatch(regex, value):
+            raise ValueError(
+                "Password must have at least one number, one special character, "
+                "one uppercase letter, one lowercase letter, and be at least 8 characters long"
+            )
+        return value
+        
+    
     
 class UserFormUpdate:
     def __init__(self, 
@@ -117,7 +134,6 @@ class UserFormUpdate:
                     lastname: str = Form(""),
                     gender: str = Form(""),
                     email: str = Form(""),
-                    password: str = Form(""),
                     image: UploadFile=File(None)):
         self.image = image
         self.create_user(
@@ -126,11 +142,10 @@ class UserFormUpdate:
                             name.upper(),
                             lastname.upper(),
                             gender.upper(),
-                            email.upper(),
-                            password
+                            email.upper()
                         )
     
-    def create_user(self,nationality,ci,name,lastname,gender,email,password):
+    def create_user(self,nationality,ci,name,lastname,gender,email):
         try:
             user_data = {
                 "nationality":nationality,
@@ -138,8 +153,7 @@ class UserFormUpdate:
                 "name":name,
                 "lastname":lastname,
                 "gender":gender,
-                "email":email,
-                "password":password
+                "email":email
             }
             
             processed_data = {
