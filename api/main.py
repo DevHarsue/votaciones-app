@@ -28,6 +28,8 @@ app.add_middleware(
 # Crear donde se guardaran las imagenes
 os.makedirs("uploads", exist_ok=True)
 app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")
+os.makedirs("public", exist_ok=True)
+app.mount("/public", StaticFiles(directory="public"), name="public")
 
 @app.get("/",status_code=status.HTTP_200_OK)
 def home() -> JSONResponse:

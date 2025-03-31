@@ -66,4 +66,51 @@ class SenderEmail:
     def send_email_validate(self,receiver, code):
         subject = 'Validación de Correo Electronico.'
         self.send_email(receiver, subject,code)
+    
+    def send_email_vote(self,receiver,starname,image_artist):
+        # Creación del mensaje de correo electrónico
+        msg = MIMEMultipart("related")
+        msg['From'] = self.smtp_user
+        msg['To'] = receiver
+        msg['Subject'] = "Voto Ejercido Correctamente."
+        images = {
+            "logo": "api/utils/model_email/animals-logo1.png",
+            "image_artist": image_artist
+        }
+        
+        with open("api/utils/model_email/index2.html",encoding="utf-8") as f:
+            html = f.read()
+        
+        body_html = transform(html).replace("{{ starname }}",str(starname) )
+        
+
+        # Cuerpo del mensaje
+        msg.attach(MIMEText(body_html, 'html','utf-8'))
+        
+        for cid, image_path in images.items():
+            with open(image_path, 'rb') as img_file:
+                img_data = img_file.read()
+            
+            mime_type, _ = mimetypes.guess_type(image_path)
+            if mime_type and mime_type.startswith('image/'):
+                subtype = mime_type.split('/')[1]
+            else:
+                subtype = 'jpeg'  # Default
+        
+            img_part = MIMEImage(img_data, _subtype=subtype)
+            img_part.add_header('Content-ID', f'<{cid}>')
+            img_part.add_header('Content-Disposition', 'inline', filename=os.path.basename(image_path))
+            msg.add_header('Content-Type', 'text/html; charset=UTF-8')
+            msg.attach(img_part)
+
+        # Enviar el correo electrónico
+        try:
+            server = smtplib.SMTP(self.smtp_server, self.smtp_port)
+            server.starttls()
+            server.login(self.smtp_user, self.smtp_password)
+            server.sendmail(self.smtp_user, receiver, msg.as_string())
+            server.quit()
+            return True
+        except Exception as e:
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=f"Error sender email: {str(e)}")
         

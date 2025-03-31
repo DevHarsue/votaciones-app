@@ -56,7 +56,7 @@ class VoteActions:
         return False
     
     @session
-    def delete_vote(self,session: Session,email: str):
+    def delete_vote(self,session: Session,email: str) -> bool:
         try:
             query = select(User).where(User.email==email.upper())
             user_db = session.execute(query).one_or_none()[0]
@@ -72,7 +72,7 @@ class VoteActions:
         return False
     
     @session
-    def get_votes(self,session: Session):
+    def get_votes(self,session: Session) -> TotalVotesResponse:
         
         total_votes = len(
                         session.execute(

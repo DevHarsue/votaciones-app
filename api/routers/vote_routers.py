@@ -2,7 +2,10 @@ from fastapi import APIRouter,status,HTTPException,Path
 from fastapi.responses import JSONResponse
 from ..models.votes_models import TotalVotesResponse
 from ..actions.votes_actions import VoteActions
+from ..actions.candidate_actions import CandidateActions
+from ..actions.user_actions import UserActions
 from .token import list_dependencies,depend_data
+from ..utils.emails import SenderEmail
 vote_router = APIRouter()
 
 @vote_router.get("/get_votes",status_code=status.HTTP_200_OK)
@@ -18,7 +21,14 @@ def create_vote(data:depend_data,candidate_id: int=Path(gt=0)) -> JSONResponse:
     vote_confirm = actions.create_vote(candidate_id=candidate_id,user_id=int(data["id"]))
     if not vote_confirm:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,detail="Error in voting registration")
-
+    
+    email = UserActions().get_user_by_id(id=int(data["id"])).email
+    candidate = CandidateActions().get_candidate(id=candidate_id)
+    starname = candidate.starname
+    image_url = candidate.image_url
+    sender = SenderEmail()
+    sender.send_email_vote(receiver=email,starname=starname,image_artist=image_url)
+    
     return JSONResponse(content={"message":"successful voting"},status_code=status.HTTP_201_CREATED)
     
 
@@ -29,6 +39,13 @@ def update_vote(data: depend_data,candidate_id: int=Path(gt=0)) -> JSONResponse:
     
     if not vote_update:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,detail="Vote not Updated")
+    
+    email = UserActions().get_user_by_id(id=int(data["id"])).email
+    candidate = CandidateActions().get_candidate(id=candidate_id)
+    starname = candidate.starname
+    image_url = candidate.image_url
+    sender = SenderEmail()
+    sender.send_email_vote(receiver=email,starname=starname,image_artist=image_url)
     
     return JSONResponse(content={"message":"Vote Updated"})
 

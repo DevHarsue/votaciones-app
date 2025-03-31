@@ -11,6 +11,8 @@ import Cookies from 'js-cookie';
 import { useRouter } from 'next/navigation';
 import Spin from '@/app/ui/components/spin';
 import { useNotification } from '@/context/NotificationContext';
+import { generarPDF } from '@/app/pdf/pdf';
+import { useUser } from '@/context/user-context';
 
 export default function VotacionesPage() {
 
@@ -20,6 +22,7 @@ export default function VotacionesPage() {
     const token = Cookies.get('auth_token');
     const { showNotification } = useNotification();
     const router = useRouter();
+    const { user }=useUser();
 
     useEffect(() => {
             fetch(process.env.NEXT_PUBLIC_API_URL+"candidates/get_candidates")
@@ -70,7 +73,6 @@ export default function VotacionesPage() {
         }
 
         try {
-            console.log(votedArtist?.id)
             setLoading(true);
             const response_vote = await fetch(process.env.NEXT_PUBLIC_API_URL+"vote/create_vote/"+votedArtist?.id, {
                 method: 'POST',
@@ -79,26 +81,35 @@ export default function VotacionesPage() {
                     'Authorization': `Bearer ${token}`
                 }
             });
-    
-                setLoading(false)
-                if (!response_vote.ok) {
-                    const response_vote_update = await fetch(process.env.NEXT_PUBLIC_API_URL+"vote/update_vote/"+votedArtist?.id, {
-                        method: 'PUT',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'Authorization': `Bearer ${token}`
-                        }
-                    });
-                    if (!response_vote_update.ok){
-                        const message = await response_vote.json()
-                        console.log(message)
-                        showNotification({message: 'Error al Votar', type:"error"});
-                        return
+
+            if (!response_vote.ok) {
+                const response_vote_update = await fetch(process.env.NEXT_PUBLIC_API_URL+"vote/update_vote/"+votedArtist?.id, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
                     }
+                });
+                if (!response_vote_update.ok){
+                    const message = await response_vote.json()
+                    console.log(message)
+                    showNotification({message: 'Error al Votar', type:"error"});
+                    return
                 }
-    
-                showNotification({message: 'Voto Ejercido Correctamente', type:"success"});
-                router.push("/resultados/")
+            }
+            
+            if (user!=null && votedArtist!=null){
+
+                const data = {
+                    "artist":votedArtist,
+                    "voter":user
+                }
+                generarPDF(data)
+            }
+            setLoading(false)
+            
+            showNotification({message: 'Voto Ejercido Correctamente', type:"success"});
+            router.push("/resultados/")
     
             } catch (err) {
                 showNotification({message: err instanceof Error ? err.message : 'Error desconocido', type:"error"});
