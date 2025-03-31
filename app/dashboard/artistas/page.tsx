@@ -36,7 +36,7 @@ export default function ArtistasPage() {
                     setLoading(false);
             });
         }
-    }, [user]);
+    }, [user,token]);
 
     const handleEdit = (id: number) => {
         router.push("/dashboard/artistas/updateArtista/"+id)

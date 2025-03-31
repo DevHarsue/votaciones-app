@@ -5,12 +5,10 @@ import Image from "next/image";
 import { NormalButton } from "../ui/components/buttons";
 import Link from "next/link";
 import Spin from "../ui/components/spin";
-import { use } from "react";
 
 export default function Dashboard(){
     const {user} = useUser()
     if (user==null) return <Spin />
-    console.log(process.env.NEXT_PUBLIC_API_URL+user.image_url)
     return(
     <main className='pl-10 flex flex-col items-center'>
         <h1 className="text-2xl font-bold mb-4 text-center">

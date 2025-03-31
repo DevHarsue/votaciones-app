@@ -24,7 +24,7 @@ export default function UpdateVotante() {
 
     const [data, setData] = useState<User | null>(null);
     const [loading, setLoading] = useState(true);
-    const [error, setError] = useState<Error | null>(null);
+    const [error, setError] = useState("");
     const token = Cookies.get('auth_token');
     const params = useParams();
     const id = parseInt(params.id as string, 10);;
@@ -57,7 +57,7 @@ export default function UpdateVotante() {
             setImageUrl(data.image_url)
             setLoading(false)
         })
-    },[id,token])
+    },[id,token,router,showNotification])
     
     const handleSendDataVoter = async () =>{
             if (!data) return
@@ -137,6 +137,7 @@ export default function UpdateVotante() {
                 router.push("/dashboard/usuarios")
             } catch (err) {
                 showNotification({message: err instanceof Error ? err.message : 'Error desconocido', type:"error"});
+                setError(`${err}`)
             } finally {
                 setLoading(false);
             }
@@ -295,7 +296,7 @@ export default function UpdateVotante() {
                     {/* Vista previa de la imagen */}
                     {imagePreview && (
                         <div className="mt-4 flex items-center justify-center">
-                            <img src={imagePreview} alt="Vista previa de la imagen" className="w-32 h-32 rounded-full object-cover" />
+                            <Image src={imagePreview} alt="Vista previa de la imagen" className="w-32 h-32 rounded-full object-cover" width={300} height={300} />
                         </div>
                     )}
                     

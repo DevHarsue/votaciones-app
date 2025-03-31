@@ -1,6 +1,5 @@
 "use client"; // Necesario para manejar estados y eventos en Next.js
 
-import { useRouter } from "next/navigation";
 import Cookies from 'js-cookie';
 
 import { NormalButton } from '../../../ui/components/buttons';
@@ -16,7 +15,6 @@ export default function LoginPage() {
     const [password, setPassword] = useState('');
 
     const [loading, setLoading] = useState(false);
-    const router = useRouter();
     const {showNotification} = useNotification()
 
     // Función para manejar el envío del formulario
@@ -43,6 +41,7 @@ export default function LoginPage() {
             Cookies.set('auth_token', data.access_token, { secure: true, sameSite: 'strict' });
             window.location.assign("/");
         } catch (err) {
+            showNotification( { message: 'Error en la peticion: '+err, type: 'error' } )
             console.log(err)
         } finally {
             setLoading(false);

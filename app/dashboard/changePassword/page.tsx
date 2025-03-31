@@ -15,7 +15,7 @@ export default function UpdateVotante() {
     const [passwordValidated, setPasswordValidated] = useState("");
 
     const [loading, setLoading] = useState(false);
-    const [error, setError] = useState<Error | null>(null);
+    const [error, setError] = useState("");
     const token = Cookies.get('auth_token');
     const {showNotification} = useNotification()
     const router = useRouter()
@@ -59,6 +59,7 @@ export default function UpdateVotante() {
                 router.push("/dashboard")
             } catch (err) {
                 showNotification({message: err instanceof Error ? err.message : 'Error desconocido', type:"error"});
+                setError(`${err}`)
             } finally {
                 setLoading(false);
             }

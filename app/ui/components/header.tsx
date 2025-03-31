@@ -7,10 +7,7 @@ import Cookies from "js-cookie";
 import { useUser } from "@/context/user-context";
 
 export default function Header() {
-    const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [isAuthenticated, setIsAuthenticated] = useState(false);
-    const [userName, setUserName] = useState("Usuario"); // Nombre del usuario
-    const [userImage, setUserImage] = useState("/default-user.png"); // Imagen del usuario
     const menuRef = useRef<HTMLDivElement | null>(null);
     const { user } = useUser();
 
@@ -20,15 +17,12 @@ export default function Header() {
         const user = JSON.parse(localStorage.getItem('user') || '{}'); // Obtener datos del usuario
         if (token && user) {
             setIsAuthenticated(true);
-            setUserName(user.name || "Usuario");
-            setUserImage(user.image_url || "/default-user.png");
         }
     }, []);
 
     // Cerrar menú al hacer clic fuera
     const handleClickOutside = (event: Event) => {
         if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
-            setIsMenuOpen(false);
         }
     };
 

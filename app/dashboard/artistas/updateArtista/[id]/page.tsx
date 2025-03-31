@@ -78,7 +78,6 @@ export default function UpdateArtista() {
                 });
             
             if (response.status==409){
-                const errorData = await response.json();
                 showNotification({message:"El Nombre Artístico ya esta siendo usado",type:"error"})
                 return
             }
@@ -120,7 +119,7 @@ export default function UpdateArtista() {
             setimageUrl(data.image_url)
             setLoading(false);
         });
-    }, [id,token]); 
+    }, [id,token,router,showNotification]); 
 
     // Función para manejar la selección de la imagen
     const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -250,7 +249,7 @@ export default function UpdateArtista() {
                         {/* Vista previa de la imagen */}
                         {imagePreview && (
                             <div className="mt-4 flex items-center justify-center">
-                                <img src={imagePreview} alt="Vista previa de la imagen" className="w-32 h-32 rounded-full object-cover" />
+                                <Image src={imagePreview} alt="Vista previa de la imagen" className="w-32 h-32 rounded-full object-cover" width={300} height={300} />
                             </div>
                         )}
 

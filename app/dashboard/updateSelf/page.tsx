@@ -1,7 +1,7 @@
 'use client';
 import { useState, useEffect } from "react";
 import { useNotification } from "@/context/NotificationContext";
-import { useRouter, useParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import Cookies from "js-cookie";
 import Spin from "@/app/ui/components/spin";
 import Image from "next/image";
@@ -25,9 +25,8 @@ export default function UpdateVotante() {
 
     const [data, setData] = useState<User | null>(null);
     const [loading, setLoading] = useState(true);
-    const [error, setError] = useState<Error | null>(null);
+    const [error, setError] = useState("")
     const token = Cookies.get('auth_token');
-    const params = useParams();
     const {showNotification} = useNotification()
     const router = useRouter()
 
@@ -141,6 +140,7 @@ export default function UpdateVotante() {
                 router.push("/dashboard")
             } catch (err) {
                 showNotification({message: err instanceof Error ? err.message : 'Error desconocido', type:"error"});
+                setError(`${err}`)
             } finally {
                 setLoading(false);
             }
@@ -362,7 +362,7 @@ export default function UpdateVotante() {
                     {/* Vista previa de la imagen */}
                     {imagePreview && (
                         <div className="mt-4 flex items-center justify-center">
-                            <img src={imagePreview} alt="Vista previa de la imagen" className="w-32 h-32 rounded-full object-cover" />
+                            <Image src={imagePreview} alt="Vista previa de la imagen" className="w-32 h-32 rounded-full object-cover" width={300} height={300} />
                         </div>
                     )}
                     

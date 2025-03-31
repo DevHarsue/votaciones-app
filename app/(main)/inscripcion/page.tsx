@@ -7,6 +7,7 @@ import { useNotification } from '@/context/NotificationContext';
 import { useRouter } from 'next/navigation';
 import Cookies from 'js-cookie';
 import Spin from '@/app/ui/components/spin';
+import Image from 'next/image';
 
 
 export default function IncripcionPage() {
@@ -214,7 +215,7 @@ export default function IncripcionPage() {
                     {/* Vista previa de la imagen */}
                     {imagePreview && (
                         <div className="mt-4 flex items-center justify-center">
-                            <img src={imagePreview} alt="Vista previa de la imagen" className="w-32 h-32 rounded-full object-cover" />
+                            <Image src={imagePreview} alt="Vista previa de la imagen" className="w-32 h-32 rounded-full object-cover" width={300} height={300} />
                         </div>
                     )}
 

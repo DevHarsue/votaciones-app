@@ -25,7 +25,9 @@ export default function ResultadosPage() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<Error | null>(null);
 
+
     useEffect(() => {
+
             fetch(process.env.NEXT_PUBLIC_API_URL+"vote/get_votes")
             .then((res) => res.json())
             .then((data) => {

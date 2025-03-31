@@ -39,7 +39,6 @@ export default function VotacionesPage() {
 
     const [selectedArtist, setSelectedArtist] = useState<Artist | null>(null);
     const [votedArtist, setVotedArtist] = useState<Artist | null>(null);
-    const [isModalClosing, setIsModalClosing] = useState(false); // Estado para controlar el cierre del modal
 
     useEffect(() => {
         fetch(process.env.NEXT_PUBLIC_API_URL + 'candidates/get_candidates')
@@ -52,11 +51,9 @@ export default function VotacionesPage() {
 
     const handleArtistClick = (artist: Artist) => {
         setSelectedArtist(artist);
-        setIsModalClosing(false); // Reinicia el estado de cierre
     };
 
     const handleCloseModal = () => {
-        setIsModalClosing(true); // Activa la animación de cierre
         setTimeout(() => {
         setSelectedArtist(null); // Cierra el modal después de la animación
         }, 200); // Duración de la animación fade-out (200ms)

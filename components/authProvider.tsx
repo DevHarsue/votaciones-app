@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect ,useState} from 'react';
+import { useEffect} from 'react';
 import { useRouter } from 'next/navigation';
 import Cookies from 'js-cookie';
 import { useUser } from '@/context/user-context';
@@ -32,7 +32,7 @@ export default function AuthProvider({children}: {children: React.ReactNode;}) {
         };
 
         validateToken();
-    }, [router]);
+    }, [router,setUser]);
 
     return <>{children}</>
 }
