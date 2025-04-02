@@ -10,7 +10,7 @@ export default function Dashboard(){
     const {user} = useUser()
     if (user==null) return <Spin />
     return(
-    <main className='pl-10 flex flex-col items-center'>
+    <main className='flex flex-col items-center max-w-4xl mx-auto pb-2'>
         <h1 className="text-2xl font-bold mb-4 text-center">
             INFORMACION PERSONAL
         </h1>
@@ -23,6 +23,7 @@ export default function Dashboard(){
                 fill
                 />
             </div>
+        <div className="flex flex-col items-start">    
             {/* Campo: Nacionalidad */}
             <div>
                 <p className="text-xl font-semibold ">Nacionalidad: {user.nationality=="V" ? "Venezolano" : "Extranjero"}</p>
@@ -43,6 +44,7 @@ export default function Dashboard(){
             <div>
                 <p className="text-xl font-semibold">Email: {user.email}</p>
             </div>
+        </div>
             
             <div className="flex justify-center">
                 <Link href="/dashboard/updateSelf">
@@ -66,19 +68,6 @@ export default function Dashboard(){
                     />
                 </Link>
             </div>
-            
-            {/* Botón: Volver a Inicio */}
-            <div className='mt-5'>
-                <Link href="/">
-                    <NormalButton
-                        text='Volver a Inicio'
-                        color='text-blue-600'
-                        hoverClass='hover:text-blue-400'
-                        extraClass='w-full py-2 px-4 rounded-md md:w-full transition-colors'
-                        type='button'
-                    />
-                </Link>
-            </div> 
         </div>
     </main>
     )
