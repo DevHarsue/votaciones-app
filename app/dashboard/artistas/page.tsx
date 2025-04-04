@@ -78,41 +78,52 @@ export default function ArtistasPage() {
         artista.starname.toLowerCase().includes(searchTerm.toLowerCase())
     );
     return (
-        <main>
-            <div className="p-4 flex flex-col px-40">
-                <h2 className="text-2xl font-bold mb-4 text-center">
-                    Gestión de Artistas
-                </h2>
-                {/* Input de búsqueda */}
-                <input
-                    type="text"
-                    placeholder="Buscar artista por nombre..."
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    className="mb-4 p-2 border border-gray-300 rounded-md"
-                />
-                {filteredData.map((artista) => (
-                    <DataRow
-                        key={artista.id}
-                        name={artista.starname}
-                        image={artista.image_url}
-                        onEdit={() => handleEdit(artista.id)}
-                        onDelete={() => handleDelete(artista.id)}
-                    />
-                ))}
+        <main className="p-4">
+        <div className="max-w-4xl mx-auto">
+            <h2 className="text-2xl font-bold mb-4 text-center">
+                Gestión de Artistas
+            </h2>
+            
+            {/* Input de búsqueda */}
+            <input
+                type="text"
+                placeholder="Buscar artista por nombre..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="w-full mb-4 p-2 border border-gray-300 rounded-md"
+            />
+            
+            {/* Lista de artistas */}
+            <div className="border rounded-lg overflow-hidden">
+                {filteredData.length > 0 ? (
+                    filteredData.map((artista) => (
+                        <DataRow
+                            key={artista.id}
+                            name={artista.starname}
+                            image={artista.image_url}
+                            onEdit={() => handleEdit(artista.id)}
+                            onDelete={() => handleDelete(artista.id)}
+                        />
+                    ))
+                ) : (
+                    <div className="p-4 text-center text-gray-500">
+                        No se encontraron artistas
+                    </div>
+                )}
             </div>
             {/* Botón: Volver a Inicio */}
-            <div className='mt-5'>
+            <div className="mt-5 text-center">
                 <Link href="/dashboard">
                     <NormalButton
                         text='Volver a Inicio'
-                        color='text-blue-600'
-                        hoverClass='hover:text-blue-400'
-                        extraClass='w-full py-2 px-4 rounded-md md:w-full transition-colors'
+                        color='bg-blue-100 text-blue-600'
+                        hoverClass='hover:bg-blue-200'
+                        extraClass='w-full sm:w-auto py-2 px-4 rounded-md transition-colors'
                         type='button'
                     />
                 </Link>
             </div>
-        </main>
-    );
+        </div>
+    </main>
+);
 }
