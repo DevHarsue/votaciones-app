@@ -3,70 +3,148 @@ import { lusitana } from '../ui/fonts';
 import Link from 'next/link';
 import Image from "next/image";
 
-export default function CNUApp(){
+export default function CNUApp() {
     return (
-        <main className="my-10 mx-4 lg:mx-auto lg:min-w-4xl">
-            <section className="flex flex-col md:flex-row mx-auto px-8 py-10 w-4xl pb-40">
-                <div className="h-full md:w-min-1/4">
+        <main className="min-h-screen bg-gradient-to-b from-green-50 to-gray-100 py-10 px-4 sm:px-6 lg:px-8">
+            {/* Hero Section */}
+            <section className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-8 items-center mb-16">
+                <div className="order-2 lg:order-1">
                     <Image
-                    src="/animals-description.png"
-                    alt="Descripción de CNU"
-                    width="600"
-                    height="400"
-                    className="w-full h-full rounded-lg shadow-lg items-center"
+                        src="/animals-description.png"
+                        alt="Descripción de CNU"
+                        width={600}
+                        height={400}
+                        className="w-full h-auto rounded-xl shadow-2xl object-cover transition-all duration-300 hover:scale-[1.02]"
+                        priority
                     />
                 </div>
                 
-                <div className={`${lusitana.className} pt-5 px-10 md:w-1/2 md:pt-20 text-center bg-gray-500 bg-opacity-20 p-6 rounded-lg border-2 border-gray-300 border-opacity-30 shadow-lg`}>
-                    <h2 className='text-3xl md:text-5xl font-bold text-gray-800 mb-2  md:text-left shadow-sm'>
-                        CNU: Donde la Fauna se Convierte en Estrella
+                <div className={`${lusitana.className} order-1 lg:order-2 p-8 bg-white bg-opacity-80 rounded-xl border border-gray-200 shadow-lg backdrop-blur-sm`}>
+                    <h2 className='text-3xl md:text-4xl lg:text-5xl font-bold text-gray-800 mb-6 text-center lg:text-left'>
+                        CNU: Donde la Fauna se Convierte en <span className="text-blue-600">Estrella</span>
                     </h2>
-                    <p className="text-gray-700 text-lg text-center md:text-left leading-relaxed mt-8 mb-2 ">
-                    Bienvenido al Consejo Nacional Único, el escenario digital donde los animales toman el micrófono, afinan sus instrumentos y compiten por el título de <span className="font-semibold">Mejor Artista Musical del Reino Animal</span>. Desde el rugido gutural de <span className="italic">Axl León Roses</span> hasta el trino melódico de <span className="italic">Canario Bieber</span>, en CNU descubrirás talentos salvajes que rompen las barreras de lo convencional.
-                    </p>
-                    <p className="text-lg  text-gray-700 text-center md:text-left leading-relaxed mt-4 ">
-                    ¿Quién se llevará el premio al mejor artista? ¿Será el lobo <span className="italic">Casablancas</span> con su estilo indie, la rana <span className="italic">Aurelio Wonder</span> con su ritmo jazzero, o el elefante <span className="italic">Minaj</span> que arrasa en las listas de éxitos? ¡Tú decides! Vota, comparte y celebra la diversión más animal del mundo digital.
-                    </p>
+                    <div className="space-y-4 text-gray-700 text-lg leading-relaxed">
+                        <p>
+                            Bienvenido al Consejo Nacional Único, el escenario digital donde los animales toman el micrófono, afinan sus instrumentos y compiten por el título de <span className="font-semibold text-blue-600">Mejor Artista Musical del Reino Animal</span>.
+                        </p>
+                        <p>
+                            Desde el rugido gutural de <span className="italic text-gray-800">Axl León Roses</span> hasta el trino melódico de <span className="italic text-gray-800">Canario Bieber</span>, en CNU descubrirás talentos salvajes que rompen las barreras de lo convencional.
+                        </p>
+                        <p>
+                            ¿Quién se llevará el premio al mejor artista? ¿Será el lobo <span className="italic text-gray-800">Casablancas</span> con su estilo indie, la rana <span className="italic text-gray-800">Aurelio Wonder</span> con su ritmo jazzero, o el elefante <span className="italic text-gray-800">Minaj</span> que arrasa en las listas de éxitos?
+                        </p>
+                        <p className="font-bold text-blue-700">
+                            ¡Tú decides! Vota, comparte y celebra la diversión más animal del mundo digital.
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+            <section className="max-w-6xl mx-auto mb-40 mt-40">
+                <h2 className={`${lusitana.className} text-3xl font-bold text-center mb-12 text-gray-800`}>
+                    El Evento Más Salvaje del Año
+                </h2>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    {/* Tarjeta 1 */}
+                    <div className="bg-white rounded-xl overflow-hidden shadow-lg hover:scale-[1.03] transition-transform duration-300">
+                        <div className="relative h-52">
+                            <Image
+                                src="/evento-concierto.png"
+                                alt="Concierto de animales"
+                                fill
+                                className="object-cover object-[center_10%]"
+                            />
+                        </div>
+                        <div className="p-6">
+                            <h3 className="text-xl font-semibold mb-2">Gran Concierto Inaugural</h3>
+                            <p className="text-gray-600">
+                                Disfruta del espectáculo donde los artistas muestran sus talentos en vivo ante el jurado.
+                            </p>
+                        </div>
+                    </div>
+
+                    {/* Tarjeta 2 */}
+                    <div className="bg-white rounded-xl overflow-hidden shadow-lg hover:scale-[1.03] transition-transform duration-300">
+                        <div className="relative h-52">
+                            <Image
+                                src="/votacion-publico.png"
+                                alt="Público votando"
+                                fill
+                                className="object-cover object-[center_30%]"
+                            />
+                        </div>
+                        <div className="p-6">
+                            <h3 className="text-xl font-semibold mb-2">Tu Voto Decide</h3>
+                            <p className="text-gray-600">
+                                Cada voto cuenta para coronar al mejor artista. ¡Participa y gana premios!
+                            </p>
+                        </div>
+                    </div>
+
+                    {/* Tarjeta 3 */}
+                    <div className="bg-white rounded-xl overflow-hidden shadow-lg hover:scale-[1.03] transition-transform duration-300">
+                        <div className="relative h-52">
+                            <Image
+                                src="/ganador-pasado.png"
+                                alt="Ganador del año pasado"
+                                fill
+                                className="object-cover object-[center_10%]"
+                            />
+                        </div>
+                        <div className="p-6">
+                            <h3 className="text-xl font-semibold mb-2">Inspírate</h3>
+                            <p className="text-gray-600">
+                                El año pasado, <span className="font-medium">Lionel Feroci</span> ganó con su potente voz. ¿Quién será el próximo?
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section className="max-w-2xl mx-auto bg-white p-8 rounded-xl border border-gray-200 shadow-lg mb-16 relative overflow-hidden flex flex-col">
+                <div className="absolute -right-20 -top-20 w-40 h-40 bg-blue-100 rounded-full opacity-30"></div>
+                <div className="absolute -left-10 -bottom-10 w-32 h-32 bg-green-100 rounded-full opacity-30"></div>
+                
+                <p className="text-lg text-gray-700 mb-6 relative z-10">
+                    ¿Quieres registrar a tu artista favorito para las elecciones?
+                </p>
+                
+                <div className="flex justify-end mt-auto">
+                    <Link href="/inscripcion" className="relative z-10">
+                        <NormalButton
+                            text="Registrar Artista"
+                            color="bg-blue-600"
+                            hoverClass="hover:bg-blue-700"
+                            extraClass="text-white rounded-lg px-6 py-3 shadow-md transition-all hover:shadow-lg"
+                            type="button"
+                        />
+                    </Link>
                 </div>
             </section>
             
-            <section className="bg-gray-200 p-6 rounded-lg border-2 border-gray-300 shadow-md my-20 mx-auto max-w-md md:max-w-lg lg:max-w-xl relative">
-            <p className="text-start mb-8">
-                ¿Quieres registrar a tu artista favorito para las elecciones? Presiona el siguiente botón.
-            </p>
-            <div>
-            <Link href="/inscripcion">
-                <NormalButton
-                    text="Registrar"
-                    color="bg-blue-600"
-                    hoverClass="hover:bg-blue-500"
-                    extraClass="text-white rounded-lg absolute right-4 bottom-4"
-                    type="button"
-                />
-            </Link>
-            </div>               
-        </section>
-            {/* Buttons Vote, Results */}
-        <div className="flex flex-col items-center space-y-6 mt-20 mb-20">
-            <Link href="/votaciones">
-                <NormalButton
-                    text="Votar"
-                    color="bg-custom-green-400"
-                    hoverClass="hover:bg-custom-green-500"
-                    extraClass="text-white py-2 px-4 rounded-lg transition-colors"
-                    type="button"
-                />
-            </Link>    
-            <Link href="/resultados">    
-                <NormalButton
-                    text="Ver Resultados"
-                    color="bg-red-700"
-                    hoverClass="hover:bg-red-500"
-                    extraClass="text-white py-2 px-4 rounded-lg transition-colors"
-                    type="button"
-                />
-            </Link>
-        </div>
+            {/* Buttons */}
+            <div className="max-w-md mx-auto grid grid-cols-1 sm:grid-cols-2 gap-6 justify-items-center sm:justify-items-stretch">
+                <Link href="/votaciones">
+                    <NormalButton
+                        text="Votar Ahora"
+                        color="bg-green-600"
+                        hoverClass="hover:bg-green-700"
+                        extraClass="text-white py-3 px-6 rounded-lg shadow-md transition-all hover:shadow-lg hover:scale-105"
+                        type="button"
+                    />
+                </Link>
+                
+                <Link href="/resultados">    
+                    <NormalButton
+                        text="Ver Resultados"
+                        color="bg-red-600"
+                        hoverClass="hover:bg-red-700"
+                        extraClass="text-white py-3 px-6 rounded-lg shadow-md transition-all hover:shadow-lg hover:scale-105"
+                        type="button"
+                    />
+                </Link>
+            </div>
         </main>
     );
-};
+}
