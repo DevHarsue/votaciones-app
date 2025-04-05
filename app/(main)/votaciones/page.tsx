@@ -123,7 +123,7 @@ export default function VotacionesPage() {
     if (!data) return <div>No se encontraron Artistas</div>;
 
     return (
-        <main className="min-h-screen bg-gray-100 p-8 flex flex-col items-center">
+        <main className="min-h-screen bg-gradient-to-b from-green-50 to-gray-100 p-8 flex flex-col items-center">
             <h1 className="text-3xl font-bold text-center mb-8">Vota Por Tu Artista Favorito</h1>
             {data.length > 0 ? (<div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-2 max-w-3xl w-full">
                 {data.map((artist) => (

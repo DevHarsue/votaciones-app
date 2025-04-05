@@ -8,7 +8,7 @@ interface ErrorProps {
 
 export default function ErrorComponent({ error, reset }: ErrorProps) {
     return (
-        <div className=" bg-gray-100 p-8 flex flex-col items-center justify-between">
+        <div className="bg-gradient-to-b from-green-50 to-gray-100 p-8 flex flex-col items-center justify-between">
             <h1 className="font-bold">Algo salió mal!</h1>
             <p>{error.message}</p>
             <NormalButton 

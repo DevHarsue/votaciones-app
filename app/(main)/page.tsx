@@ -40,8 +40,8 @@ export default function CNUApp() {
                 </div>
             </section>
 
-            <section className="max-w-6xl mx-auto mb-40 mt-40">
-                <h2 className={`${lusitana.className} text-3xl font-bold text-center mb-12 text-gray-800`}>
+            <section className="max-w-6xl mx-auto mb-20 mt-20">
+                <h2 className={`${lusitana.className} text-4xl font-bold text-center mb-20 text-gray-800`}>
                     El Evento Más Salvaje del Año
                 </h2>
                 
@@ -103,8 +103,8 @@ export default function CNUApp() {
             </section>
 
             <section className="max-w-2xl mx-auto bg-white p-8 rounded-xl border border-gray-200 shadow-lg mb-16 relative overflow-hidden flex flex-col">
-                <div className="absolute -right-20 -top-20 w-40 h-40 bg-blue-100 rounded-full opacity-30"></div>
-                <div className="absolute -left-10 -bottom-10 w-32 h-32 bg-green-100 rounded-full opacity-30"></div>
+                <div className="absolute -right-20 -top-20 w-40 h-40 bg-blue-300 rounded-full opacity-30"></div>
+                <div className="absolute -left-10 -bottom-10 w-32 h-32 bg-blue-700 rounded-full opacity-30"></div>
                 
                 <p className="text-lg text-gray-700 mb-6 relative z-10">
                     ¿Quieres registrar a tu artista favorito para las elecciones?
@@ -116,7 +116,7 @@ export default function CNUApp() {
                             text="Registrar Artista"
                             color="bg-blue-600"
                             hoverClass="hover:bg-blue-700"
-                            extraClass="text-white rounded-lg px-6 py-3 shadow-md transition-all hover:shadow-lg"
+                            extraClass="text-white py-3 px-6 rounded-lg shadow-md transition-transform hover:shadow-lg hover:scale-105 duration-300 font-bold"
                             type="button"
                         />
                     </Link>
@@ -124,27 +124,53 @@ export default function CNUApp() {
             </section>
             
             {/* Buttons */}
-            <div className="max-w-md mx-auto grid grid-cols-1 sm:grid-cols-2 gap-6 justify-items-center sm:justify-items-stretch">
-                <Link href="/votaciones">
-                    <NormalButton
-                        text="Votar Ahora"
-                        color="bg-green-600"
-                        hoverClass="hover:bg-green-700"
-                        extraClass="text-white py-3 px-6 rounded-lg shadow-md transition-all hover:shadow-lg hover:scale-105"
-                        type="button"
-                    />
-                </Link>
-                
-                <Link href="/resultados">    
-                    <NormalButton
-                        text="Ver Resultados"
-                        color="bg-red-600"
-                        hoverClass="hover:bg-red-700"
-                        extraClass="text-white py-3 px-6 rounded-lg shadow-md transition-all hover:shadow-lg hover:scale-105"
-                        type="button"
-                    />
-                </Link>
-            </div>
+            <section className="max-w-2xl mx-auto bg-white p-8 rounded-xl border border-gray-200 shadow-lg mb-16 relative overflow-hidden flex flex-col">
+                <div className="absolute -right-5 -top-5 w-40 h-40 bg-green-600 rounded-full opacity-30"></div>
+                <div className="absolute -left-5 -bottom-5 w-32 h-32 bg-green-800 rounded-full opacity-30"></div>
+
+                <p className="text-center text-lg font-medium mb-2 text-gray-800">
+                    ¡Tu voto hace la diferencia! 
+                </p>
+                <p className="text-center text-gray-600">
+                    Elige a tu artista favorito y ayúdalo a llegar a la cima. ¡Cada voto cuenta!
+                </p>
+
+                <div className="flex justify-center mt-6">
+                    <Link href="/votaciones">
+                        <NormalButton
+                            text="Votar Ahora"
+                            color="bg-green-600"
+                            hoverClass="hover:bg-green-700"
+                            extraClass="text-white py-3 px-6 rounded-lg shadow-md transition-transform hover:shadow-lg hover:scale-105 duration-300 font-bold"
+                            type="button"
+                        />
+                    </Link>
+                </div>
+            </section>
+
+            <section className="max-w-2xl mx-auto bg-white p-8 rounded-xl border border-gray-200 shadow-lg mb-16 relative overflow-hidden flex flex-col">
+                <div className="absolute -right-2 -bottom-20 w-40 h-40 bg-red-300 rounded-full opacity-30"></div>
+                <div className="absolute -left-2 -top-20 w-32 h-32 bg-orange-300 rounded-full opacity-30"></div>
+
+                <p className="text-center text-lg font-medium mb-2 text-gray-800">
+                    ¿Quién va ganando la competencia?
+                </p>
+                <p className="text-center text-gray-600">
+                    Descubre en tiempo real qué artistas están liderando esta batalla musical. ¡No te quedes fuera!
+                </p>
+
+                <div className="flex justify-center mt-6">
+                    <Link href="/resultados">    
+                        <NormalButton
+                            text="Ver Resultados en Vivo"
+                            color="bg-red-600"
+                            hoverClass="hover:bg-red-700"
+                            extraClass="text-white py-3 px-6 rounded-lg shadow-md transition-transform hover:shadow-lg hover:scale-105 duration-300 font-bold"
+                            type="button"
+                        />
+                    </Link>
+                </div>
+            </section>
         </main>
     );
 }
