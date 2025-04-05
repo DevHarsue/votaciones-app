@@ -10,7 +10,8 @@ export default function Dashboard(){
     const {user} = useUser()
     if (user==null) return <Spin />
     return(
-    <main className='flex flex-col items-center max-w-4xl mx-auto pb-2'>
+    <main className='bg-gradient-to-b from-green-50 to-gray-100 pl-10 flex flex-col items-center'>
+
         <h1 className="text-2xl font-bold mb-4 text-center">
             INFORMACION PERSONAL
         </h1>

@@ -74,8 +74,9 @@ export default function UsuariosPage() {
         (usuario.name+" "+usuario.lastname).toLowerCase().includes(searchTerm.toLowerCase())
     );
     return (
-        <main className="p-4">
-            <div className="max-w-4xl mx-auto">
+        <main className="bg-gradient-to-b from-green-50 to-gray-100">
+            <div className="p-4 flex flex-col px-40">
+
                 <h2 className="text-2xl font-bold mb-4 text-center">
                     Gestión de Usuarios
                 </h2>

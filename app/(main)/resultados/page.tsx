@@ -48,7 +48,7 @@ export default function ResultadosPage() {
     }
 
     return (
-        <main className="min-h-screen bg-gray-100 p-8 flex flex-col items-center ">
+        <main className="min-h-screen bg-gradient-to-b from-green-50 to-gray-100 p-8 flex flex-col items-center ">
         <h1 className="text-3xl font-bold text-center mb-8">
             Resultados de las Votaciones
         </h1>

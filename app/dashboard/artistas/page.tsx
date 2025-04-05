@@ -78,38 +78,29 @@ export default function ArtistasPage() {
         artista.starname.toLowerCase().includes(searchTerm.toLowerCase())
     );
     return (
-        <main className="p-4">
-        <div className="max-w-4xl mx-auto">
-            <h2 className="text-2xl font-bold mb-4 text-center">
-                Gestión de Artistas
-            </h2>
-            
-            {/* Input de búsqueda */}
-            <input
-                type="text"
-                placeholder="Buscar artista por nombre..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full mb-4 p-2 border border-gray-300 rounded-md"
-            />
-            
-            {/* Lista de artistas */}
-            <div className="border rounded-lg overflow-hidden">
-                {filteredData.length > 0 ? (
-                    filteredData.map((artista) => (
-                        <DataRow
-                            key={artista.id}
-                            name={artista.starname}
-                            image={artista.image_url}
-                            onEdit={() => handleEdit(artista.id)}
-                            onDelete={() => handleDelete(artista.id)}
-                        />
-                    ))
-                ) : (
-                    <div className="p-4 text-center text-gray-500">
-                        No se encontraron artistas
-                    </div>
-                )}
+        <main className="bg-gradient-to-b from-green-50 to-gray-100">
+            <div className="p-4 flex flex-col px-40">
+                <h2 className="text-2xl font-bold mb-4 text-center">
+                    Gestión de Artistas
+                </h2>
+                {/* Input de búsqueda */}
+                <input
+                    type="text"
+                    placeholder="Buscar artista por nombre..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="mb-4 p-2 border border-gray-300 rounded-md"
+                />
+                {filteredData.map((artista) => (
+                    <DataRow
+                        key={artista.id}
+                        name={artista.starname}
+                        image={artista.image_url}
+                        onEdit={() => handleEdit(artista.id)}
+                        onDelete={() => handleDelete(artista.id)}
+                    />
+                ))}
+
             </div>
             {/* Botón: Volver a Inicio */}
             <div className="mt-5 text-center">
