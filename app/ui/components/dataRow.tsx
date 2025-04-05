@@ -4,44 +4,49 @@ import { NormalButton } from "./buttons";
 
 interface DataRowProps {
     name: string;
-    image: string  
+    image: string;
     onEdit: () => void;
     onDelete: () => void;
 }
-export default function DataRow({ name,image, onEdit, onDelete }: DataRowProps) {
-	const url =process.env.NEXT_PUBLIC_API_URL
-	return (
-	<div className="flex justify-between items-center p-2 border-b">
-		<div className="flex items-center justify-between">
-			<Image
-				src={url+image}
-				width={40}
-				height={40}
-				alt="Image"
-				className="w-10 h-10 rounded-full bg-red-200"
-			/>
-			<p className="font-bold ml-6">{name}</p>
-		</div>
-		<div>
-			{/* Botón de Modificar */} 
-			<NormalButton
-				text="Modificar"
-				color="bg-blue-500"
-				hoverClass="hover:bg-blue-700"
-				extraClass="text-white px-2 py-1 rounded mr-2"
-				type="button"
-				onClick={onEdit}
-			/>
-			{/* Botón de Eliminar */}
-			<NormalButton
-				text="Eliminar"
-				color="bg-red-500"
-				hoverClass="hover:bg-red-700"
-				extraClass="text-white px-2 py-1 rounded"
-				type="button"
-				onClick={onDelete}
-			/>
-		</div>
-	</div>
-	);
+
+export default function DataRow({ name, image, onEdit, onDelete }: DataRowProps) {
+    const url = process.env.NEXT_PUBLIC_API_URL;
+    
+    return (
+        <div className="flex flex-col sm:flex-row justify-between items-center p-3 border-b gap-2 sm:gap-0">
+            <div className="flex items-center w-full sm:w-auto">
+                <div className="relative w-12 h-12 sm:w-10 sm:h-10">
+                    <Image
+                        src={url + image}
+                        fill
+                        alt="Artista"
+                        className="rounded-full object-cover bg-gray-200"
+                        sizes="(max-width: 640px) 48px, 40px"
+                    />
+                </div>
+                <p className="font-bold ml-3 sm:ml-6 text-sm sm:text-base truncate max-w-[150px] sm:max-w-none">
+                    {name}
+                </p>
+            </div>
+
+            <div className="flex flex-row sm:flex-col md:flex-row gap-2 w-full sm:w-auto justify-end">
+                <NormalButton
+                    text="Modificar"
+                    color="bg-blue-500"
+                    hoverClass="hover:bg-blue-700"
+                    extraClass="text-white px-3 py-1 sm:px-2 sm:py-1 rounded text-sm sm:text-base"
+                    type="button"
+                    onClick={onEdit}
+                />
+                <NormalButton
+                    text="Eliminar"
+                    color="bg-red-500"
+                    hoverClass="hover:bg-red-700"
+                    extraClass="text-white px-3 py-1 sm:px-2 sm:py-1 rounded text-sm sm:text-base"
+                    type="button"
+                    onClick={onDelete}
+                />
+            </div>
+        </div>
+    );
 }

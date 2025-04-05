@@ -100,19 +100,21 @@ export default function ArtistasPage() {
                         onDelete={() => handleDelete(artista.id)}
                     />
                 ))}
+
             </div>
             {/* Botón: Volver a Inicio */}
-            <div className='mt-5'>
+            <div className="mt-5 text-center">
                 <Link href="/dashboard">
                     <NormalButton
                         text='Volver a Inicio'
-                        color='text-blue-600'
-                        hoverClass='hover:text-blue-400'
-                        extraClass='w-full py-2 px-4 rounded-md md:w-full transition-colors'
+                        color='bg-blue-100 text-blue-600'
+                        hoverClass='hover:bg-blue-200'
+                        extraClass='w-full sm:w-auto py-2 px-4 rounded-md transition-colors'
                         type='button'
                     />
                 </Link>
             </div>
-        </main>
-    );
+        </div>
+    </main>
+);
 }

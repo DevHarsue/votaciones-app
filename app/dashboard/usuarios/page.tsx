@@ -76,6 +76,7 @@ export default function UsuariosPage() {
     return (
         <main className="bg-gradient-to-b from-green-50 to-gray-100">
             <div className="p-4 flex flex-col px-40">
+
                 <h2 className="text-2xl font-bold mb-4 text-center">
                     Gestión de Usuarios
                 </h2>
@@ -85,8 +86,9 @@ export default function UsuariosPage() {
                     placeholder="Buscar Usuarios por nombre..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
-                    className="mb-4 p-2 border border-gray-300 rounded-md"
+                    className="w-full mb-4 p-2 border border-gray-300 rounded-md"
                 />
+                <div className="border rounded-lg overflow-hidden">
                 {filteredData.map((usuario) => (
                     <DataRow
                         key={usuario.id}
@@ -96,16 +98,20 @@ export default function UsuariosPage() {
                         onDelete={() => handleDelete(usuario.email)}
                     />
                 ))}
+                </div>
             </div>
-            <Link href="/dashboard">
-                <NormalButton
-                    text='Volver a Inicio'
-                    color='text-blue-600'
-                    hoverClass='hover:text-blue-400'
-                    extraClass='w-full py-2 px-4 rounded-md md:w-full transition-colors'
-                    type='button'
-                />
-            </Link>
+            {/* Botón: Volver a Inicio */}
+            <div className="mt-5 text-center">
+                <Link href="/dashboard">
+                    <NormalButton
+                        text='Volver a Inicio'
+                        color='bg-blue-100 text-blue-600'
+                        hoverClass='hover:bg-blue-200'
+                        extraClass='w-full sm:w-auto py-2 px-4 rounded-md transition-colors'
+                        type='button'
+                    />
+                </Link>
+            </div>
         </main>
     );
 }
