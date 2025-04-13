@@ -39,7 +39,6 @@ export default function UpdateVotante() {
 
 
     useEffect(()=>{
-
         setLoading(true)
         if (user!=null){
             setData(user)
@@ -225,17 +224,17 @@ export default function UpdateVotante() {
                 </h1>
                 <form className="">
                     <div className="relative aspect-square">
-                                <Image
-                                src={process.env.NEXT_PUBLIC_API_URL+imageUrl}
-                                alt={"Imagen Actual"}
-                                className="w-10 h-10 rounded-full bg-red-200 object-cover"
-                                fill
-                                />
+                        <Image
+                            src={process.env.NEXT_PUBLIC_API_URL+imageUrl}
+                            alt={"Imagen Actual"}
+                            className="w-10 h-10 rounded-full bg-red-200 object-cover"
+                            fill
+                        />
                     </div>
                     {/* Campo: Nacionalidad */}
                     <div>
                         <label className="block text-sm font-medium text-gray-700">
-                        Nacionalidad
+                            Nacionalidad
                         </label>
                         <select
                             value={nationality}
@@ -390,7 +389,7 @@ export default function UpdateVotante() {
                         </Link>
                     </div> 
                 </form>
-        </div>
+            </div>
         </div>
     );
 }

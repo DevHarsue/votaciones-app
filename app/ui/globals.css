@@ -17,6 +17,10 @@ input[type='number']::-webkit-outer-spin-button {
     margin: 0;
 }
 
+.loader_container{
+    height: 65vh;
+}
+
 .loader {
     border-top-color: aliceblue;
     border-width: 32px;

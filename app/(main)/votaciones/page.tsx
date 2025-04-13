@@ -127,11 +127,11 @@ export default function VotacionesPage() {
             <h1 className="text-3xl font-bold text-center mb-8">Vota Por Tu Artista Favorito</h1>
             {data.length > 0 ? (<div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-2 max-w-3xl w-full">
                 {data.map((artist) => (
-                <ArtistCard
-                    key={artist.id}
-                    artist={artist}
-                    onClick={() => handleArtistClick(artist)}
-                />
+                    <ArtistCard
+                        key={artist.id}
+                        artist={artist}
+                        onClick={() => handleArtistClick(artist)}
+                    />
                 ))}
             </div>) :
             (<div>
@@ -143,9 +143,9 @@ export default function VotacionesPage() {
                 onClose={handleCloseModal}
                 onVote={() => handleVote(selectedArtist)}
                 />
-        )}
-        {/* Div para mostrar el artista votado */}
-        {votedArtist && (
+            )}
+            {/* Div para mostrar el artista votado */}
+            {votedArtist && (
                 <div className="mt-8 p-6 bg-white rounded-lg shadow-md flex flex-col items-center">
                     <h2 className="text-2xl font-bold mb-4">Has votado por:</h2>
                     <div className="relative aspect-square w-32">
@@ -168,17 +168,17 @@ export default function VotacionesPage() {
                         </div>
                 </div>
             )}
-        <div className="mt-3">
-            <Link href="/">
-            <NormalButton
-                text="Volver a Inicio"
-                color="text-blue-600"
-                hoverClass="hover:text-blue-400"
-                extraClass="w-full py-2 px-4 rounded-md md:w-full transition-colors"
-                type="button"
-            />
-            </Link>
-        </div>
-    </main>
-  );
+            <div className="mt-3">
+                <Link href="/">
+                <NormalButton
+                    text="Volver a Inicio"
+                    color="text-blue-600"
+                    hoverClass="hover:text-blue-400"
+                    extraClass="w-full py-2 px-4 rounded-md md:w-full transition-colors"
+                    type="button"
+                />
+                </Link>
+            </div>
+        </main>
+    );
 }

@@ -25,7 +25,7 @@ export default function Notification({ message, type = 'info', onClose }: Notifi
         <div className={`${colors[type]} text-white px-6 py-3 rounded-lg shadow-lg flex items-center space-x-4 transition-transform duration-300 transform translate-x-0`}>
             <span>{message}</span>
             <button onClick={onClose} className="hover:text-gray-200">
-            ×
+                ×
             </button>
         </div>
         </div>

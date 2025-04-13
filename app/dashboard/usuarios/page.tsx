@@ -18,8 +18,6 @@ export default function UsuariosPage() {
     const token = Cookies.get('auth_token');
     const [searchTerm, setSearchTerm] = useState(""); // Estado para el término de búsqueda
 
-
-    
     useEffect(() => {
         if (!token) return;
         fetch(process.env.NEXT_PUBLIC_API_URL+"get_users",{
@@ -76,7 +74,6 @@ export default function UsuariosPage() {
     return (
         <main className="bg-gradient-to-b from-green-50 to-gray-100">
             <div className="p-4 flex flex-col px-40">
-
                 <h2 className="text-2xl font-bold mb-4 text-center">
                     Gestión de Usuarios
                 </h2>

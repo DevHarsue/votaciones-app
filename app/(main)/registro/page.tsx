@@ -215,10 +215,9 @@ export default function RegistroPage() {
             setImagePreview(URL.createObjectURL(file)); // Vista previa de la imagen
         }
     };
-
+    if (loading) return <Spin />;
     return (
         <main className="min-h-screen bg-gradient-to-b from-green-50 to-gray-100 flex items-center justify-center">
-            {loading && (<Spin />)}
             <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md mt-4 mb-4">
                 <h1 className="text-3xl font-bold text-center mb-10">
                     REGISTRO DE USUARIO

@@ -142,7 +142,6 @@ export default function UpdateVotante() {
                 setLoading(false);
             }
         }
-
     const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const MAX_SIZE_MB = 4;
         const MAX_BYTES = MAX_SIZE_MB * 1024 * 1024; // 4MB en bytes
@@ -186,17 +185,17 @@ export default function UpdateVotante() {
                 </h1>
                 <form className="">
                     <div className="relative aspect-square">
-                                <Image
-                                src={process.env.NEXT_PUBLIC_API_URL+imageUrl}
-                                alt={"Imagen Actual"}
-                                className="w-10 h-10 rounded-full bg-red-200 object-cover"
-                                fill
-                                />
+                        <Image
+                            src={process.env.NEXT_PUBLIC_API_URL+imageUrl}
+                            alt={"Imagen Actual"}
+                            className="w-10 h-10 rounded-full bg-red-200 object-cover"
+                            fill
+                        />
                     </div>
                     {/* Campo: Nacionalidad */}
                     <div>
                         <label className="block text-sm font-medium text-gray-700">
-                        Nacionalidad
+                            Nacionalidad
                         </label>
                         <select
                             value={nationality}
@@ -283,15 +282,15 @@ export default function UpdateVotante() {
                     </div>
                    {/* Campo: Imagen */}
                     <div>
-                            <label className="block text-sm font-medium text-gray-700">Imagen de Usuario</label>
-                            <input
-                                type="file"
-                                onChange={handleImageChange}
-                                className="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-semibold file:cursor-pointer file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
-                                accept="image/*"
-                                required
-                            />
-                        </div>
+                        <label className="block text-sm font-medium text-gray-700">Imagen de Usuario</label>
+                        <input
+                            type="file"
+                            onChange={handleImageChange}
+                            className="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-semibold file:cursor-pointer file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+                            accept="image/*"
+                            required
+                        />
+                    </div>
 
                     {/* Vista previa de la imagen */}
                     {imagePreview && (
@@ -324,7 +323,7 @@ export default function UpdateVotante() {
                         </Link>
                     </div> 
                 </form>
-        </div>
+            </div>
         </div>
     );
 }
