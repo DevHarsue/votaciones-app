@@ -54,7 +54,9 @@ export default function Header() {
                         className="w-16 h-16 rounded-full cursor-pointer"
                     />
                 </Link>
-                <h1 className="text-4xl font-bold text-custom-beige">CNU</h1>
+                <Link href="/">
+                    <h1 className="text-4xl font-bold text-custom-beige">CNU</h1>
+                </Link>
             </div>
 
             {/* Botones sesion iniciada */}

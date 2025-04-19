@@ -1,5 +1,10 @@
 import Dashboard from "./../ui/components/headerdash";
 import React from "react";
+import { Metadata } from 'next';
+
+export const metadata: Metadata = {
+    title: "Dashboard"
+};
 
 export default function RootDashboard({
     children,
