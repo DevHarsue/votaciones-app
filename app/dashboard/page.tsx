@@ -9,7 +9,7 @@ import Spin from "../ui/components/spin";
 export default function Dashboard() {
     const { user } = useUser()
     if (user == null) return <Spin />
-    
+
     return (
         <main className='bg-gradient-to-b from-green-50 to-gray-100 min-h-screen p-6 md:p-10 flex flex-col items-center'>
             <div className="w-full max-w-4xl bg-white rounded-lg shadow-md overflow-hidden">
