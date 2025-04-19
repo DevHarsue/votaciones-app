@@ -18,6 +18,7 @@ export default function ArtistasPage() {
     const router = useRouter();
     const token = Cookies.get('auth_token');    
     const {user} = useUser()
+
     useEffect(() => {
         setLoading(true)
         if (user!=null){
@@ -100,7 +101,6 @@ export default function ArtistasPage() {
                         onDelete={() => handleDelete(artista.id)}
                     />
                 ))}
-
             </div>
             {/* Botón: Volver a Inicio */}
             <div className="mt-5 text-center">
@@ -114,7 +114,6 @@ export default function ArtistasPage() {
                     />
                 </Link>
             </div>
-        </div>
-    </main>
-);
+        </main>
+    );
 }

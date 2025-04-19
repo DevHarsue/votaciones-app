@@ -21,48 +21,46 @@ export default function UpdateVotante() {
     const router = useRouter()
     
     const handleSendUpdatePassword = async () =>{
-            if (loading){
+        if (loading){
+            return
+        }
+        if (!validatePassword(password)){
+            showNotification( { message: 'Contraseña Invalida', type: 'error' } )
+            setLoading(false);
+            return
+        }
+        if (password!=passwordValidated){
+            showNotification( { message: 'Las Contraseñas no son iguales', type: 'error' } )
+            setLoading(false);
+            return
+        }
+        try {
+            setLoading(true);
+            const response = await fetch(process.env.NEXT_PUBLIC_API_URL+"update_self_password/", {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({
+                    "new_password": password,
+                    "old_password": oldPassword
+                })
+            });
+            if (response.status==401){
+                showNotification({message: 'Contraseña Actual Incorrecta', type:"error"});
                 return
             }
-            if (!validatePassword(password)){
-                showNotification( { message: 'Contraseña Invalida', type: 'error' } )
-                setLoading(false);
-                return
-            }
-            if (password!=passwordValidated){
-                showNotification( { message: 'Las Contraseñas no son iguales', type: 'error' } )
-                setLoading(false);
-                return
-            }
-            try {
-                setLoading(true);
-                const response = await fetch(process.env.NEXT_PUBLIC_API_URL+"update_self_password/", {
-                    method: 'PUT',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${token}`
-                    },
-                    body: JSON.stringify({
-                        "new_password": password,
-                        "old_password": oldPassword
-                    })
-                });
-                if (response.status==401){
-                    showNotification({message: 'Contraseña Actual Incorrecta', type:"error"});
-                    return
-
-                }
-                if (!response.ok) throw new Error('Error en la solicitud');
-                
-                showNotification({message: 'Contraseña Actualizada Correctamente', type:"success"});
-
-                router.push("/dashboard")
-            } catch (err) {
-                showNotification({message: err instanceof Error ? err.message : 'Error desconocido', type:"error"});
-                setError(`${err}`)
-            } finally {
-                setLoading(false);
-            }
+            if (!response.ok) throw new Error('Error en la solicitud');
+            
+            showNotification({message: 'Contraseña Actualizada Correctamente', type:"success"});
+            router.push("/dashboard")
+        } catch (err) {
+            showNotification({message: err instanceof Error ? err.message : 'Error desconocido', type:"error"});
+            setError(`${err}`)
+        } finally {
+            setLoading(false);
+        }
     }
 
     if (error) {
@@ -145,7 +143,7 @@ export default function UpdateVotante() {
                         </Link>
                     </div> 
                 </form>
-        </div>
+            </div>
         </div>
     );
 }
