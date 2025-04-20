@@ -11,7 +11,7 @@ import Cookies from 'js-cookie';
 import { useRouter } from 'next/navigation';
 import Spin from '@/app/ui/components/spin';
 import { useNotification } from '@/context/NotificationContext';
-import { generarPDF } from '@/app/pdf/pdf';
+import { generarComprobantePDF } from '@/app/pdf/pdf';
 import { useUser } from '@/context/user-context';
 export default function VotacionesPage() {
 
@@ -100,7 +100,7 @@ export default function VotacionesPage() {
                     "artist":votedArtist,
                     "voter":user
                 }
-                generarPDF(data)
+                generarComprobantePDF(data)
             }
             setLoading(false)
             

@@ -3,116 +3,213 @@ import {
     Page,
     Text,
     Image,
+    View,
     StyleSheet,
 } from '@react-pdf/renderer';
-import { Artist,User } from '../ui/types';
+import { Artist, User } from '../ui/types';
+import { pdf } from '@react-pdf/renderer';
 
-interface Data{
+interface Data {
     voter: User
     artist: Artist
 }
 
-// Estilos para el PDF con Times New Roman
+// Mejorado: Estilos organizados y mejor legibilidad
 const pdfStyles = StyleSheet.create({
     page: {
-        padding: 20,
-        fontFamily: 'Times-Roman', // Fuente Times New Roman
-        fontSize: 14,
+        padding: 40,
+        fontFamily: 'Times-Roman',
+        fontSize: 12,
         lineHeight: 1.5,
-        textAlign: 'center', // Centro del texto
+    },
+    headerContainer: {
+        marginBottom: 20,
+        alignItems: 'center',
     },
     logo: {
-        width: 100, // Tamaño del logo
-        height: 100,
-        alignSelf: 'center', // Centrar el logo
-        marginBottom: 10, // Espacio debajo del logo
+        width: 80,
+        height: 80,
+        marginBottom: 10,
     },
-    header: {
-        marginBottom: 15,
-        fontSize: 20,
+    title: {
+        fontSize: 18,
         fontWeight: 'bold',
+        marginBottom: 5,
+    },
+    subtitle: {
+        fontSize: 14,
+        marginBottom: 15,
     },
     section: {
+        marginBottom: 20,
+    },
+    sectionTitle: {
+        fontSize: 14,
         fontWeight: 'bold',
+        marginBottom: 10,
+        textDecoration: 'underline',
     },
-    textItem: {
-        marginBottom: 3,
+    row: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        marginBottom: 5,
     },
-    image: {
-        width: 100,
-        height: 100,
-        marginVertical: 10,
-        alignSelf: 'center', // Centrar las imágenes
-        marginBottom: 20
+    label: {
+        fontWeight: 'bold',
+        width: '30%',
+        textAlign: 'right',
+    },
+    value: {
+        width: '65%',
+        textAlign: 'left',
     },
     separator: {
-        marginTop: 20,
+        borderBottomWidth: 1,
+        borderBottomColor: '#000',
+        marginVertical: 15,
+    },
+    photo: {
+        width: 120,
+        height: 150,
+        marginTop: 10,
+        borderWidth: 1,
+        borderColor: '#ccc',
+    },
+    logoContainer: {
+        position: 'absolute',
+        top: 20,
+        left: 20,
+        zIndex: 1,
     },
 });
 
-// Componente que genera el contenido del PDF
-const MyPdfDocument = ({ data }:{data:Data}) => {
-    data.voter.gender= data.voter.gender=="M" ? "Masculino" : data.voter.gender=="F" ? "Femenino" : "Otro";
-    data.artist.gender= data.artist.gender=="M" ? "Masculino" : data.artist.gender=="F" ? "Femenino" : "Otro";
-    const logo = process.env.NEXT_PUBLIC_API_URL + "public\\animals-logo1.png"
+// Mejorado: Componente más organizado y con mejor manejo de datos
+const MyPdfDocument = ({ data }: { data: Data }) => {
+    // Evitar mutación directa de props
+    const voter = {
+        ...data.voter,
+        gender: data.voter.gender === "M" ? "Masculino" : 
+                data.voter.gender === "F" ? "Femenino" : "Otro"
+    };
+
+    const artist = {
+        ...data.artist,
+        gender: data.artist.gender === "M" ? "Masculino" : 
+               data.artist.gender === "F" ? "Femenino" : "Otro"
+    };
+
+    const formatCI = () => {
+        return `${voter.nationality}-${voter.ci}`;
+    };
+
+    const buildImageUrl = (path: string) => {
+        // Mejorado: Manejo seguro de URLs
+        const baseUrl = process.env.NEXT_PUBLIC_API_URL || '';
+        return `${baseUrl}${path.replace(/\\/g, '/')}`;
+    };
+
     return (
         <Document>
             <Page style={pdfStyles.page}>
-            <Text style={pdfStyles.header}>CNU</Text>
-            {/* Logo encima del título */}
-            {logo && <Image style={pdfStyles.logo} source={{ uri: logo}} />}
+                <View style={pdfStyles.logoContainer}>
+                    <Image 
+                        style={pdfStyles.logo} 
+                        source={{ uri: buildImageUrl("public/animals-logo1.png") }} 
+                    />
+                </View>
+                <View style={pdfStyles.headerContainer}>
+                    <Text style={pdfStyles.title}>CONSEJO NACIONAL UNICO</Text>
+                    <Text style={pdfStyles.subtitle}>Comprobante de Voto</Text>
+                </View>
 
-            {/* Título */}
-            <Text style={pdfStyles.header}>Detalles de Voto:</Text>
+                <View style={pdfStyles.section}>
+                    <Text style={pdfStyles.sectionTitle}>DATOS DEL VOTANTE</Text>
+                    
+                    <View style={pdfStyles.row}>
+                        <Text style={pdfStyles.label}>Cédula:</Text>
+                        <Text style={pdfStyles.value}>{formatCI()}</Text>
+                    </View>
+                    
+                    <View style={pdfStyles.row}>
+                        <Text style={pdfStyles.label}>Nombre:</Text>
+                        <Text style={pdfStyles.value}>{`${voter.name} ${voter.lastname}`}</Text>
+                    </View>
+                    
+                    <View style={pdfStyles.row}>
+                        <Text style={pdfStyles.label}>Género:</Text>
+                        <Text style={pdfStyles.value}>{voter.gender}</Text>
+                    </View>
+                    
+                    <View style={pdfStyles.row}>
+                        <Text style={pdfStyles.label}>Email:</Text>
+                        <Text style={pdfStyles.value}>{voter.email}</Text>
+                    </View>
 
-            {/* Sección del votante */}
-            <Text style={pdfStyles.section}>Votante:</Text>
-            <Text style={pdfStyles.textItem}>{(data?.voter?.nationality + "-" +data?.voter?.ci) || 'N/A'}</Text> {/* Cédula */}
-            <Text style={pdfStyles.textItem}>{(data?.voter?.name + " " + data?.voter.lastname) || 'N/A'}</Text>
-            <Text style={pdfStyles.textItem}>{data?.voter?.gender || 'N/A'}</Text>
-            <Text style={pdfStyles.textItem}>{data?.voter?.email || 'N/A'}</Text>
-            {data?.voter?.image_url && (
-                <Image style={pdfStyles.image} source={{ uri: process.env.NEXT_PUBLIC_API_URL+data.voter.image_url }} />
-            )}
+                    {voter.image_url && (
+                        <View style={{ alignItems: 'center', marginTop: 10 }}>
+                            <Text style={{ marginBottom: 5 }}>Foto de perfil:</Text>
+                            <Image 
+                                style={pdfStyles.photo} 
+                                source={{ uri: buildImageUrl(voter.image_url) }} 
+                            />
+                        </View>
+                    )}
+                </View>
 
-            {/* Separador */}
-            <Text style={pdfStyles.separator}></Text>
+                <View style={pdfStyles.separator} />
 
-            {/* Sección del artista (votado) */}
-            <Text style={pdfStyles.section}>Artista Votado:</Text>
-            <Text style={pdfStyles.textItem}>{data?.artist?.starname || 'N/A'}</Text>
-            <Text style={pdfStyles.textItem}>{(data?.artist?.name + " " + data?.artist.lastname) || 'N/A'}</Text>
-            <Text style={pdfStyles.textItem}>{data?.artist?.gender || 'N/A'}</Text>
-            {data?.artist?.image_url && (
-                <Image style={pdfStyles.image} source={{ uri: process.env.NEXT_PUBLIC_API_URL+data.artist.image_url }} />
-            )}
+                <View style={pdfStyles.section}>
+                    <Text style={pdfStyles.sectionTitle}>ARTISTA SELECCIONADO</Text>
+                    
+                    <View style={pdfStyles.row}>
+                        <Text style={pdfStyles.label}>Nombre Artístico:</Text>
+                        <Text style={pdfStyles.value}>{artist.starname}</Text>
+                    </View>
+                    
+                    <View style={pdfStyles.row}>
+                        <Text style={pdfStyles.label}>Nombre Real:</Text>
+                        <Text style={pdfStyles.value}>{`${artist.name} ${artist.lastname}`}</Text>
+                    </View>
+                    
+                    <View style={pdfStyles.row}>
+                        <Text style={pdfStyles.label}>Género:</Text>
+                        <Text style={pdfStyles.value}>{artist.gender}</Text>
+                    </View>
+
+                    {artist.image_url && (
+                        <View style={{ alignItems: 'center', marginTop: 10 }}>
+                            <Text style={{ marginBottom: 5 }}>Foto del artista:</Text>
+                            <Image 
+                                style={pdfStyles.photo} 
+                                source={{ uri: buildImageUrl(artist.image_url) }} 
+                            />
+                        </View>
+                    )}
+                </View>
             </Page>
         </Document>
     );
-}
+};
 
-
-import { pdf } from '@react-pdf/renderer';
-
-export const generarPDF = async (data: Data) => {
+// Función de generación de PDF (se mantiene similar pero con mejor nombre)
+export const generarComprobantePDF = async (data: Data) => {
     try {
-        // Generar el PDF como Blob
         const blob = await pdf(<MyPdfDocument data={data} />).toBlob();
-        
-        // Crear un objeto URL temporal
         const url = URL.createObjectURL(blob);
         
-        // Crear un enlace y simular click
         const link = document.createElement('a');
         link.href = url;
-        link.download = 'voto-cnu-'+data.voter.id+'.pdf'; // Nombre del archivo
+        link.download = `comprobante-voto-${data.voter.ci}.pdf`;
         document.body.appendChild(link);
         link.click();
         
-        // Limpiar
-        document.body.removeChild(link);
-        URL.revokeObjectURL(url);
+        // Limpieza
+        setTimeout(() => {
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+        }, 100);
     } catch (error) {
-        console.error('Error al generar PDF:', error);
+        console.error('Error generando comprobante:', error);
+        throw new Error('No se pudo generar el comprobante');
     }
 };
