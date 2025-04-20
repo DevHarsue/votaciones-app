@@ -8,6 +8,12 @@ import { useRouter } from "next/navigation";
 import Cookies from "js-cookie";
 import Spin from "@/app/ui/components/spin";
 import { User } from "@/app/ui/types";
+// import { Metadata } from 'next';
+
+
+// export const metadata: Metadata = {
+//     title: "Usuarios",
+// };
 
 export default function UsuariosPage() {
     const [data, setData] = useState<[User] | null>(null);
@@ -72,8 +78,8 @@ export default function UsuariosPage() {
         (usuario.name+" "+usuario.lastname).toLowerCase().includes(searchTerm.toLowerCase())
     );
     return (
-        <main className="bg-gradient-to-b from-green-50 to-gray-100">
-            <div className="p-4 flex flex-col px-40">
+        <main className="bg-gradient-to-b from-green-50 to-gray-100 p-4">
+            <div className="p-4 flex flex-col">
                 <h2 className="text-2xl font-bold mb-4 text-center">
                     Gestión de Usuarios
                 </h2>

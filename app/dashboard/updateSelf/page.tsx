@@ -106,7 +106,6 @@ export default function UpdateVotante() {
                 if(image){
                     form.append('image', image);
                 }
-                console.log(form.entries().forEach(e=>console.log(e)))
                 setLoading(true);
                 const response = await fetch(process.env.NEXT_PUBLIC_API_URL+"update_self_user/", {
                     method: 'PUT',

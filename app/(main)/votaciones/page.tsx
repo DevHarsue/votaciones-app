@@ -13,7 +13,6 @@ import Spin from '@/app/ui/components/spin';
 import { useNotification } from '@/context/NotificationContext';
 import { generarPDF } from '@/app/pdf/pdf';
 import { useUser } from '@/context/user-context';
-
 export default function VotacionesPage() {
 
     const [data, setData] = useState<[Artist]|null>(null);
