@@ -64,48 +64,48 @@ export default function Header() {
                 {isAuthenticated && user? (
                     <div className="flex items-center space-x-8 md:pr-10">
                         <Link href="/dashboard">
-                            <div className="flex items-center space-x-2">
-                                <Image
-                                    src={process.env.NEXT_PUBLIC_API_URL+user?.image_url}
-                                    width={40}
-                                    height={40}
-                                    alt="User Image"
-                                    className="w-10 h-10 rounded-full bg-red-200"
-                                />
-                                <span className="text-white cursor:pointer hover:text-blue-400 px-2">{user.name}</span>
-                            </div>
-
-                        </Link>
-                        <NormalButton
-                            text="CERRAR SESIÓN 🔒 "
-                            color="bg-transparent"
-                            hoverClass="hover:bg-red-700"
-                            extraClass="text-white py-2 px-4 rounded-md border "
-                            type="button"
-                            onClick={handleLogout}
-                        />
+    <div className="flex items-center space-x-2 group">
+        <div className="w-10 h-10 rounded-full border-2 border-white border-opacity-30 group-hover:border-opacity-80 overflow-hidden transition-all duration-300">
+            <Image 
+                src={process.env.NEXT_PUBLIC_API_URL+user?.image_url}
+                width={40} 
+                height={40} 
+                alt="Avatar" 
+                className="object-cover"
+            />
+        </div>
+        <span className="text-white group-hover:text-blue-200 transition-colors duration-300">
+            {user.name}
+        </span>
+    </div>
+</Link>
+    <NormalButton
+        text="CERRAR SESIÓN"
+        color="bg-red-500"
+        hoverClass="hover:bg-red-600 hover:shadow-inner"
+        extraClass="text-white py-2 px-6 rounded-lg shadow-[0_4px_8px_rgba(0,0,0,0.1)] hover:shadow-[0_6px_12px_rgba(0,0,0,0.15)] transition-all duration-300"
+        onClick={handleLogout}
+/>
                     </div>
                 ) : (
                     // {/* Botones sin iniciar sesion */}
                     <div className="flex flex-col md:flex-row justify-center items-start space-x-2 md:pr-10 w-auto text-1xl">
                         <Link href="/login">
-                            <NormalButton
-                                text="INICIAR SESIÓN 🔓 "
-                                color="bg-transparent"
-                                hoverClass="hover:text-blue-400"
-                                extraClass="text-white py-2 px-4 rounded-md"
-                                type="button"
-                            />
-                        </Link>
-                        <Link href="/registro">
-                            <NormalButton
-                                text="REGISTRARSE 👤 "
-                                color="bg-transparent"
-                                hoverClass="hover:text-blue-400"
-                                extraClass="text-white py-2 px-2 rounded-md w-full"
-                                type="button"
-                            />
-                        </Link>
+    <NormalButton
+        text="INICIAR SESIÓN →"
+        color="bg-transparent"
+        hoverClass="hover:text-blue-300"
+        extraClass="text-white py-2 px-4 border-b-2 border-transparent hover:border-blue-300 transition-all duration-300"
+    />
+</Link>
+<Link href="/registro">
+    <NormalButton
+        text="REGISTRARSE"
+        color="bg-blue-600"
+        hoverClass="hover:bg-blue-700 hover:shadow-md"
+        extraClass="text-white py-2 px-6 rounded-full transition-all duration-300"
+    />
+</Link>
                     </div>
                 )}
             </div>

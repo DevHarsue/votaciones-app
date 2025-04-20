@@ -2,14 +2,11 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useUser } from "@/context/user-context";
-import Spin from "./spin";
 import { useRouter } from "next/navigation";
 
 export default function Dashboard() {
     const { user } = useUser();
     const router = useRouter();
-    
-    if (user == null) return <Spin />;
 
     return (
         <>
@@ -39,7 +36,7 @@ export default function Dashboard() {
                         </div>
                     </Link>
                     
-                    {user.rol == "ADMIN" && (
+                    {user?.rol == "ADMIN" && (
                         <Link href="/dashboard/usuarios" className="flex-grow">
                             <div className="w-full text-white py-3 px-4 text-center border-t border-blue-700 bg-blue-900 hover:bg-blue-800 transition-colors">
                                 Usuarios
@@ -79,7 +76,7 @@ export default function Dashboard() {
                             </div>
                         </Link>
                         
-                        {user.rol == "ADMIN" && (
+                        {user?.rol == "ADMIN" && (
                             <Link href="/dashboard/usuarios" className="w-full">
                                 <div className="flex items-center justify-center h-14 px-4 border-b border-gray-200 hover:bg-gray-50 transition-colors">
                                     <span className="text-gray-800 font-medium">Usuarios</span>
