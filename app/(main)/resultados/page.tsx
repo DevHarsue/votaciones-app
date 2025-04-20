@@ -5,12 +5,6 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { NormalButton } from '../../ui/components/buttons';
 import Spin from '@/app/ui/components/spin';
-// import { Metadata } from "next";
-
-// export const metadata: Metadata = {
-//     title: 'Resultados',
-// };
-
 interface Candidate {
     data_candidate:{
         id: number

@@ -8,12 +8,6 @@ import { useRouter } from "next/navigation";
 import Cookies from "js-cookie";
 import Spin from "@/app/ui/components/spin";
 import { User } from "@/app/ui/types";
-// import { Metadata } from 'next';
-
-
-// export const metadata: Metadata = {
-//     title: "Usuarios",
-// };
 
 export default function UsuariosPage() {
     const [data, setData] = useState<[User] | null>(null);

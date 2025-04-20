@@ -5,10 +5,7 @@ import { UserProvider } from '@/context/user-context';
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {
-    title: {
-        template: '%s | CNU',
-        default: 'CNU',
-    },
+    title: "CNU",
     description: 'Sistema de votacion CNU',
 };
 export default function RootLayout({
