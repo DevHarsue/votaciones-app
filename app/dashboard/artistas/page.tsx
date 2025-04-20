@@ -79,8 +79,8 @@ export default function ArtistasPage() {
         artista.starname.toLowerCase().includes(searchTerm.toLowerCase())
     );
     return (
-        <main className="bg-gradient-to-b from-green-50 to-gray-100">
-            <div className="p-4 flex flex-col px-40">
+        <main className="bg-gradient-to-b from-green-50 to-gray-100 p-4">
+            <div className="p-4 flex flex-col">
                 <h2 className="text-2xl font-bold mb-4 text-center">
                     Gestión de Artistas
                 </h2>

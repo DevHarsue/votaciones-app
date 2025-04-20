@@ -18,7 +18,6 @@ export default function CNUApp() {
                         priority
                     />
                 </div>
-                
                 <div className={`${lusitana.className} order-1 lg:order-2 p-8 bg-white bg-opacity-80 rounded-xl border border-gray-200 shadow-lg backdrop-blur-sm`}>
                     <h2 className='text-3xl md:text-4xl lg:text-5xl font-bold text-gray-800 mb-6 text-center lg:text-left'>
                         CNU: Donde la Fauna se Convierte en <span className="text-blue-600">Estrella</span>
@@ -42,11 +41,9 @@ export default function CNUApp() {
 
             <section className="max-w-6xl mx-auto mb-20 mt-20">
                 <h2 className={`${lusitana.className} text-4xl font-bold text-center mb-20 text-gray-800`}>
-
                     El Evento Más Salvaje del Año
                 </h2>
-                
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                     {/* Tarjeta 1 */}
                     <div className="bg-white rounded-xl overflow-hidden shadow-lg hover:scale-[1.03] transition-transform duration-300">
                         <div className="relative h-52">

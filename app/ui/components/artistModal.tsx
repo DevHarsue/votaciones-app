@@ -29,7 +29,7 @@ export default function ArtistModal({ artist, onClose, onVote }: ArtistModalProp
                     <h2 className="text-2xl font-bold mb-2">{artist.starname}</h2>
                     <p className="text-gray-700">Nombre: {artist.name}</p>
                     <p className='text-gray-700'>Apellido: {artist.lastname}</p>
-                    <p className='text-gray-700'>Género: {artist.gender}</p>
+                    <p className='text-gray-700'>Género: {artist.gender == "M" ? "MASCULINO" : artist.gender == "F" ? "FEMENINO" : "OTRO"}</p>
                         <div className="mt-4">
                             <button
                                 onClick={onVote}
