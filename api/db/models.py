@@ -19,11 +19,6 @@ class User(Base):
     image_url = Column(Text, nullable=False)
     rol = Column(Enum(*roles,name="rol_enum"), nullable=False)
 
-class UserSession(Base):
-    __tablename__ = "users_sessions"
-    id = Column(Integer, primary_key=True,autoincrement=True)
-    user_id = Column(Integer, ForeignKey('users.id'),nullable=False)
-    token = Column(Text,nullable=False)
     
 
 class Code(Base):

@@ -95,7 +95,7 @@ export default function Dashboard() {
                     <button 
                         onClick={() => router.push("/")}
                         className="absolute bottom-4 right-4 bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-full shadow-md transition-colors">
-                        Salir
+                        Volver
                     </button>
                 </div>
             </div>
