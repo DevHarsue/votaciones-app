@@ -127,6 +127,9 @@ export default function RegistroPage() {
                 if (message.includes("Email")){
                     showNotification({message: "Ya existe un registro con ese correo electronico.", type:"error"});
                 }
+                if (message.includes("Code")){
+                    showNotification({message: "Codigo incorrecto", type:"error"});
+                }
 
                 if (message.includes("CI")){
                     showNotification({message: "Ya existe un registro con esa Cedula", type:"error"});

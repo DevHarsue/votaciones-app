@@ -19,7 +19,6 @@ class User(Base):
     image_url = Column(Text, nullable=False)
     rol = Column(Enum(*roles,name="rol_enum"), nullable=False)
 
-    
 
 class Code(Base):
     __tablename__ = "codes"
@@ -37,7 +36,6 @@ class Candidate(Base):
     gender = Column(Enum(*genders,name="gender_enum"), nullable=False)
     image_url = Column(Text, nullable=False)
     user_id = Column(Integer, ForeignKey('users.id'),nullable=False)
-    
 
 class Vote(Base):
     __tablename__ = "votes"
